@@ -80,7 +80,7 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 `SiteHeader` is a client component. Supply serializable data and application-owned callbacks:
 
-- `logo` (ReactNode) and optional `title` for ministry mode.
+- `logo` (ReactNode) and optional `title` for ministry mode. The title wraps within 320px and the bar grows with it. It does not truncate.
 - `pathname` so scroll mode resets on navigation.
 - `desktopNavItems` / `mobileNavItems`: `{ href, label, current?, external? }`.
 - `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, and `sections`. Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
@@ -98,7 +98,7 @@ Keep labels, routing, authentication, API calls, account panels, and persistence
 
 ## Accessibility and responsive behavior
 
-Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Apps and sites are a React Aria listbox in a grid for Show all, Apps only, and Sites only. The card body scrolls. "Scroll to view more" is a button shown only while that body is at the top and more tiles sit below. While it is hidden it is removed from pointer and keyboard access. Arrow keys move the highlight (hover treatment, without a focus ring) and Enter opens the highlighted app or site. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion` (the scroll control still appears, and its scroll is instant). Manual screen-reader and device testing remains part of adopting an experimental block.
+Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Apps and sites are a React Aria listbox in a grid for Show all, Apps only, and Sites only. The card body scrolls. "Scroll to view more" is a button shown only while that body is at the top and more tiles sit below. While it is hidden it is removed from pointer and keyboard access. Arrow keys move the highlight (hover treatment, without a focus ring) and Enter opens the highlighted app or site. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion` (the scroll control still appears, and its scroll is instant). Desktop navigation is shown from 1121px wide. At 1120px and below, the header uses the mobile menu. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 

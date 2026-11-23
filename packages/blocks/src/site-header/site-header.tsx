@@ -5,6 +5,7 @@ import {
   useEffect,
   useId,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -104,7 +105,7 @@ function DesktopNav({
 }) {
   return (
     <motion.nav
-      className="hidden min-w-0 flex-1 items-center lg:flex"
+      className="hidden min-w-0 flex-1 items-center min-[1121px]:flex"
       animate={{ opacity: hidden ? 0 : 1 }}
       transition={prefersReducedMotion ? { duration: 0 } : fadeTransition}
       style={{ pointerEvents: hidden ? 'none' : 'auto' }}
@@ -202,10 +203,10 @@ function HeaderLogoButton({
             {logo}
           </span>
           <span
-            className={`text-text-base-emphasis line-clamp-2 min-w-0 text-start transition-[max-width,font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
+            className={`text-text-base-emphasis min-w-0 max-w-[320px] text-start transition-[font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
               isFloating
-                ? 'type-body-md-medium max-w-40 leading-[1.5] sm:max-w-52 xl:max-w-[242px]'
-                : 'type-caption-medium max-w-[184px] leading-[1.34] tracking-[0.18px] lg:type-body-md-medium lg:max-w-[242px] lg:leading-[1.5] lg:tracking-normal'
+                ? 'type-body-md-medium leading-[1.5]'
+                : 'type-caption-medium leading-[1.34] tracking-[0.18px] lg:type-body-md-medium lg:leading-[1.5] lg:tracking-normal'
             }`}
             aria-hidden
           >
@@ -270,7 +271,7 @@ function HeaderActions({
         inert={isOpen || undefined}
       >
         {actions}
-        <span className="lg:hidden">
+        <span className="min-[1121px]:hidden">
           <Button
             intent="secondary"
             appearance="transparent"
@@ -389,12 +390,15 @@ export function SiteHeader({
   const titleId = useId();
   const surfaceRef = useRef<HTMLElement>(null);
   const bannerExitRef = useRef<HTMLDivElement>(null);
+  const navRowRef = useRef<HTMLDivElement>(null);
+  const [barHeight, setBarHeight] = useState(HEADER_HEIGHT);
   const unrenderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { mode: scrollMode, floatingMotion } = useHeaderScrollMode(
     pathname,
     surfaceRef,
     bannerExitRef,
+    barHeight,
   );
   const [openedFromFloating, setOpenedFromFloating] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -406,6 +410,19 @@ export function SiteHeader({
   const [officialBannerDetailsHeight, setOfficialBannerDetailsHeight] = useState(0);
   const [isOfficialBannerResizing, setIsOfficialBannerResizing] = useState(false);
   const [menuPathname, setMenuPathname] = useState(pathname);
+
+  useLayoutEffect(() => {
+    const row = navRowRef.current;
+    if (!row) return;
+    const update = () => {
+      const next = row.offsetHeight;
+      setBarHeight((current) => (current === next ? current : next));
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, []);
 
   // Close the mobile menu when the application navigates.
   if (pathname !== menuPathname) {
@@ -436,8 +453,8 @@ export function SiteHeader({
     !isExpanded && !floatingLayout ? (isMobileMenuOpen ? 0 : officialBannerHeight + 4) : undefined;
   const layoutSpacerHeight =
     scrollMode === 'top' && !isRendered && isMobileMenuOpen
-      ? HEADER_HEIGHT
-      : officialBannerHeight + 4 + HEADER_HEIGHT;
+      ? barHeight
+      : officialBannerHeight + 4 + barHeight;
   const selectedTheme = themeOptionFromScheme(colorScheme);
 
   const geometryTransition =
@@ -672,8 +689,8 @@ export function SiteHeader({
               ? 'top-2 h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:h-[calc(100dvh-1.5rem)] lg:w-[calc(100%-4rem)]'
               : 'top-2 h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-[1496px]'
             : floatingLayout
-              ? 'top-2 h-[72px] w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:w-[calc(100%-4rem)]'
-              : 'top-0 h-[72px] w-full max-w-[100vw]',
+              ? 'top-2 w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:w-[calc(100%-4rem)]'
+              : 'top-0 w-full max-w-[100vw]',
           isExpanded ? 'rounded-[24px]' : floatingLayout ? 'rounded-[36px]' : 'rounded-none',
           isExpanded || showFloatingChrome
             ? 'shadow-[0_24px_64px_var(--veli-color-effects-shadow-depth-200)]'
@@ -699,11 +716,13 @@ export function SiteHeader({
           marginInline: anchorExpandedSurfaceToStart ? 0 : 'auto',
           paddingTop: isExpanded ? OPEN_PAD_TOP : 0,
           top: headerTopOffset,
+          height: isExpanded ? undefined : barHeight,
           transition: geometryTransition ?? surfaceDockingTransition ?? headerTopTransition,
         }}
       >
         <div
-          className={`flex h-[72px] shrink-0 items-center ${navRowPadding}`}
+          ref={navRowRef}
+          className={`flex min-h-[72px] shrink-0 items-center ${navRowPadding}`}
           style={{ transition: navRowTransition }}
         >
           <HeaderLogoButton
@@ -791,7 +810,7 @@ export function SiteHeader({
       <MobileNavPanel
         navItems={mobileNavItems}
         open={isMobileMenuOpen}
-        headerHeight={HEADER_HEIGHT}
+        headerHeight={barHeight}
         selectedTheme={selectedTheme}
         languages={languages}
         language={language}
