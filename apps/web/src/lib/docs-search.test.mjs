@@ -23,6 +23,7 @@ const options = (entries, render = renderEntry) => ({
   entries,
   renderEntry: render,
   category: 'Components',
+  idPrefix: 'components',
   basePath: '/docs/',
   orderedSlugs: ['button'],
   orderOffset: 100,
@@ -119,6 +120,7 @@ test('Get Started preserves the docs landing URL with a serializable guide ID', 
   const records = await buildCollectionSearchItems({
     ...options([source]),
     category: 'Overview',
+    idPrefix: 'overview',
     orderedSlugs: ['get-started'],
     hrefForSlug: () => '/docs/',
   });
