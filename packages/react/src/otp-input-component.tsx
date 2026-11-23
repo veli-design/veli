@@ -527,6 +527,8 @@ export function OTPInput({
                 ref={setInputRef}
                 dir="ltr"
                 autoComplete={autoComplete}
+                data-1p-ignore=""
+                data-op-ignore=""
                 enterKeyHint={enterKeyHint}
                 inputMode={spec.inputMode}
                 pattern={spec.pattern}

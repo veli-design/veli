@@ -32,7 +32,7 @@
     "test:veli-lint": "node --test scripts/lint/*.test.mjs"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,astro}": [
+    "*.{js,jsx,mjs,cjs,ts,tsx,astro}": [
       "prettier --write",
       "eslint --fix --max-warnings 0 --no-warn-ignored"
     ],

@@ -97,6 +97,13 @@ test('the alphabet sets keyboard hints and the code stays left to right', () => 
   assert.equal(attr(inputTag(render({ autoComplete: 'off' }))[0], 'autoComplete'), 'off');
 });
 
+test('the input keeps one-time-code and ignores password managers', () => {
+  const input = inputTag(render({}))[0];
+  assert.equal(attr(input, 'autoComplete'), 'one-time-code');
+  assert.equal(attr(input, 'data-1p-ignore'), '');
+  assert.equal(attr(input, 'data-op-ignore'), '');
+});
+
 test('screen readers get one labelled text field; slots are hidden', () => {
   const html = render({ label: 'Verification code' }, (field) =>
     h(VeliProvider, { language: 'dv' }, field),

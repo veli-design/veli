@@ -71,13 +71,18 @@ test('wide content tables remain keyboard scrollable, including five and six col
   );
 });
 
-test('foundation tables share the behavior while non-doc pages remain unchanged', () => {
+test('foundation and pattern tables share the behavior while non-doc pages remain unchanged', () => {
   const foundation = table();
   const { children } = transform(
     [foundation],
     '/workspace/apps/web/src/content/foundations/color.mdx',
   );
   assert.equal(children[0].properties.tabIndex, 0);
+
+  const pattern = table(3);
+  const patternTree = transform([pattern], '/workspace/apps/web/src/content/patterns/forms.mdx');
+  assert.equal(patternTree.children[0].properties.tabIndex, 0);
+
   const other = table();
   const original = globalThis.structuredClone(other);
   transform([other], '/workspace/apps/web/src/pages/index.mdx');
