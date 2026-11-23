@@ -40,7 +40,7 @@
     "mdast-util-gfm-table": "^2.0.0",
     "mdast-util-to-markdown": "^2.1.2",
     "playwright": "1.58.2",
-    "sharp": "0.34.5",
+    "sharp": "0.35.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "wrangler": "^4.116.0"
