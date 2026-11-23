@@ -121,7 +121,7 @@ test('Dhivehi fee numbers use the Figma Waheed glyphs and keep the currency word
   await expect(number).toHaveCSS('font-weight', '700');
   expect(
     await number.evaluate((node) => ({
-      lang: node.lang,
+      lang: node.getAttribute('lang') ?? '',
       separator: node.nextSibling?.textContent,
       text: node.textContent,
     })),
