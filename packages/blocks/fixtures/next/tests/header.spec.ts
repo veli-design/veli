@@ -114,7 +114,7 @@ test('app switcher filters to a site list and moves the highlight with arrows', 
   await expect(defence).toHaveAttribute('data-highlighted', 'true');
   // Selecting a filter returns focus to its trigger, whose arrows open the menu.
   await defence.focus();
-  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
   await expect(foreign).toHaveAttribute('data-highlighted', 'true');
   await expect(defence).not.toHaveAttribute('data-highlighted', 'true');
 });
@@ -231,7 +231,7 @@ test('app switcher Filter arrow opens the menu and type-to-search reaches Search
   await expect(search).toHaveValue('m');
 });
 
-test('app switcher list badge stays beside the current item name', async ({ page }) => {
+test('app switcher keeps You are here on the current grid tile', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
@@ -240,16 +240,89 @@ test('app switcher list badge stays beside the current item name', async ({ page
 
   const current = page.getByRole('option', { name: /Gov\.mv/ });
   await expect(current.getByText('You are here')).toBeVisible();
-  const badgeBesideName = await current.evaluate((option) => {
-    const badge = Array.from(option.querySelectorAll('span')).find(
-      (el) => el.textContent?.trim() === 'You are here',
-    );
+  const tile = await current.evaluate((option) => {
     const name = Array.from(option.querySelectorAll('p')).find((el) =>
       el.textContent?.includes('Gov.mv'),
     );
-    return Boolean(badge && name && badge.parentElement === name.parentElement);
+    return {
+      direction: getComputedStyle(option).flexDirection,
+      clamp: name ? getComputedStyle(name).webkitLineClamp : '',
+    };
   });
-  expect(badgeBesideName).toBe(true);
+  expect(tile.direction).toBe('column');
+  expect(tile.clamp === 'none' || tile.clamp === '').toBe(true);
+});
+
+test('app switcher shows a scroll hint and keeps filtered results in the grid', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  await expect(page.getByRole('button', { name: 'View more' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'View less' })).toHaveCount(0);
+
+  const hint = page.locator('button', { hasText: 'Scroll to view more' });
+  await expect(hint).toBeVisible();
+  await expect(hint).toHaveAttribute('tabindex', '0');
+
+  const scroller = page.locator('[data-switcher-scroll]');
+  await hint.click();
+  await expect
+    .poll(() => scroller.evaluate((el) => (el as HTMLElement).scrollTop))
+    .toBeGreaterThan(4);
+
+  await page.getByRole('button', { name: 'Filter' }).click();
+  await page.getByRole('menuitemradio', { name: 'Sites only' }).click();
+  const defence = page.getByRole('option', { name: 'Minister of Defence and National Service' });
+  await expect(defence).toBeVisible();
+  const box = await defence.evaluate((el) => {
+    const grid = el.closest('[role="listbox"], [role="grid"]');
+    return {
+      direction: getComputedStyle(el).flexDirection,
+      width: Math.round(el.getBoundingClientRect().width),
+      columns: grid ? getComputedStyle(grid).gridTemplateColumns : '',
+    };
+  });
+  expect(box.direction).toBe('column');
+  expect(box.width).toBe(165);
+  expect(box.columns).toContain('165px');
+
+  const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
+  await search.fill('Locker');
+  await expect(hint).toHaveAttribute('aria-hidden', 'true');
+  await expect(hint).toHaveAttribute('tabindex', '-1');
+});
+
+test('entity name wraps and the mobile menu starts at 1120px', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Long entity' }).click();
+
+  const title = page.getByText(
+    'Ministry of Fisheries, Agriculture and Ocean Resources, Longer Affairs, National Planning, Coastal Administration, and Maritime Safety',
+  );
+  await expect(title).toBeVisible();
+  const metrics = await title.evaluate((el) => {
+    const style = getComputedStyle(el);
+    const header = el.closest('[data-header-surface]');
+    return {
+      width: Math.round(el.getBoundingClientRect().width),
+      clamp: style.webkitLineClamp,
+      headerHeight: header ? Math.round(header.getBoundingClientRect().height) : 0,
+    };
+  });
+  expect(metrics.width).toBeLessThanOrEqual(320);
+  expect(metrics.clamp === 'none' || metrics.clamp === '').toBe(true);
+  expect(metrics.headerHeight).toBeGreaterThan(72);
+
+  await page.setViewportSize({ width: 1120, height: 800 });
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeVisible();
+
+  await page.setViewportSize({ width: 1121, height: 800 });
+  await expect(page.getByRole('button', { name: 'Open menu' })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
 });
 
 test('reduced motion still opens the app switcher', async ({ page }) => {
