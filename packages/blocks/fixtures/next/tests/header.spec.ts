@@ -260,8 +260,8 @@ test('app switcher shows a scroll hint and keeps filtered results in the grid', 
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
 
-  await expect(page.getByRole('button', { name: 'View more' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'View less' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'View more', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'View less', exact: true })).toHaveCount(0);
 
   const hint = page.locator('button', { hasText: 'Scroll to view more' });
   await expect(hint).toBeVisible();
