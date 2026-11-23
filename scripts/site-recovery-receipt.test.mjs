@@ -11,6 +11,7 @@ import {
   readRecoveryReceipt,
 } from './site-recovery-receipt.mjs';
 import { latestDelivery, planSiteDelivery, alreadyDelivered } from './site-auto.mjs';
+import { createStoredZip } from './stored-zip.mjs';
 const digest = 'd'.repeat(64);
 function fixture(t) {
   // Hooks export GIT_* variables; temporary repositories must not inherit them.
@@ -195,9 +196,7 @@ test('receipt ZIP reader only reads bounded JSON and fails on altered identity',
       producer: 9,
       digest,
     });
-  writeFileSync(resolve(h.root, 'delivery.json'), JSON.stringify(value));
-  execFileSync('zip', ['-q', 'receipt.zip', 'delivery.json'], { cwd: h.root });
-  const bytes = readFileSync(resolve(h.root, 'receipt.zip'));
+  const bytes = createStoredZip({ 'delivery.json': JSON.stringify(value) });
   assert.deepEqual(
     await readRecoveryReceipt(async () => bytes, { id: 8, size_in_bytes: bytes.length }),
     value,

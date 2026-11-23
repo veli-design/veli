@@ -207,7 +207,9 @@ for (const language of ['en', 'dv']) {
     await expect(page.locator('[data-filter-fade="end"]')).toHaveCSS('opacity', '1');
     await rail.evaluate((el) => {
       el.scrollLeft =
-        el.dir === 'rtl' || getComputedStyle(el).direction === 'rtl' ? -100000 : 100000;
+        el.getAttribute('dir') === 'rtl' || getComputedStyle(el).direction === 'rtl'
+          ? -100000
+          : 100000;
     });
     await expect(next).toHaveCount(0);
     await expect(previous).toBeVisible();
@@ -485,9 +487,10 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
       new MutationObserver(() => {
         samples.push({
           mode: target.getAttribute('data-filter-tag-mode'),
-          durations: target
-            .getAnimations()
-            .map((animation) => animation.effect!.getTiming().duration),
+          durations: target.getAnimations().map((animation) => {
+            const duration = animation.effect!.getTiming().duration;
+            return typeof duration === 'object' ? duration.toString() : duration;
+          }),
         });
       }).observe(target, { attributes: true, attributeFilter: ['data-filter-tag-mode'] });
     });

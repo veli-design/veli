@@ -1,9 +1,8 @@
 import fields from '../lib/design-fields.json';
 
 // Artwork coordinates are read from Figma 2382:89507, relative to each clip.
-// These canvases provide the resting force fields and ambient hero/closing.
+// These canvases provide the resting force fields and ambient hero.
 // Interactive card motion is owned by the deferred designer preview module.
-const ambient = { period: 16, drift: 2.2 };
 const HERO = {
   T: 6,
   waves: 2,
@@ -91,14 +90,13 @@ export function initDesignMotion() {
         context.setTransform(canvas.width / data.width, 0, 0, canvas.height / data.height, 0, 0);
         context.clearRect(0, 0, data.width, data.height);
         if (!cachedSprite) return;
-        const animate = !still && element instanceof HTMLCanvasElement;
-        const hero = data.name === 'hero';
+        const animateHero = !still && data.name === 'hero';
         const phase = (time % HERO.T) / HERO.T;
         for (let i = 0; i < data.points.length; i++) {
           const [x, y] = data.points[i];
           let ox = 0,
             oy = 0;
-          if (animate && hero) {
+          if (animateHero) {
             const grain = heroGrains[i];
             const wave = Math.sin(TAU * phase * HERO.waves - (TAU * x) / HERO.waveLen + grain.lag);
             ox = grain.wr * Math.sin(TAU * phase * grain.f1 + grain.p1);
@@ -106,10 +104,6 @@ export function initDesignMotion() {
               grain.wr * Math.sin(TAU * phase * grain.f2 + grain.p2) -
               HERO.waveAmp * grain.amp * wave;
             context.globalAlpha = 1 - (HERO.waveLift * (1 - wave)) / 2;
-          } else if (animate) {
-            ox =
-              Math.sin((time / ambient.period) * Math.PI * 2 + y * 0.013 + i * 0.1) * ambient.drift;
-            oy = Math.cos((time / ambient.period) * Math.PI * 2 + x * 0.017) * ambient.drift;
           }
           const width = data.dotWidth,
             height = data.dotHeight;
@@ -154,12 +148,6 @@ export function initDesignMotion() {
     if (!element) continue;
     new ResizeObserver(() => {
       element.style.setProperty(property, String(element.clientWidth / width));
-      if (selector === '.design-motion-demo') {
-        element.style.setProperty(
-          '--mobile-motion-scale',
-          String(Math.min(1, element.clientWidth / 382)),
-        );
-      }
     }).observe(element);
   }
   document.addEventListener('visibilitychange', wake);
@@ -178,17 +166,25 @@ export function initDesignMotion() {
     '.design-forces, .design-atoll, .design-crystalline, .design-motion-demo, .design-thaana',
   );
   if (previews.length) {
+    let near = false;
+    const tryLoad = () => {
+      if (!near || reduced()) return;
+      preload.disconnect();
+      window.removeEventListener('veli:motion-change', tryLoad);
+      void import('./design-previews.js').then(({ initDesignPreviews }) =>
+        initDesignPreviews(heroSeed),
+      );
+    };
     const preload = new IntersectionObserver(
       (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          preload.disconnect();
-          void import('./design-previews.js').then(({ initDesignPreviews }) =>
-            initDesignPreviews(heroSeed),
-          );
-        }
+        // One trigger is enough. If motion is disabled, retain the stills and
+        // defer all interactive SVGs and particle data until the user opts in.
+        near ||= entries.some((entry) => entry.isIntersecting);
+        tryLoad();
       },
       { rootMargin: '600px' },
     );
+    window.addEventListener('veli:motion-change', tryLoad);
     previews.forEach((preview) => preload.observe(preview));
   }
   wake();

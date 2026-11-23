@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, rmSync, realpathSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import test from 'node:test';
 import { localGitEnv } from './git-env.mjs';
 
@@ -23,13 +23,16 @@ test('foreign Git commands clear hook repository selection without changing tran
   assert.equal(filtered.GIT_WORK_TREE, undefined);
   assert.equal(filtered.GIT_INDEX_FILE, undefined);
   assert.equal(filtered.GIT_SSH_COMMAND, environment.GIT_SSH_COMMAND);
+  // Git may report forward slashes on Windows; resolve() normalizes both sides.
   assert.equal(
-    execFileSync('git', ['rev-parse', '--show-toplevel'], {
-      cwd: root,
-      env: filtered,
-      encoding: 'utf8',
-    }).trim(),
-    realpathSync(root),
+    resolve(
+      execFileSync('git', ['rev-parse', '--show-toplevel'], {
+        cwd: root,
+        env: filtered,
+        encoding: 'utf8',
+      }).trim(),
+    ),
+    resolve(realpathSync(root)),
   );
   assert.deepEqual(environment, original);
 });
