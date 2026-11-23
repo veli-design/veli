@@ -1,7 +1,7 @@
 {
   "id": "site-header",
   "title": "Site header",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "status": "experimental",
   "description": "Scroll-aware site header with official banner, language and theme controls, mobile menu, and an embedded app switcher.",
   "files": [
@@ -27,7 +27,7 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.20.1",
+    "@veli-design/react": "0.20.2",
     "@veli-design/tokens": "0.11.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",

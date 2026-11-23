@@ -1,3 +1,9 @@
+## 0.8.2
+
+### Fixed
+
+- Refresh the exact tested dependency baseline to Veli React 0.20.2. Copied source, supported dependency ranges and previous block archives are unchanged.
+
 ## 0.8.1
 
 ### Fixed

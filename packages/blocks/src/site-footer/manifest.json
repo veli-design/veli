@@ -1,7 +1,7 @@
 {
   "id": "site-footer",
   "title": "Site footer",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "status": "experimental",
   "description": "Responsive, bilingual footer link groups composed from Veli Link.",
   "files": ["site-footer.tsx"],
@@ -16,7 +16,7 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.20.1",
+    "@veli-design/react": "0.20.2",
     "@veli-design/tokens": "0.11.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
