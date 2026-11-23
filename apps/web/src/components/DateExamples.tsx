@@ -1,7 +1,8 @@
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import { parseDate } from '@internationalized/date';
-import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
+import { useDocsColorScheme } from './useDocsColorScheme';
 import { DatePicker } from '@veli-design/react/date-picker';
 import { DocsEnGbLocale } from './DocsEnGbLocale';
 
@@ -45,22 +46,9 @@ export function DatePickerValidationDemo() {
   );
 }
 
-function subscribeToDocsTheme(callback: () => void) {
-  window.addEventListener('veli:color-scheme-change', callback);
-  return () => window.removeEventListener('veli:color-scheme-change', callback);
-}
-function getDocsColorScheme(): VeliColorScheme {
-  const value = document.documentElement.dataset.colorScheme;
-  return value === 'light' || value === 'dark' ? value : 'system';
-}
-
 export function DatePickerRtlDemo() {
   const [language, setLanguage] = useState('Dhivehi');
-  const colorScheme = useSyncExternalStore(
-    subscribeToDocsTheme,
-    getDocsColorScheme,
-    () => 'system' as const,
-  );
+  const colorScheme = useDocsColorScheme();
   return (
     <DocsPreview
       codeKey={`date-picker-language-${language === 'Dhivehi' ? 'dv' : 'en'}`}

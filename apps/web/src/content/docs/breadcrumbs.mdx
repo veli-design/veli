@@ -1,6 +1,6 @@
 ---
 title: Breadcrumbs
-description: Accessible hierarchical navigation built with React Aria Breadcrumbs and Veli design tokens.
+description: 'A trail that shows where a page sits in a service and links back up to each earlier level.'
 ---
 
 import {
@@ -11,9 +11,392 @@ import {
   BreadcrumbsUsageDemo,
 } from '../../components/BreadcrumbsExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Breadcrumbs
 
-`Breadcrumbs` communicates hierarchy and lets people move through nested pages or workflows. A trail contains linked earlier levels, a final current page, and optionally an overflow control for collapsed middle levels. It follows the [Breadcrumb Figma specification](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=713-10978).
+<DocsTab id="overview">
+
+A breadcrumb trail shows where a page sits in a service's structure and lets people go back up a level in one step. Use it on pages three or more levels deep, especially when people arrive from search or a direct link. Each earlier level is a link and the last crumb is the current page.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/breadcrumbs.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-breadcrumbs--docs"
+/>
+
+## When to use
+
+### Use breadcrumbs when
+
+- A page belongs to a hierarchy with several levels, such as Services, then Permits, then Fishing permit.
+- People need to go back to earlier levels.
+- People arrive from search or a deep link and need to know where they are.
+- A long trail needs an overflow menu for hidden levels.
+
+### Don't use breadcrumbs when
+
+- The site is one or two levels deep. The page title is enough.
+- People are in a linear flow, such as a multi-step form. Give them a clear back action with a Link.
+- You need the main navigation of a site or service. Breadcrumbs only add to it.
+- People switch between peer sections on the same page. Use Tabs.
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-intro-1.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-intro-1-dark.webp"
+  alt="A white card on a grey surface. At the top, the trail Back, then Home / Services / Permits / … / Fishing permit, with Back in the link colour with a left caret and a short divider after it. Below the trail, the page title Fishing permit and the line Apply for a new permit or renew the one you have."
+  width="2400"
+  height="840"
+  caption="A breadcrumb trail above the page title."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-anatomy-1.svg"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-anatomy-1-dark.svg"
+  alt="The trail Back, Home / Services / Permits / … / Fishing permit with six numbered markers: 1 on the whole trail, 2 on the link crumb Services, 3 on a slash separator, 4 on the current page Fishing permit, 5 on the back link Back with its caret and 6 on the ellipsis crumb."
+  width="624"
+  height="326"
+  caption="The parts of a breadcrumb trail. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Trail**
+
+   The list of crumbs. It wraps to a second line when it runs out of room. In code it is Breadcrumbs, and the list has no background or padding.
+
+2. **Link crumb**
+
+   An earlier level people can go back to. It is the only interactive crumb, so hover, pressed, focus and disabled apply here. In code, Breadcrumb with an href.
+
+3. **Separator**
+
+   A slash added after every crumb except the current page. It is decorative, so screen readers skip it. In code it is added by CSS after each list item.
+
+4. **Current page**
+
+   The page people are on. It has no link and no separator after it. In code, the last Breadcrumb.
+
+5. **Back link**
+
+   Optional. A Back link with a caret and a short divider, at the start of the trail. In code, showBackLink on Breadcrumbs, or BreadcrumbBackLink.
+
+6. **Overflow**
+
+   Stands for the levels hidden between the first crumb and the current page. In code, BreadcrumbOverflow, or a Breadcrumb without an href for a plain ellipsis.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/breadcrumbs/breadcrumbs-do-1.webp" darkSrc="/images/docs/breadcrumbs/breadcrumbs-do-1-dark.webp" alt="The trail Home / Services / Permits / Fishing permit, with Fishing permit in darker text and no slash after it." width="1136" height="240">
+
+End with the current page as plain text.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/breadcrumbs/breadcrumbs-dont-1.webp" darkSrc="/images/docs/breadcrumbs/breadcrumbs-dont-1-dark.webp" alt="The trail Home / Services / Permits / Fishing permit /, with Fishing permit in the same muted link style as the others and a slash after it." width="1136" height="240">
+
+Don't link the page people are already on. The last crumb is where they are.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/breadcrumbs/breadcrumbs-do-2.webp" darkSrc="/images/docs/breadcrumbs/breadcrumbs-do-2-dark.webp" alt="The trail Home / Services / Permits / Fishing permit." width="1136" height="240">
+
+Use the real page titles, in the same words as the page headings.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/breadcrumbs/breadcrumbs-dont-2.webp" darkSrc="/images/docs/breadcrumbs/breadcrumbs-dont-2-dark.webp" alt="The trail Back / Level 2 / Level 3 / Current." width="1136" height="240">
+
+Don't write Back or generic level names. People can't tell where each crumb leads. A crumb is a place, not an action.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/breadcrumbs/breadcrumbs-do-3.webp" darkSrc="/images/docs/breadcrumbs/breadcrumbs-do-3-dark.webp" alt="The trail Home / … / Permits / Fishing permit, with the ellipsis crumb in the middle." width="1136" height="288">
+
+Collapse middle levels with the ellipsis crumb when the trail is long. Keep the first crumb and the current page.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/breadcrumbs/breadcrumbs-dont-3.webp" darkSrc="/images/docs/breadcrumbs/breadcrumbs-dont-3-dark.webp" alt="The trail Home / Government services / Marine and fisheries / Permits and licensing / Commercial fishing permit application, wrapping onto two lines." width="1136" height="288">
+
+Don't let a long trail fill the page. Collapse the middle instead.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Use the page title
+
+Use each destination page's title, or words close to it, as the crumb label. Name the same place the same way every time.
+
+| Do                                         | Don't                                              |
+| :----------------------------------------- | :------------------------------------------------- |
+| Fishing permit                             | Permit page (not the page title)                   |
+| Home / Services / Permits / Fishing permit | Back / Level 2 / Level 3 / Current (generic names) |
+
+### Keep labels short
+
+Keep labels to one to three words. Long titles can be shortened, but keep the meaning.
+
+| Do             | Don't                                              |
+| :------------- | :------------------------------------------------- |
+| Fishing permit | Commercial fishing permit application (four words) |
+
+### Start with Home
+
+The first crumb is usually Home or the service root.
+
+| Do               |
+| :--------------- |
+| Home             |
+| Renew a passport |
+
+### Service names
+
+When a crumb links to a service, use the service name as its page title does, verb first. Content wins over the three-word limit when a shorter name would be unclear.
+
+| Do               | Don't                        |
+| :--------------- | :--------------------------- |
+| Renew a passport | Passport renewal (noun form) |
+
+### Sentence case, no punctuation
+
+| Do             | Don't                         |
+| :------------- | :---------------------------- |
+| Fishing permit | Fishing Permit (title case)   |
+| Permits        | Permits. (trailing full stop) |
+
+Never type the slash separator into a label. Breadcrumbs draw it.
+
+### Back link
+
+When the trail shows the back link, keep its label Back: it returns to the previous page with answers kept.
+
+### Built-in text and Dhivehi
+
+Breadcrumbs have built-in English text: the back link label Back, the overflow trigger name Show hidden breadcrumb pages and the overflow menu name Hidden breadcrumb pages. They stay English unless you pass Dhivehi, so pass backLinkLabel, label and menuLabel, and the trail's aria-label, on Dhivehi pages.
+
+| Do                       | Don't                                                                      |
+| :----------------------- | :------------------------------------------------------------------------- |
+| backLinkLabel="ފަހަތަށް" | The default Back in a Dhivehi trail (English label in a Dhivehi interface) |
+
+Use the native Dhivehi page titles, and check that the trail still fits on small screens.
+
+## Related components
+
+| Component                                  | When to use it                                                                                            |
+| :----------------------------------------- | :-------------------------------------------------------------------------------------------------------- |
+| [Link](/docs/components/link/)             | a single back to link when there is no hierarchy to show.                                                 |
+| [Tabs](/docs/components/tabs/)             | switch between sibling views at the same level.                                                           |
+| [Menu](/docs/components/menu/)             | the overflow crumb opens a Menu that lists the collapsed levels.                                          |
+| [Button](/docs/components/button/)         | for actions. Breadcrumbs only navigate.                                                                   |
+| [VeliProvider](/docs/components/provider/) | sets the direction that mirrors the trail and the back link caret, and the language of the overflow menu. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for breadcrumbs: crumb types, back link, overflow, states, spacing and tokens. Values match the shipped component.
+
+## Crumbs
+
+A trail is built from three kinds of crumb.
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-crumbs-1.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-crumbs-1-dark.webp"
+  alt="Three examples labelled Type link, current and overflow: Services followed by a slash in muted text, Fishing permit in darker text with no slash, and an ellipsis followed by a slash."
+  width="2400"
+  height="560"
+  caption="The three kinds of crumb: link, current and overflow."
+/>
+
+- **Link**: an earlier level, with an href. The only interactive crumb.
+- **Current**: the last crumb, the page people are on. It is never interactive.
+- **Overflow**: the ellipsis crumb, which stands for collapsed levels. With BreadcrumbOverflow it is a trigger that opens a menu of the hidden levels. A Breadcrumb without an href shows a plain ellipsis instead.
+
+## Back link
+
+Illustration needed: the trail "Back | Services / Fishing permit", with Back in link colour with a left caret, followed by a short vertical divider.
+
+_A trail with the back link._
+
+Use the back link when people need a direct return action before the trail. It sits before the first crumb, separated by a divider, in the link colour with a caret that points back. Turn it on with showBackLink and backLinkHref, or place BreadcrumbBackLink yourself before the other crumbs.
+
+## Overflow
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-overflow-1.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-overflow-1-dark.webp"
+  alt="The ellipsis crumb in four states labelled Default, Hover, Pressed and Open. Hover and pressed add a light and a darker background. Open adds the focus ring and a menu below listing Level 2, Level 3, Level 4 and Level 5."
+  width="2400"
+  height="728"
+  caption="The overflow crumb states, with the menu open in the last."
+/>
+
+- Collapse long trails on purpose: keep the first crumb and the current page, and put the middle levels in BreadcrumbOverflow.
+- The overflow menu lists the hidden levels so people can jump straight to one.
+- BreadcrumbOverflow doesn't navigate on its own. Give each item an href, or handle the selection with onAction.
+
+## States
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-states-1.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-states-1-dark.webp"
+  alt="A link crumb First page followed by a slash in three states labelled Default, Hover and Pressed: muted text at rest, a light background on hover and a darker background when pressed."
+  width="2400"
+  height="480"
+/>
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-states-2.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-states-2-dark.webp"
+  alt="The same crumb labelled Focus, with a rounded focus ring around it, and Disabled, in lighter text."
+  width="2400"
+  height="480"
+  caption="Link crumb states."
+/>
+
+| State    | When                   | Visual change                                                         |
+| :------- | :--------------------- | :-------------------------------------------------------------------- |
+| Default  | No interaction         | Text `text/base/muted`                                                |
+| Hover    | Pointer over the crumb | Background `components/breadcrumbs/hover`, text `text/base/DEFAULT`   |
+| Pressed  | While pressed          | Background `components/breadcrumbs/pressed`, text `text/base/DEFAULT` |
+| Focus    | Keyboard focus         | Focus ring, text `text/base/DEFAULT`                                  |
+| Disabled | isDisabled             | Text `text/base/inactive`. Not clickable and skipped by Tab           |
+
+States apply to link crumbs only. The current page is never interactive. The overflow crumb has default, hover, pressed and open states in Figma; open shows the menu.
+
+## Behaviour
+
+- **Navigation**: each link crumb follows its href. A crumb can change app state with onPress instead.
+- **Data-driven trails**: pass items, with an id for each, and handle onAction(key) when application state controls the path. Activating an earlier crumb collapses the trail to that level.
+- **Disabled crumbs**: use isDisabled when a level that was shown is no longer available. The label stays in the trail but can't be used.
+- **Wrapping**: the trail wraps across lines on narrow screens and never scrolls sideways. When space is short, collapse middle levels into the overflow crumb.
+- **Back link with a render function**: Breadcrumbs don't add the automatic back link when their children use a render function. Place BreadcrumbBackLink yourself.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-rtl-1.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-rtl-1-dark.webp"
+  alt="Two examples labelled LTR breadcrumbs and RTL breadcrumbsDv. On the left, Back, then Home / Services / Permits / … / Fishing permit, left to right. On the right, the Dhivehi trail right to left: a right-pointing caret and ފަހަތަށް on the right, then ޚުލާޞާ / ލިޔެކިޔުންތައް / ހިސްޓްރީ / … / ހުއްދަ, with the current page on the left."
+  width="2400"
+  height="400"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the trail mirrors: the first crumb sits on the right and the separator moves to the left of each label. The separator stays a slash.
+- The back link caret follows the direction, so it points right in Dhivehi.
+- Links and the current page use the Dhivehi body sm medium style, as in English. The ellipsis crumb uses Dhivehi body sm regular.
+- Dhivehi crumbs measure 32 high in Figma, where English crumbs are 24, because the Dhivehi line height is 28. This differs from the rule that a Dv component keeps the English heights; see Missing or unverified.
+- The overflow menu's language and direction follow VeliProvider.
+- In code, wrap the page in VeliProvider with language set to dv. In Figma, design Dhivehi screens with breadcrumbsDv and breadcrumbItemDv.
+
+Example configuration: trail with the back link.
+
+| Crumb                     | English        | Dhivehi               |
+| :------------------------ | :------------- | :-------------------- |
+| Back link (backLinkLabel) | Back           | ފަހަތަށް              |
+| Link                      | Home           | ހޯމް                  |
+| Link                      | Services       | ޚިދުމަތްތައް          |
+| Link                      | Permits        | ހުއްދަތައް            |
+| Current page              | Fishing permit | މަސްވެރިކަމުގެ ހުއްދަ |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-spacing-1.svg"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-spacing-1-dark.svg"
+  alt="Spacing redlines. A link crumb First page in its hover state, with 8 side padding, 2 top and bottom padding, 6 padding on the separator and a 24 minimum height. Next to it, a trail starting with Back, marked with 4 padding."
+  width="1200"
+  height="304"
+  caption="Crumb padding and trail spacing, in pixels at 1x."
+/>
+
+| Property                                | Value                               |
+| :-------------------------------------- | :---------------------------------- |
+| Crumb height                            | 24 minimum (32 measured in Dhivehi) |
+| Crumb side padding                      | 8                                   |
+| Crumb vertical padding                  | 2                                   |
+| Gap between crumbs and separators       | 6                                   |
+| Gap between caret and Back              | 6                                   |
+| Back link caret                         | 16                                  |
+| Divider after the back link             | 1 x 8                               |
+| Crumb corner radius (hover and pressed) | 6 (`radius/DEFAULT`)                |
+
+- The 6 on each side of the slash is padding on the separator itself; crumbs and the trail have no gap. Text to slash is 14 in total: 8 crumb padding plus 6 separator padding.
+- The 24 crumb height is a minimum, so a taller label grows the crumb.
+- In Figma the trail sits on a slate surface with 4 padding and an 8 radius. In code the list has no background or padding.
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-radius-1.svg"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-radius-1-dark.svg"
+  alt="A link crumb First page in the hover and pressed states, each marked with a corner radius of 6, radius/DEFAULT."
+  width="1200"
+  height="184"
+  caption="The 6 radius shows only when a crumb has a background, on hover and pressed."
+/>
+
+## Typography
+
+| Element           | English                                                                            | Dhivehi                                   | Colour token                                                    |
+| :---------------- | :--------------------------------------------------------------------------------- | :---------------------------------------- | :-------------------------------------------------------------- |
+| Link crumb        | Body sm medium, Inter Medium 14/20                                                 | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/muted`; hover, pressed and focus `text/base/DEFAULT` |
+| Current page      | Body sm medium, Inter Medium 14/20                                                 | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/strong`                                              |
+| Back link         | Body sm medium, Inter Medium 14/20                                                 | Dhivehi body sm medium                    | `text/links/default`                                            |
+| Overflow ellipsis | Body sm regular, Inter Regular 14/20; hover, pressed and open use Body sm semibold | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`                                             |
+| Separator         | Body sm regular, Inter Regular 14/20                                               | As English                                | `text/base/inactive`                                            |
+
+The current page uses medium weight like the link crumbs. It stands out through its colour.
+
+## Tokens
+
+| Part                         | Default              | Hover and pressed                                                                        | Focus               | Disabled             |
+| :--------------------------- | :------------------- | :--------------------------------------------------------------------------------------- | :------------------ | :------------------- |
+| Link crumb text              | `text/base/muted`    | `text/base/DEFAULT`                                                                      | `text/base/DEFAULT` | `text/base/inactive` |
+| Link crumb background        | None                 | `components/breadcrumbs/hover`, `components/breadcrumbs/pressed`                         | None                | None                 |
+| Current page text            | `text/base/strong`   |                                                                                          |                     |                      |
+| Overflow ellipsis text       | `text/base/DEFAULT`  | `text/base/DEFAULT`                                                                      |                     |                      |
+| Overflow ellipsis background | None                 | `components/breadcrumbs/hover`, `components/breadcrumbs/pressed` (pressed also for open) |                     |                      |
+| Separator                    | `text/base/inactive` |                                                                                          |                     |                      |
+| Back link text               | `text/links/default` | `text/links/hover`                                                                       | `text/links/hover`  |                      |
+| Back link caret              | `icon/links/default` | `icon/links/hover`                                                                       | `icon/links/hover`  |                      |
+| Divider                      | `border/base/strong` |                                                                                          |                     |                      |
+| Focus ring                   | `border/focus`       |                                                                                          |                     |                      |
+
+Token names leave out the `semantics/` prefix.
+
+## Motion
+
+| What moves                       | Duration | Easing   |
+| :------------------------------- | :------- | :------- |
+| Crumb text and background colour | Normal   | Ease out |
+
+Only colours change; nothing moves. With reduced motion turned on, the colour transition is turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -161,3 +544,62 @@ All remaining supported React Aria `Breadcrumbs` and `Breadcrumb` props can stil
 ## Migration from `tone`
 
 `Breadcrumb` no longer accepts the `tone` prop. It did not change rendered styles. Remove it from existing breadcrumbs; use `BreadcrumbBackLink` or `showBackLink` for the dedicated blue back-link treatment.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How breadcrumbs work with keyboards and screen readers, and what you still need to do.
+
+## Keyboard
+
+| Key                        | Action                                                                  |
+| :------------------------- | :---------------------------------------------------------------------- |
+| Tab                        | Moves focus to the next link crumb, the back link or the overflow crumb |
+| Shift + Tab                | Moves focus to the previous one                                         |
+| Enter                      | Follows the focused link crumb or back link                             |
+| Enter, Space or Down arrow | Opens the overflow menu from the focused overflow crumb                 |
+| Up and Down arrows         | Move through the hidden levels in the open overflow menu                |
+| Escape                     | Closes the overflow menu                                                |
+
+The current page and disabled crumbs are skipped.
+
+## Screen readers
+
+- The trail is an ordered list. Name it with aria-label, such as Breadcrumb. Don't repeat the role in the name: not Breadcrumb navigation. Pass the Dhivehi name on Dhivehi pages.
+- When the trail is page navigation, place it in a nav landmark. Leave the landmark out for breadcrumbs inside tables or popovers, where it only adds noise.
+- The current page is marked with aria-current="page".
+- The slash separator is decorative and hidden from assistive technology. Never put it in the label text.
+- The overflow crumb is a button that opens a menu. It is named Show hidden breadcrumb pages and its menu Hidden breadcrumb pages; change them with label and menuLabel.
+- A disabled crumb is announced as disabled.
+
+## Focus
+
+Keyboard focus shows a 2px focus ring in `border/focus` with a transparent 2px gap around the crumb, following its 6 radius. The ring sits outside the crumb, so focusing doesn't move the trail. Only link crumbs and the back link can receive focus; the current page and a plain ellipsis crumb can't. Never remove the ring.
+
+<DocsFigure
+  src="/images/docs/breadcrumbs/breadcrumbs-focus-1.webp"
+  darkSrc="/images/docs/breadcrumbs/breadcrumbs-focus-1-dark.webp"
+  alt="A link crumb First page with its focus ring, marked 2 gap, 2 ring and 32 high with the ring; and the trail Back, Home / Services / Permits / … / Fishing permit with the focus ring on Services."
+  width="2400"
+  height="458"
+  caption="The focus ring on a crumb, alone and in a trail."
+/>
+
+## Target size
+
+Each crumb is at least 24px tall. Keep the 8px side padding so the target stays comfortable.
+
+## Contrast
+
+Use the breadcrumb tokens as they are. Don't override them with custom colours.
+
+## Reduced motion
+
+When people prefer reduced motion, the colour transitions are turned off. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The list, separators and back link caret mirror on their own. Pass Dhivehi crumb labels, backLinkLabel, the overflow label and menuLabel, and the trail's aria-label yourself.
+
+</DocsTab>

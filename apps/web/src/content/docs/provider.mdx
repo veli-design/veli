@@ -1,11 +1,169 @@
 ---
 title: VeliProvider
-description: Supported language, direction, and color scheme contract for Veli components.
+description: 'Sets the language, direction and colour scheme for every Veli component inside it, and connects Veli links to your router.'
 ---
+
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
 
 # VeliProvider
 
-`VeliProvider` is the integration point for Veli's supported language, direction, and color scheme modes. Consumers choose a supported language, and Veli maps that to locale, DOM language, DOM direction, and theme attributes.
+<DocsTab id="overview">
+
+VeliProvider sets the language, direction and colour scheme for every Veli component inside it, and connects Veli links to your app's router. It renders no visible UI. Wrap the whole app once, choose en or dv with the language prop, and set lang and dir on the html element to match.
+
+<DocsResources source="https://github.com/veli-design/veli/blob/main/packages/react/src/provider.ts" />
+
+## When to use
+
+### Use VeliProvider when
+
+- You build any app that uses Veli, English-only ones too. Put it at the root and always pass language. Without a provider, components fall back to English and left to right, and a later Dhivehi launch has to touch every screen.
+- You need the system, light or dark colour scheme. Set colorScheme.
+- Links in Link, Tabs, Menu or Breadcrumbs should change pages through your app's router. Pass navigate, and useHref if your router needs it.
+
+### Don't use VeliProvider when
+
+- You only need to change the language of a passage or block. Set lang and dir on that element instead. Nest a provider only at a real app boundary, such as a separately built part of the page.
+- A framework theme runtime, such as next-themes, already owns the theme on the html element. Pass the resolved light or dark value from that runtime to colorScheme, or leave the theme to the runtime.
+- You want to theme one region dark. Adding the dark class to a wrapper doesn't change the components inside. Theme the whole page at html, and use the high contrast Button for Buttons on coloured surfaces.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do">
+
+Set language="dv" on VeliProvider and lang="dv" dir="rtl" on the html element.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont">
+
+Don't rely on VeliProvider alone for the page language. It sets lang and dir only on its own wrapper, not on html.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do">
+
+Choose the language from the person's saved choice, such as /en/ or /dv/ in the URL, then the browser languages, then the service default.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont">
+
+Don't choose the language from the IP address or location. People abroad, and people who read both languages, would get a language they did not pick.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do">
+
+Use one VeliProvider at the root of the app.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont">
+
+Don't nest a VeliProvider around each passage in another language. Every provider also writes the theme to html and renders its own pre-paint script, so nested providers compete.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### What the language prop translates
+
+VeliProvider has no text of its own. Its language prop decides the language of Veli's built-in strings. Veli's own strings switch to Dhivehi, React Aria strings and dates formatted by Intl stay English under dv, and some Veli defaults are English in both languages, such as Calendar Previous month and Table Select all.
+
+### Your own strings
+
+Supply every string your app writes in English and Dhivehi, and pick it with useVeliLanguage. VeliProvider translates only Veli's built-in strings. When a translation is missing, show the English string, never the raw key or an empty space.
+
+### Theme choice
+
+When a service lets people choose a theme, offer the three values VeliProvider supports and name them in plain words in the page language.
+
+| Do             | Don't                                                         |
+| :------------- | :------------------------------------------------------------ |
+| Light          | System (technical; people may not know which system is meant) |
+| Dark           | Auto (doesn't say what it follows)                            |
+| Device setting |                                                               |
+
+### Language switch
+
+Offer a visible language switch on every page, in the same place, with each option written in its own language: ދިވެހި on an English page and English on a Dhivehi page. Mark each option with its lang.
+
+## Related components
+
+| Component                                    | When to use it                                                                                    |
+| :------------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| [Link](/docs/components/link/)               | navigates through your app's router when VeliProvider has navigate.                               |
+| [Tabs](/docs/components/tabs/)               | tabs with href use the navigate function.                                                         |
+| [Menu](/docs/components/menu/)               | menu items with href use the navigate function; submenus open with the mirrored arrow in Dhivehi. |
+| [Breadcrumbs](/docs/components/breadcrumbs/) | href uses the navigate function.                                                                  |
+| [Modal](/docs/components/modal/)             | renders outside the provider wrapper, so its direction and theme come from html.                  |
+| [Popover](/docs/components/popover/)         | renders outside the provider wrapper and takes its direction and theme from html.                 |
+| [Spinner](/docs/components/spinner/)         | its default name, Loading or ލޯޑުވަނީ, follows the provider language.                             |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+VeliProvider has no visual design of its own. This tab covers what it sets for the components inside it: language, direction, typography and colour scheme.
+
+## Behaviour
+
+- **Wrapper**: VeliProvider renders a div that carries lang, dir, data-theme (the resolved theme), `data-color-scheme` (the requested one) and the dark class when the theme is dark.
+- **Routing**: with navigate, Veli links change pages through your router without a full reload. Without it, href falls back to the browser's normal navigation.
+- **Hooks**: useVeliLanguage returns the active language, locale and direction. useVeliColorScheme returns the requested colour scheme and the resolved light or dark mode.
+- **Without a provider**: components use English and left to right, and Veli links navigate with a full page load.
+
+## Language and direction
+
+| language | Content language | Locale | Direction |
+| :------- | :--------------- | :----- | :-------- |
+| en       | English          | en-GB  | ltr       |
+| dv       | Dhivehi          | dv-MV  | rtl       |
+
+- language defaults to en in code, but that is only a fallback. Always pass the language the person chose.
+- Don't pass locale and direction separately. Veli owns the mapping, so unsupported combinations can't happen.
+- VeliProvider supports only English and Dhivehi.
+- Under language dv, Veli shows numbers in Latin digits. Intl has no dv-MV data, so dates formatted by React Aria fall back to English and US order, except Calendar month and weekday names, which Veli supplies in Dhivehi.
+- React Aria resolves dv to right to left, so arrow keys in Tabs, Menus, Tags, Tables and Calendars mirror.
+
+## Typography
+
+VeliProvider sets the lang that the type utilities read. Keep using the same type utilities in both languages: font family, size, line height, weight and letter spacing switch to the Dhivehi values under lang dv. dir rtl alone doesn't switch typography.
+
+Load MV Faseyha, MV A Waheed and MV Aaamu FK in your app and preload the font of the page language. VeliProvider and the type utilities switch to these fonts but don't download them.
+
+## Colour scheme
+
+| colorScheme      | Behaviour                                                                                                                        |
+| :--------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| system (default) | Follows the device's light or dark setting. A light or dark value stored under `veli-color-scheme` wins over the device setting. |
+| light            | Forces light mode.                                                                                                               |
+| dark             | Forces dark mode.                                                                                                                |
+
+- VeliProvider renders an inline script that sets the dark class, data-theme and `color-scheme` on html before the first paint, so the page never flashes the wrong theme.
+- It keeps the dark class, data-theme and `color-scheme` on html in step with the theme, follows device changes, and keeps open tabs in step.
+- When people switch theme, turn on disableTransitionOnChange so colours switch at once instead of animating.
+- When a framework owns the theme instead, set the dark class, data-theme and `color-scheme` on html yourself, so scrollbars and native controls match. With next-themes, set attribute="class" and use its script for the first paint.
+- Set the `theme-color` meta tag to the page background for each theme, so the browser toolbar matches the page.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -334,3 +492,40 @@ Consumers should keep using the same semantic `type-*` classes in both languages
 | `disableTransitionOnChange` | `boolean`                       | `false`    | Suppresses CSS transitions for one frame while the theme changes.           |
 | `className`                 | `string`                        | -          | Adds classes to the provider wrapper.                                       |
 | `children`                  | `ReactNode`                     | -          | Application or component subtree that should inherit the provider contract. |
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+What VeliProvider does for language and direction, and what you still need to set yourself.
+
+## Page language
+
+- VeliProvider sets lang and dir only on its own wrapper. Set lang and dir on the html element yourself: lang="dv" dir="rtl" for Dhivehi pages and lang="en" dir="ltr" for English pages.
+- Render html lang and dir on the server in the first HTML, from the same value you pass to language, so the page never paints in the wrong direction.
+- Overlays such as Modal and Popover render outside the wrapper, so they take their direction and theme from html.
+
+## Screen readers
+
+- The lang that VeliProvider sets lets screen readers switch to a Dhivehi voice. Screen reader and text to speech support for Dhivehi is limited, so test Dhivehi pages on the devices people use.
+- VeliProvider passes the mapped locale to React Aria, so built-in names and keyboard direction follow the language.
+- Mark any phrase in a different language from the page with lang, and dir when the direction differs. On bilingual pages, give each block its own lang and dir.
+
+## Reduced motion
+
+disableTransitionOnChange turns off transitions and animations for one frame while the theme changes, so the whole page doesn't animate between colours.
+
+## Contrast
+
+Check contrast for every text and control colour in Light and Dark separately, because Veli colours change value between themes. Design and review every screen in both themes together.
+
+## Testing
+
+- Test every service by hand before release: with the keyboard only, at 400% zoom, at 200% text size, with text spacing overrides, with reduced motion, in forced colours and in Dark.
+- Check every template at widths 320, 375, 768 and 1280 and at an ultra-wide width, in English and in Dhivehi. Zoom out to 50% to fake the ultra-wide width.
+
+## Right to left
+
+Set language="dv". Direction-aware Veli components read the provider or the inherited direction, and use logical properties so layouts mirror. Use logical properties in your own layout too.
+
+</DocsTab>

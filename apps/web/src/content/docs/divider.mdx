@@ -1,6 +1,6 @@
 ---
 title: Divider
-description: Accessible content separators and callback-driven expandable dividers for the Veli design system.
+description: 'A thin line that separates related content, with an optional short caption, and an expandable variant that shows or hides more content.'
 ---
 
 import {
@@ -9,6 +9,370 @@ import {
   DividerUsageDemo,
   DividerVerticalOrientationDemo,
 } from '../../components/DividerExamples';
+
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
+# Divider
+
+<DocsTab id="overview">
+
+A divider separates related content with a thin line, so a long section reads as clear groups. Use it between rows of a list or summary, or with a short label such as Or between two alternative actions. With a click handler it can also act as an expand control that shows or hides more content.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/divider.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-divider--docs"
+/>
+
+## When to use
+
+### Use a divider when
+
+- Related content blocks need a subtle boundary: between the rows of a list or summary, or between a heading and its content. Use a horizontal divider with appearance subtle, the default, and no text.
+- Two alternative actions need an Or between them. Use a divider with text.
+- Inline items, such as tabs or metadata, need a separator. Use a vertical divider and let it stretch to the row height.
+- A long section should start collapsed and people can reveal more. Use an expandable divider with a label that says what the click does.
+
+### Don't use a divider when
+
+- Spacing alone separates the content. Use more space instead of a line.
+- The content needs its own container. Use a card.
+- The content should collapse under a title. Use an accordion.
+- The items are views of the same content. Use tabs.
+- A new section needs a heading. Use a heading and the document structure, not a divider alone.
+
+<DocsFigure
+  src="/images/docs/divider/divider-intro-1.webp"
+  darkSrc="/images/docs/divider/divider-intro-1-dark.webp"
+  alt='A card titled Applicant details, "Review the information before continuing." Three rows, Name Aishath Mariyam, Island Malé and Permit reference WP-2026-04817, are separated by subtle lines. Below them a Continue button, a divider with the caption Or, and a Save and finish later button.'
+  width="2400"
+  height="1344"
+  caption="Subtle dividers between the rows of a summary, and Or between two actions."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/divider/divider-anatomy-1.svg"
+  darkSrc="/images/docs/divider/divider-anatomy-1-dark.svg"
+  alt="A horizontal divider with a caret in a circle and the caption Or continue with between two lines. Four numbered markers: 1 on the start line, 2 on the icon, 3 on the text and 4 on the end line."
+  width="576"
+  height="360"
+  caption="The parts of a divider with text and icon. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Start line**
+
+   A 1px line that fills the space before the caption, in the appearance colour. It is decorative, so screen readers skip it. A line-only divider is this line at full width; a vertical one stretches to its row.
+
+2. **Icon**
+
+   Optional, off by default, and only for an expandable divider. A 16px caret in a circle before the text, in `icon/base/muted`. It turns 180 degrees while aria-expanded is true. It is decorative. In code it is showIcon.
+
+3. **Text**
+
+   Optional caption, horizontal dividers only. Caption regular in `text/base/muted`, 6 from the lines and the icon. It also names the separator for screen readers. In code it is text.
+
+4. **End line**
+
+   Matches the start line. The two lines share the space left after the icon and text.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/divider/divider-do-1.webp" darkSrc="/images/docs/divider/divider-do-1-dark.webp" alt="The rows Name Aishath Mariyam, Island Malé and Permit reference WP-2026-04817, separated by subtle light lines." width="1136" height="408">
+
+Use the subtle line between rows of a summary, so the content leads.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/divider/divider-dont-1.webp" darkSrc="/images/docs/divider/divider-dont-1-dark.webp" alt="The same three rows separated by dark emphasis lines." width="1136" height="408">
+
+Don't use emphasis between every row. Heavy lines compete with the content they separate.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/divider/divider-do-2.webp" darkSrc="/images/docs/divider/divider-do-2-dark.webp" alt="A divider with the caption Or." width="1136" height="224">
+
+Keep divider text to 1 to 3 words, such as Or.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/divider/divider-dont-2.webp" darkSrc="/images/docs/divider/divider-dont-2-dark.webp" alt="A divider with the caption Applicant details and documents." width="1136" height="224">
+
+Don't put a heading in the divider. Use a heading above the content instead.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/divider/divider-do-3.webp" darkSrc="/images/docs/divider/divider-do-3-dark.webp" alt="The inline items Summary, Documents and Status, separated by vertical dividers the height of the text row." width="1136" height="331">
+
+Stretch a vertical divider to the height of its row, as code does.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/divider/divider-dont-3.webp" darkSrc="/images/docs/divider/divider-dont-3-dark.webp" alt="The same items with vertical dividers that stick out well above and below the text." width="1136" height="331">
+
+Don't leave a vertical divider at its 70 default in a short row. It sticks out past the text.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Captions
+
+Divider captions take 1 to 3 words, make sense read alone, and are never a heading. Use sentence case and no full stop.
+
+| Do               | Don't                                                                     |
+| :--------------- | :------------------------------------------------------------------------ |
+| Or               | OR (all caps)                                                             |
+| Or continue with | Or sign in with your email address instead. (a sentence with a full stop) |
+|                  | Applicant details and documents (a heading written as divider text)       |
+|                  | See below (means nothing without the layout)                              |
+
+### Always set the text
+
+Set the text in every divider that shows text. The design file default, Or continue with, is a placeholder.
+
+### Expandable divider labels
+
+Say what the click does and swap the text with the state. The aria-label changes with the state and contains the visible text.
+
+| Do                               | Don't                                                         |
+| :------------------------------- | :------------------------------------------------------------ |
+| Show more information            | More (does not say what changes)                              |
+| Show less information            | Click to expand (names the gesture, not the result)           |
+| aria-label Show more information | aria-label Toggle section (does not contain the visible text) |
+
+### Dhivehi copy
+
+Divider has no built-in strings: the caption and the expandable aria-label come from props. Pass Dhivehi text for both on Dhivehi pages.
+
+## Related components
+
+| Component                                | When to use it                                                                                  |
+| :--------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| [Accordion](/docs/components/accordion/) | hide and show content under a title.                                                            |
+| [Card](/docs/components/card/)           | group related content in its own container.                                                     |
+| [Tabs](/docs/components/tabs/)           | switch between views of the same content.                                                       |
+| [Table](/docs/components/table/)         | show rows of data with their own row lines.                                                     |
+| [Modal](/docs/components/modal/)         | a divider can separate blocks inside a modal body, such as a summary from the details below it. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the divider: appearances, orientation, text, the expandable divider and the tokens behind them.
+
+## Appearances
+
+Appearance sets the line colour. In code, appearance defaults to subtle. Use the least prominent line that still separates the content clearly, and one appearance for the same kind of break across a page.
+
+<DocsFigure
+  src="/images/docs/divider/divider-appearances-1.webp"
+  darkSrc="/images/docs/divider/divider-appearances-1-dark.webp"
+  alt='Appearance subtle, a very light line, labelled "The default. Separates rows in a list or summary without adding weight." Appearance muted, a little darker, labelled "A little more visible than subtle. Storybook uses it for the expandable divider."'
+  width="2400"
+  height="384"
+/>
+
+<DocsFigure
+  src="/images/docs/divider/divider-appearances-2.webp"
+  darkSrc="/images/docs/divider/divider-appearances-2-dark.webp"
+  alt='Appearance strong, a mid grey line, labelled "Separates larger blocks, such as two parts of a long form." Appearance emphasis, the darkest line, labelled "The most visible line. Keep it for a break the reader must notice, such as before a total."'
+  width="2400"
+  height="432"
+  caption="Appearance subtle, muted, strong and emphasis."
+/>
+
+| Appearance       | Token                  | Use                                                             |
+| :--------------- | :--------------------- | :-------------------------------------------------------------- |
+| subtle (default) | `border/base/subtle`   | Between rows of a list or summary                               |
+| muted            | `border/base/muted`    | When the line needs to be a little more visible                 |
+| strong           | `border/base/strong`   | Larger blocks, such as two parts of a long form                 |
+| emphasis         | `border/base/emphasis` | Only for a break the reader must notice, such as before a total |
+
+The appearance never carries meaning; a divider separates by position.
+
+## Orientation
+
+<DocsFigure
+  src="/images/docs/divider/divider-orientation-1.webp"
+  darkSrc="/images/docs/divider/divider-orientation-1-dark.webp"
+  alt='Orientation horizontal: a line across the stage, labelled "The default, between stacked content. Fills the width of its parent. Text and icon work only here." Orientation vertical: the inline items Summary, Documents and Status separated by vertical lines, labelled "Between inline items, such as tabs or metadata. Stretches to the row height, 24 minimum."'
+  width="2400"
+  height="480"
+  caption="Horizontal and vertical dividers."
+/>
+
+- **Horizontal**, the default, between stacked content. It fills the available width.
+- **Vertical** (orientation vertical) between inline items, such as tabs or metadata. It stretches to the height its container gives it, 24 minimum, so place it in a container with an explicit height. A vertical divider ignores text and showIcon. In Figma the vertical variant is 70 high by default: set it to fill the height of its row.
+
+## Text
+
+Use text for a short caption between the lines, such as Or continue with. Use text only on horizontal dividers. Turn showIcon on only for an expandable divider, where the caption says what opens.
+
+<DocsFigure
+  src="/images/docs/divider/divider-text-1.webp"
+  darkSrc="/images/docs/divider/divider-text-1-dark.webp"
+  alt="Three dividers. text on: the caption Or continue with between two lines. showIcon on: a caret in a circle and Show more information between two lines. text off: one plain line."
+  width="2400"
+  height="464"
+  caption="A caption, a caption with the caret, and a plain line."
+/>
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/divider/divider-options-1.webp"
+  darkSrc="/images/docs/divider/divider-options-1-dark.webp"
+  alt='Use Section break: a heading Permit information, a subtle line, then the text "Use horizontal dividers to separate related content blocks without introducing extra hierarchy."'
+  width="758"
+  height="736"
+/>
+
+<DocsFigure
+  src="/images/docs/divider/divider-options-2.webp"
+  darkSrc="/images/docs/divider/divider-options-2-dark.webp"
+  alt="Use Alternative actions: a Continue button, a divider with the caption Or, and a Save and finish later button."
+  width="758"
+  height="688"
+  caption="A section break with no text, and Or between two alternative actions."
+/>
+
+- **Section break**: separate a heading from its content, or one block from the next. No text, appearance subtle.
+- **Alternative actions**: put Or between two ways to finish the same task. Set text to Or.
+- **Expandable**: let readers reveal more of a long section. Turn showIcon on and add onClick in code. Use the least prominent line that still reads; Storybook shows it with appearance muted.
+
+## Expandable divider
+
+<DocsFigure
+  src="/images/docs/divider/divider-expandable-1.webp"
+  darkSrc="/images/docs/divider/divider-expandable-1-dark.webp"
+  alt='Use Expandable: a heading Permit information, the text "Expand to read additional information." and a muted divider with a caret in a circle and the caption Show more information.'
+  width="758"
+  height="784"
+  caption="An expandable divider, collapsed."
+/>
+
+- Pass onClick to make a horizontal divider a full-width native button. You must give it aria-label, aria-expanded and aria-controls; showIcon is optional. Without a non-empty aria-label, onClick throws an error. Code does not require aria-expanded, so check it yourself.
+- The divider only toggles. Your app shows and hides the content and owns the expanded state.
+- Keep the content in the page, hidden with the hidden attribute while collapsed, and point aria-controls at its id.
+- Turn on showIcon only on an expandable divider. The caret turns 180 degrees while aria-expanded is true.
+
+## States
+
+| State    | When                                    | Visual change                                                                         |
+| :------- | :-------------------------------------- | :------------------------------------------------------------------------------------ |
+| Default  | No interaction                          | Line in the appearance colour                                                         |
+| Focus    | Keyboard focus on an expandable divider | 2px `border/focus` ring with a 2px offset. In forced colours, a 2px Highlight outline |
+| Expanded | aria-expanded true                      | Caret turned 180 degrees                                                              |
+
+A plain divider has no interaction and does not take focus. There is no hover or disabled state.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/divider/divider-rtl-1.webp"
+  darkSrc="/images/docs/divider/divider-rtl-1-dark.webp"
+  alt="Left, an English Divider with a caret in a circle and Or continue with. Right, DividerDv mirrored, with the caret to the right of the Dhivehi caption ނުވަތަ ކުރިއަށްދާނީ."
+  width="2400"
+  height="440"
+  caption="Divider and DividerDv with text and icon."
+/>
+
+- Lines have no direction, so a line-only or vertical divider looks the same in English and Dhivehi.
+- With text, the order mirrors: the icon sits on the start side, to the right of the text.
+- Dhivehi text uses the Dhivehi caption regular style, so the row is 24 high instead of 16. Gaps stay 6. See Missing or unverified.
+- In Figma, use DividerDv for dividers with text. It has the 4 text variants of Divider, mirrored. Line-only and vertical dividers use Divider.
+- Give an expandable divider a Dhivehi aria-label as well as Dhivehi text.
+
+Example configuration: an expandable divider with showIcon, and a divider with text.
+
+| Use                                          | Dhivehi                          |
+| :------------------------------------------- | :------------------------------- |
+| Caption: Or                                  | ނުވަތަ                           |
+| Caption: Or continue with                    | ނުވަތަ ކުރިއަށްދާނީ              |
+| Expandable, collapsed: Show more information | އިތުރު މަޢުލޫމާތު ދައްކާ         |
+| Expandable, expanded: Show less information  | މަޢުލޫމާތު ކުޑަކުރައްވާ          |
+| Vertical: Summary, Documents, Status         | ޚުލާޞާ, ލިޔެކިޔުންތައް, ސްޓޭޓަސް |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/divider/divider-spacing-1.svg"
+  darkSrc="/images/docs/divider/divider-spacing-1-dark.svg"
+  alt="Spacing redlines for a divider with icon and text. English, Or continue with: 16 high, with 6 between the start line and the icon, the icon and the text, and the text and the end line. Dhivehi, ނުވަތަ ކުރިއަށްދާނީ: 24 high with the same 6 gaps."
+  width="1200"
+  height="272"
+/>
+
+<DocsFigure
+  src="/images/docs/divider/divider-spacing-2.svg"
+  darkSrc="/images/docs/divider/divider-spacing-2-dark.svg"
+  alt="Length redlines. Horizontal: the line fills the width of its parent. Vertical: lines between Summary, Documents and Status stretch to the row, 24 minimum."
+  width="1200"
+  height="209"
+  caption="All values in pixels at 1x."
+/>
+
+| Variant           | Height                                         | Gaps                                          |
+| :---------------- | :--------------------------------------------- | :-------------------------------------------- |
+| With text or icon | 16 high (the caption line), lines 1px, centred | 6 (`spacing/1,5`) between line, icon and text |
+| Dhivehi with text | 24 high, lines 1px, centred                    | 6, as English                                 |
+| Line only         | 1px line, full width of the parent             | None                                          |
+| Vertical          | 1 wide, stretches to the parent, 24 minimum    | None                                          |
+
+Padding is 0 on every variant: the divider takes the spacing of the layout around it. The two lines grow equally, so they share the width left after the icon and text. The icon is 16.
+
+## Typography
+
+| Element | English                      | Dhivehi                                   | Colour token      |
+| :------ | :--------------------------- | :---------------------------------------- | :---------------- |
+| Text    | Caption regular, Inter 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/muted` |
+
+## Tokens
+
+| Part           | Token                  |
+| :------------- | :--------------------- |
+| Line, subtle   | `border/base/subtle`   |
+| Line, muted    | `border/base/muted`    |
+| Line, strong   | `border/base/strong`   |
+| Line, emphasis | `border/base/emphasis` |
+| Text           | `text/base/muted`      |
+| Icon           | `icon/base/muted`      |
+| Focus ring     | `border/focus`         |
+
+Token names leave out the `semantics/` prefix. Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                          | Duration | Easing      |
+| :---------------------------------- | :------- | :---------- |
+| Caret turn on an expandable divider | Normal   | Ease in out |
+
+With reduced motion turned on, the caret turns without the animation. The divider doesn't animate the content; if you animate it, respect reduced motion.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -138,3 +502,48 @@ For expandable content, update `aria-expanded` with the caller's state and point
 Divider does not own the content panel or its animation. The caret rotation uses motion-safe Veli transition tokens; if the caller animates the content, respect `prefers-reduced-motion`.
 
 The caption uses the muted text token; appearances use semantic border tokens and follow system, light, and dark themes. Layout follows the surrounding writing direction.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the divider works with screen readers and keyboards. A plain divider is a separator; an expandable divider is a native button.
+
+## Keyboard
+
+A plain divider has no interaction and does not take focus. An expandable divider is a native button in the tab order.
+
+| Key            | Action                                         |
+| :------------- | :--------------------------------------------- |
+| Tab            | Moves focus to the expandable divider          |
+| Enter or Space | Runs onClick, which shows or hides the content |
+
+## Screen readers
+
+- A plain divider has the separator role, with its orientation. The decorative line segments around the text are hidden from assistive technology.
+- A divider with text adds a hidden separator named by the text.
+- An expandable divider is a button named by its aria-label. You must pass aria-expanded and aria-controls so screen readers announce the state and the content it controls.
+- The icon is decorative and hidden.
+- Back up the grouping a divider shows with spacing or headings, so the line is not the only cue that content belongs together.
+
+## Focus
+
+Keyboard focus on an expandable divider shows a 2px ring in `border/focus` with a 2px offset. In forced colours it becomes a 2px Highlight outline.
+
+## Hidden content
+
+Content an expandable divider controls stays in the page, hidden with the hidden attribute while collapsed, so it stays out of the reading order and aria-controls points to an element that exists.
+
+## Contrast
+
+Subtle lines can fall below 3:1 and disappear in forced colours or at high zoom. That is why the line must never be the only cue: use spacing or headings as well.
+
+## Reduced motion
+
+When the user prefers reduced motion, the caret turns without the animation. If you animate the content you show, apply the same preference.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). The order of icon and text mirrors and the Dhivehi caption style applies. Pass Dhivehi text and aria-label yourself.
+
+</DocsTab>

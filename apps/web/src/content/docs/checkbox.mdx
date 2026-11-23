@@ -1,6 +1,6 @@
 ---
 title: Checkbox
-description: Accessible checkboxes in three sizes, with indeterminate state, validation, and groups.
+description: 'Lets people choose any number of options from a set, or turn one option on or off, when the form is submitted.'
 ---
 
 import {
@@ -12,9 +12,430 @@ import {
   CheckboxUsageDemo,
 } from '../../components/CheckboxExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Checkbox
 
-Use `Checkbox` for an independent choice and `CheckboxGroup` for several choices held as one `string[]` value. The [current Figma spec](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=305-8759) includes English and Dhivehi variants.
+<DocsTab id="overview">
+
+A checkbox lets people choose one or more options from a set, or turn a single option on or off. Use it when any number of choices can be selected, including none, and the choice takes effect when the form is submitted. A checkbox can be off, on or indeterminate, which shows that some, not all, of the items it controls are selected.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/checkbox.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-checkbox--docs"
+/>
+
+## When to use
+
+### Use a checkbox when
+
+- People can choose any number of options, including none, and opt in or out of each one on its own.
+- One option is turned on or off and takes effect when the form is submitted, such as accepting terms. Ask for consent with a checkbox whose label states exactly what people agree to.
+- A parent option needs to show that only some of its children are selected. Use the indeterminate value on the parent.
+- People need to see every option at once to compare them.
+- Several checkboxes need a shared label, description or error message. Put them in a CheckboxGroup.
+
+### Don't use a checkbox when
+
+- People must choose exactly one option from a set. Use a [radio](/docs/components/radio/) group.
+- The setting changes straight away and reads as on or off, such as turning notifications on. Use a [switch](/docs/components/switch/).
+- The list is long and people would rather search or type into it. Use a [combobox](/docs/components/combobox/).
+- The choice is an action, such as Save. Use a [button](/docs/components/button/).
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-intro-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-intro-1-dark.webp"
+  alt='A form card asking "How should we contact you?" with the description "We send updates about your passport application." Three checkboxes follow: Email and SMS are selected, Post is not. Below them, an unselected checkbox reads "I confirm these details are correct", then a Continue button.'
+  width="2400"
+  height="1224"
+  caption="A checkbox group for contact channels and a single confirmation checkbox in a passport form."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-anatomy-1.svg"
+  darkSrc="/images/docs/checkbox/checkbox-anatomy-1-dark.svg"
+  alt='A selected checkbox with five numbered markers: 1 on the box, 2 on the check inside it, 3 on the label "Label text", 4 on the description "Description text" and 5 on the red error message "Error text".'
+  width="576"
+  height="360"
+  caption="The parts of a checkbox. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Control**
+
+   The square box, 16 at size md, 20 at lg and 24 at xl. It has a border when off and is filled when on or indeterminate. In code it is Checkbox.
+
+2. **Indicator**
+
+   A check when on and a dash when indeterminate. It is decorative, so screen readers skip it; the state comes from the input. In code isSelected shows the check and isIndeterminate the dash.
+
+3. **Label**
+
+   Names the choice. Clicking it toggles the box. In code it is the Checkbox children.
+
+4. **Description**
+
+   Optional helper text below the label. In code it is description.
+
+5. **Error message**
+
+   Shown only while the checkbox is invalid. In code it is errorMessage, shown when isInvalid is true.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/checkbox/checkbox-do-1.webp" darkSrc="/images/docs/checkbox/checkbox-do-1-dark.webp" alt="A single selected checkbox labelled &quot;Send me SMS reminders&quot;." width="568" height="116">
+
+Write the label so that selected means yes: Send me SMS reminders.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/checkbox/checkbox-dont-1.webp" darkSrc="/images/docs/checkbox/checkbox-dont-1-dark.webp" alt="A single unselected checkbox labelled &quot;Don&#x27;t send me SMS reminders&quot;." width="568" height="116">
+
+Don't word the label as a negative. People have to work out that selecting it means no.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/checkbox/checkbox-do-2.webp" darkSrc="/images/docs/checkbox/checkbox-do-2-dark.webp" alt="Three checkboxes, Email, SMS and Push, stacked in a column 12 apart." width="568" height="180">
+
+Stack options in a column, 12 apart, so the boxes line up and the labels are easy to scan.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/checkbox/checkbox-dont-2.webp" darkSrc="/images/docs/checkbox/checkbox-dont-2-dark.webp" alt="Three checkboxes, Email, SMS and Push, laid out side by side in one row." width="568" height="180">
+
+Don't run options along a row. It is hard to tell which box belongs to which label.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/checkbox/checkbox-do-3.webp" darkSrc="/images/docs/checkbox/checkbox-do-3-dark.webp" alt="An unselected checkbox labelled &quot;Accept terms and conditions&quot; with the error &quot;You must accept the terms to continue&quot; below it." width="568" height="136">
+
+Say what is needed in the error: You must accept the terms to continue.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/checkbox/checkbox-dont-3.webp" darkSrc="/images/docs/checkbox/checkbox-dont-3-dark.webp" alt="An unselected checkbox labelled &quot;Accept terms and conditions&quot; with the error &quot;Invalid input&quot; below it." width="568" height="136">
+
+Don't write vague errors. Invalid input does not say what to do.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Labels
+
+Name the thing being chosen, in sentence case and without a full stop. Keep a label to one line where you can. Write options as short, parallel phrases that don't overlap, in a logical order such as alphabetical, by size or by frequency.
+
+| Do                    | Don't                           |
+| :-------------------- | :------------------------------ |
+| Email me a receipt    | Receipt. (full stop on a label) |
+| Send me SMS reminders | EMAIL ME A RECEIPT (all caps)   |
+
+### Positive wording
+
+Word labels so that selected means yes.
+
+| Do                                    | Don't                                               |
+| :------------------------------------ | :-------------------------------------------------- |
+| Send me SMS reminders                 | Don't send me SMS reminders (selecting it means no) |
+| Email me updates about my application | Do not email me (selected means no)                 |
+
+### Descriptions
+
+Add one short sentence only when the label needs context. Leave off the full stop, and don't put links in it.
+
+| Do                                        | Don't                                                                                   |
+| :---------------------------------------- | :-------------------------------------------------------------------------------------- |
+| We send it to the address on your account | Please read this carefully before you continue. (please, adds nothing, and a full stop) |
+
+### Error messages
+
+Say what is wrong and how to fix it, in one sentence without a full stop. For a missing answer, use Choose. Never show only Required or Invalid, don't blame people and don't say please. Show the same words in the error summary at the top of the page, and mark the checkbox or group invalid with isInvalid.
+
+| Do                                    | Don't                                                          |
+| :------------------------------------ | :------------------------------------------------------------- |
+| You must accept the terms to continue | Invalid input (generic)                                        |
+| Choose at least 1 way to contact you  | Please tick the box. (please, sensory wording and a full stop) |
+|                                       | Required (does not say what to do)                             |
+
+### Group labels
+
+Write the group label as the question you are asking, ending with a question mark and with no colon. Add the description Choose all that apply. CheckboxGroup has no label prop, so put FieldLabel inside it; use aria-labelledby only when a visible heading already asks the question. On a page that asks one question, the question is also the page heading.
+
+| Do                         | Don't                                                              |
+| :------------------------- | :----------------------------------------------------------------- |
+| How should we contact you? | Notification channels: (a colon, and it does not ask the question) |
+
+### Consent
+
+Say exactly what people agree to, in the first person. Ask for each purpose in its own checkbox, and summarise the key terms in plain words beside it. People must be able to open the full terms without losing their answers.
+
+| Do                                                                                      | Don't                                                                     |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------ |
+| I confirm these details are correct                                                     | I agree (does not say to what)                                            |
+| I agree to Maldives Immigration sharing my passport details with the Ministry of Health | I agree to the terms and to receive newsletters (two purposes in one box) |
+
+### None of these
+
+When none of the options may apply, add None of these as the last checkbox in the group, and clear the other options when people select it. Without it, people can't tell a skipped question from a real answer of none.
+
+### No links
+
+Don't put links in labels, descriptions or error messages.
+
+### Dhivehi copy
+
+Checkbox has no built-in text. Pass every label, description, error and accessible name in English and Dhivehi. Write Dhivehi natively rather than translating word for word, and keep it as short as the English, because Dhivehi lines are taller.
+
+## Related components
+
+| Component                              | When to use it                                                                                                   |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| [Radio](/docs/components/radio/)       | choose one option from a short list.                                                                             |
+| [Switch](/docs/components/switch/)     | turn a setting on or off straight away.                                                                          |
+| [Select](/docs/components/select/)     | choose one option from a list in a menu.                                                                         |
+| [Combobox](/docs/components/combobox/) | choose from a long list by typing to filter it.                                                                  |
+| [Field](/docs/components/field/)       | put FieldLabel, FieldDescription and FieldError inside a CheckboxGroup to give it a question, help and an error. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the checkbox: selection values, sizes, states, content options, spacing and the tokens behind them. Values match the shipped component unless noted under Missing or unverified.
+
+## Selection
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-selection-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-selection-1-dark.webp"
+  alt='Three checkboxes at size md. Off: "Send me SMS reminders" with an empty box. On: the same label with a filled box and a check. Indeterminate: "All notification channels" with a filled box and a dash.'
+  width="1024"
+  height="202"
+  caption="Off, the default, on and indeterminate."
+/>
+
+| Value         | When                                                 | In code                                          |
+| :------------ | :--------------------------------------------------- | :----------------------------------------------- |
+| Off           | Not selected. The default                            | isSelected false                                 |
+| On            | Selected                                             | isSelected, or defaultSelected when uncontrolled |
+| Indeterminate | Some, not all, of the items it controls are selected | isIndeterminate                                  |
+
+- A click toggles between off and on.
+- Use indeterminate only on a parent checkbox that controls a group of children. It shows partial selection; it is not a third submitted value.
+- The dash replaces the check whatever isSelected is.
+- Code does not clear isIndeterminate on click. Set it from the children's state in your handler, or the parent shows the wrong summary.
+
+## Sizes
+
+Checkbox has three sizes: md, lg and xl. The box, the label style, and the description and error style change with size. In code, size defaults to md.
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-sizes-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-sizes-1-dark.webp"
+  alt='Three checkboxes labelled "Email me a receipt" with the description "Sent to your account email." at size md with a 16 box, lg with a 20 box and xl with a 24 box. Text grows with the size.'
+  width="2400"
+  height="544"
+  caption="Sizes md, the default, lg and xl."
+/>
+
+- Use **md** (box 16) in most forms, next to md inputs.
+- Use **lg** (box 20) next to lg fields, so label sizes match.
+- Use **xl** (box 24) when the checkbox is the main thing on the screen, such as a single consent step.
+- Keep one size within a group.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-options-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-options-1-dark.webp"
+  alt='Three examples. Required consent: "Accept terms and conditions" with the error "You must accept the terms to continue". Option with detail: "Email me a receipt" with the description "We send it to the address on your account." Group with parent: an indeterminate "All notification channels" checkbox above indented Email, SMS and Push checkboxes.'
+  width="1024"
+  height="304"
+  caption="Required consent, an option with detail, and a parent with indented children."
+/>
+
+- **Required consent**: one checkbox before people submit. Set isRequired, and isInvalid with errorMessage when it is not selected. Leave out the description.
+- **Option with detail**: a choice that needs one line of context. Set description.
+- **Group with parent**: set isIndeterminate on the parent and put the children in a CheckboxGroup, indented 24 under the parent and 12 apart.
+- Group related checkboxes in a CheckboxGroup. It holds one list of selected values and stacks the checkboxes 12 apart.
+- Put the error on a single checkbox only when it stands alone, as with consent. For a group, set errorMessage on the CheckboxGroup.
+
+## States
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-states-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-states-1-dark.webp"
+  alt='Four checkboxes at size md labelled "Send me SMS reminders" with the description "Standard rates may apply." in the default, hover, pressed and focus states. Hover darkens the border, pressed thickens it and focus adds a ring around the box.'
+  width="2400"
+  height="520"
+/>
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-states-2.webp"
+  darkSrc="/images/docs/checkbox/checkbox-states-2-dark.webp"
+  alt='Two more states of the same checkbox. Disabled shows a muted box and grey text. Invalid shows the error "Choose at least one way to hear from us." below the description; the box does not change.'
+  width="1024"
+  height="239"
+  caption="States at size md, off. On and indeterminate follow the same rules."
+/>
+
+| State    | When                              | Visual change                                                                   |
+| :------- | :-------------------------------- | :------------------------------------------------------------------------------ |
+| Default  | No interaction                    | Off shows the border; on and indeterminate fill the box                         |
+| Hover    | Pointer over the box or the label | The border darkens; a filled box turns `components/checkbox/container-bg-hover` |
+| Pressed  | While pressing                    | The border thickens by 1. A filled box uses the hover fill                      |
+| Focus    | Keyboard focus                    | Focus ring around the box: a 2px gap, then a 2px ring in `border/focus`         |
+| Disabled | isDisabled                        | Muted box and text; removed from the tab order                                  |
+| Invalid  | isInvalid                         | The error message shows below; the box does not change                          |
+
+Code also has isReadOnly. A read-only checkbox keeps focus and its value but blocks changes, and it looks the same as default.
+
+## Behaviour
+
+- **Toggling**: clicking the box or its label toggles it, and so does Space. The whole row is the target. onChange receives the new value as a boolean.
+- **Controlled or uncontrolled**: pass isSelected with onChange to control it, or defaultSelected to leave it uncontrolled.
+- **Groups**: CheckboxGroup holds the selected values as a list of strings. Give each Checkbox a unique value. The group's value and onChange work with form libraries.
+- **Validation**: isInvalid shows errorMessage below the label. isRequired marks the input as required; on a CheckboxGroup it means at least one must be selected.
+- **Validate on submit**: Veli Form shows errors without blocking submission, so check a required Checkbox or CheckboxGroup in the submit handler and set isInvalid and your own errorMessage there. Browser messages are in English and don't follow the language you set.
+- **Group errors**: a CheckboxGroup replaces its description with the error while invalid, so the error must make sense on its own. A single checkbox keeps its description beside its error.
+- **Consent starts unticked**: never pre-tick a checkbox that gives consent, accepts terms or agrees to data sharing. Leave out defaultSelected, and set isRequired when the service can't go ahead without it. Don't tick Remember me by default, and never offer it on kiosks.
+- **No surprises**: changing a checkbox never navigates or submits. Showing a related follow-up question directly below it is fine.
+- **Wrapping**: labels and messages wrap to the space they have. A CheckboxGroup stacks, or wraps when it must.
+- **Styling**: Checkbox takes no style overrides. Its className only sets the outer layout.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-rtl-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-rtl-1-dark.webp"
+  alt='Two checkboxes side by side. On the left, the English Checkbox: "Email me a receipt" with "We send it to the address on your account." On the right, CheckboxDv mirrored right to left, with the box on the right of Dhivehi placeholder label and description text.'
+  width="1024"
+  height="188"
+  caption="English, left to right, and Dhivehi, right to left."
+/>
+
+- In Dhivehi the box sits to the right of the label and the text aligns right. The check and the dash don't mirror.
+- Labels use Dhivehi body sm regular at md, Dhivehi body md regular at lg and Dhivehi body lg regular at xl (MV Faseyha).
+- Rows measure 28 at md, 32 at lg and 36 at xl with the taller Dhivehi lines, where English rows are 20, 24 and 28. The box stays centred on the first line. This differs from the rule that a Dv component keeps the English heights; see Missing or unverified.
+- In code, wrap the app in VeliProvider with language set to dv.
+- In Figma, design Dhivehi screens with CheckboxDv. It has the same 51 variants as Checkbox.
+
+Example configuration: size md, an invalid consent checkbox and a group.
+
+| Part              | English                               | Dhivehi                                                         |
+| :---------------- | :------------------------------------ | :-------------------------------------------------------------- |
+| Consent label     | Accept terms and conditions           | އުސޫލުތަކާއި ޝަރުތުތައް ގަބޫލުކުރަން                            |
+| Consent error     | You must accept the terms to continue | ކުރިއަށް ދިއުމަށްޓަކައި ޝަރުތުތައް ގަބޫލުކުރައްވަން ޖެހޭނެއެވެ. |
+| Group label       | How should we contact you?            | އަޅުގަނޑުމެން ތިޔަބޭފުޅާއާ ގުޅާނީ ކިހިނެއް؟                     |
+| Group description | Choose all that apply                 | ގުޅޭ ހުރިހާ އެއްޗެއް އިޚްތިޔާރުކުރައްވާ                         |
+| Option            | Email                                 | އީމެއިލް                                                        |
+| Option            | SMS                                   | އެސް އެމް އެސް                                                  |
+| Option            | Push notifications                    | ޕުޝް އެންގުން                                                   |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-spacing-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-spacing-1-dark.webp"
+  alt="Spacing redlines for an off, invalid checkbox at sizes md, lg and xl, each showing the box size (16, 20, 24), a 12 gap from box to label and 4 between label, description and error."
+  width="1024"
+  height="291"
+  caption="All values in pixels at 1x. Bands are gaps between parts and lines with end ticks are sizes."
+/>
+
+| Property                      | md      | lg      | xl      |
+| :---------------------------- | :------ | :------ | :------ |
+| Box                           | 16 x 16 | 20 x 20 | 24 x 24 |
+| Row height (label line)       | 20      | 24      | 28      |
+| Box to label                  | 12      | 12      | 12      |
+| Label to description          | 4       | 4       | 4       |
+| Description to error          | 4       | 4       | 4       |
+| Border, off                   | 2       | 3       | 3       |
+| Border, off and pressed       | 3       | 4       | 4       |
+| Between checkboxes in a group | 12      | 12      | 12      |
+| Child indent under a parent   | 24      | 24      | 24      |
+| Corner radius                 | 4       | 6       | 6       |
+
+The box is centred in a row as tall as the label line.
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-radius-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-radius-1-dark.webp"
+  alt="Three checkboxes at sizes md, lg and xl, with the box corner radius marked: 4 at md and 6 at lg and xl."
+  width="1024"
+  height="183"
+  caption="The box uses radius 4 (radius/sm) at md and 6 (radius/DEFAULT) at lg and xl."
+/>
+
+## Typography
+
+| Element                | English                              | Dhivehi                                   | Colour token                                 |
+| :--------------------- | :----------------------------------- | :---------------------------------------- | :------------------------------------------- |
+| Label, md              | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/strong`; disabled `text/disabled` |
+| Label, lg              | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/strong`; disabled `text/disabled` |
+| Label, xl              | Body lg regular, Inter Regular 18/28 | Dhivehi body lg regular, MV Faseyha 19/36 | `text/base/strong`; disabled `text/disabled` |
+| Description, md and lg | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`; disabled `text/disabled`  |
+| Description, xl        | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/muted`; disabled `text/disabled`  |
+| Error, md              | Caption regular, Inter Regular 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/danger/muted`                          |
+| Error, lg              | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/danger/muted`                          |
+| Error, xl              | Body md regular, Inter Regular 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/danger/muted`                          |
+
+## Tokens
+
+Names leave out the `components/checkbox/` and `semantics/` prefixes.
+
+| State    | Box fill                                                                        | Box border                                                                   | Indicator and text                                                       |
+| :------- | :------------------------------------------------------------------------------ | :--------------------------------------------------------------------------- | :----------------------------------------------------------------------- |
+| Default  | Off none; on `container-checked-bg`; indeterminate `container-indeterminate-bg` | Off `container-border`; on and indeterminate match the fill                  | Indicator white; label `text/base/strong`, description `text/base/muted` |
+| Hover    | Off none; on and indeterminate `container-bg-hover`                             | Off `container-border-hover`; on and indeterminate match the fill            | As default                                                               |
+| Pressed  | Off none; on and indeterminate `container-bg-hover`                             | Off `container-border-hover`, 1 thicker; on and indeterminate match the fill | As default                                                               |
+| Focus    | As default                                                                      | As default, plus the focus ring in `border/focus`                            | As default                                                               |
+| Disabled | Off none; on and indeterminate `indicator-disabled-bg`                          | Off `indicator-disabled-border`                                              | Label and description `text/disabled`                                    |
+| Invalid  | As default                                                                      | As default                                                                   | Error message `text/danger/muted`                                        |
+
+Override these tokens, not raw colours, when theming.
+
+<DocsFigure
+  src="/images/docs/checkbox/checkbox-focus-1.webp"
+  darkSrc="/images/docs/checkbox/checkbox-focus-1-dark.webp"
+  alt="Three checkboxes in the focus state: md off, lg on and xl indeterminate, each with the focus ring around the box and a gap between ring and box."
+  width="1024"
+  height="187"
+  caption="The focus ring follows the box radius and is the same for every selection value."
+/>
+
+## Motion
+
+| What moves                                                           | Duration    | Easing   |
+| :------------------------------------------------------------------- | :---------- | :------- |
+| Box fill and border colour                                           | Fast (80ms) | Ease out |
+| Check or dash appearing (fades in and scales from 70 to 100 percent) | Normal      | Ease out |
+
+With reduced motion turned on, these transitions are turned off.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -308,3 +729,55 @@ React Aria differences and exclusions:
 | `style`        | Not supported.                                                              |
 | `errorMessage` | Accepts `ReactNode`; validation-message render functions are not supported. |
 | `ref`          | A root ref is not declared in Veli's public group props.                    |
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the checkbox works with keyboards, screen readers and touch, and what you still need to do. Each checkbox is a native checkbox input inside its label, built on React Aria.
+
+## Keyboard
+
+| Key         | Action                                                                         |
+| :---------- | :----------------------------------------------------------------------------- |
+| Tab         | Moves focus to the next checkbox. Each checkbox in a group is its own tab stop |
+| Shift + Tab | Moves focus to the previous checkbox                                           |
+| Space       | Toggles the focused checkbox                                                   |
+
+Enter does not toggle a checkbox, and there is no arrow key navigation in a CheckboxGroup. Disabled checkboxes are skipped.
+
+## Screen readers
+
+- A native checkbox input sits inside the label, visually hidden, so the label text is the accessible name. Pass aria-label only when there is no visible text, and make sure any accessible name contains the visible label.
+- The state is read as checked, not checked, or mixed for indeterminate.
+- The description and error are linked to the input with aria-describedby, so they are read after the label. A newly shown error is announced.
+- The check and dash are decorative and hidden from assistive technology.
+- A CheckboxGroup is a group named by the FieldLabel placed inside it. Every group of checkboxes needs a group label.
+
+## Focus
+
+- Keyboard focus shows the focus ring around the box. It appears for keyboard focus only, not on click.
+- The ring sits outside the box, so focusing doesn't change its size or move the label.
+- State is never shown by colour alone: the check, the dash and the border show it, and errors also show a message.
+
+## Disabled
+
+Disabled checkboxes can't be focused or changed, and are left out of form submission. When people need to see a value they can't change here, use isReadOnly instead: a read-only checkbox keeps focus and its value.
+
+## Target size
+
+The label is part of the control, so the whole row toggles the checkbox. At size md the row is 20 high, under the 24 minimum, so it passes only through spacing: keep checkboxes at least 12 apart, as CheckboxGroup does, or use size lg on touch screens. Keep the label inside the control.
+
+## Contrast
+
+Use the checkbox's text, border and fill tokens as they are. Don't override them with custom colours.
+
+## Reduced motion
+
+When the user prefers reduced motion, the box colours and the check change without a transition. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction and the language, places the box on the right and applies the Dhivehi text styles. Pass Dhivehi labels, descriptions and errors yourself: Checkbox has no built-in text.
+
+</DocsTab>

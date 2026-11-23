@@ -62,12 +62,12 @@ test('existing author-provided names are preserved', () => {
   assert.equal(labelled.properties.ariaLabel, undefined);
 });
 
-test('only column counts covered by the scroll styles gain keyboard stops', () => {
-  const tables = [table(2), table(3), table(4), table(5)];
+test('wide content tables remain keyboard scrollable, including five and six columns', () => {
+  const tables = [table(2), table(3), table(4), table(5), table(6)];
   const { children } = transform(tables);
   assert.deepEqual(
     children.map((node) => node.properties.tabIndex),
-    [undefined, 0, 0, undefined],
+    [undefined, 0, 0, 0, 0],
   );
 });
 

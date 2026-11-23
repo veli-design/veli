@@ -1,9 +1,10 @@
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import { Button } from '@veli-design/react/button';
 import { Tooltip, TooltipTrigger } from '@veli-design/react/tooltip';
 import { Kbd, KbdGroup } from '@veli-design/react/kbd';
-import { VeliProvider, type VeliColorScheme } from '@veli-design/react/provider';
+import { VeliProvider } from '@veli-design/react/provider';
 import { DocsPreview, DocsPreviewOption } from './DocsPreview';
+import { useDocsColorScheme } from './useDocsColorScheme';
 
 export function TooltipUsageDemo() {
   return (
@@ -63,22 +64,8 @@ export function TooltipShortcutDemo() {
   );
 }
 
-function subscribeToDocsTheme(onChange: () => void) {
-  window.addEventListener('veli:color-scheme-change', onChange);
-  return () => window.removeEventListener('veli:color-scheme-change', onChange);
-}
-
-function getDocsColorScheme(): VeliColorScheme {
-  const scheme = document.documentElement.dataset.colorScheme;
-  return scheme === 'light' || scheme === 'dark' ? scheme : 'system';
-}
-
 export function TooltipRtlDemo() {
-  const colorScheme = useSyncExternalStore(
-    subscribeToDocsTheme,
-    getDocsColorScheme,
-    () => 'system' as const,
-  );
+  const colorScheme = useDocsColorScheme();
   const [language, setLanguage] = useState('Dhivehi');
   const isDhivehi = language === 'Dhivehi';
   return (

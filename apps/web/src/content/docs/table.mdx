@@ -1,6 +1,6 @@
 ---
 title: Table
-description: Accessible data tables with sorting, selection, resizing, and Veli token styling.
+description: 'Rows and columns for records that share the same attributes, so people can scan, compare, sort, select or open them.'
 ---
 
 import { TableUsageDemo } from '../../components/TableExamples';
@@ -12,9 +12,558 @@ import {
   TableRtlDemo,
 } from '../../components/TableExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Table
 
-The Table component wraps React Aria table primitives with Veli typography, borders, hover states, and integrated checkbox selection for multi-select tables.
+<DocsTab id="overview">
+
+A table shows a set of records that share the same attributes, one record per row and one attribute per column, so people can scan, compare, sort, select or open them. Typical uses are a person's applications, payments, permits or a data access log.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/table.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-table--docs"
+/>
+
+## When to use
+
+### Use a table when
+
+- People scan or compare records across columns, such as payments made or applications submitted.
+- People check a history or log over time, such as who accessed their data.
+- Rows need sorting, selection, opening, resizing or reordering.
+- Every record has the same attributes, one per column.
+
+### Don't use a table when
+
+- The content isn't naturally tabular. Use a list or a card.
+- You want to lay out a page or put form fields side by side. Use the page layout grid for placement and Field for form questions.
+- It shows the details of one record, such as one application's answers. Show them as label and value pairs in a card or on the record's page.
+- People answer a form question, such as choosing one service. Use Radio for one choice, Checkbox for several, or Select and Combobox for long lists.
+- A wide table would be the only view on phones and people need every column to understand each record. Show each record as a card.
+
+<DocsFigure
+  src="/images/docs/table/table-intro-1.webp"
+  darkSrc="/images/docs/table/table-intro-1-dark.webp"
+  alt='A white card titled Your applications, with the line "Applications you started or submitted, newest first." Below it a table with the columns Reference number, Service, Submitted (with a caret pointing down), Status and Fee (MVR), and a last column of menu buttons. Rows: WP-2026-04817, Work permit renewal, 21 Oct 2026, In review, 250.00; BL-3051, Business licence, 14 Oct 2026, Action needed, 1,500.00; PR-20418, Passport renewal, 2 Oct 2026, Approved, 750.00; DL-2026-00912, Driving licence renewal, 28 Sep 2026, Draft, 12.50. Status words are badges and fees align right.'
+  width="2400"
+  height="1296"
+  caption="A table of a person&#x27;s applications, under a heading that names it."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/table/table-anatomy-1.svg"
+  darkSrc="/images/docs/table/table-anatomy-1-dark.svg"
+  alt="A table with a drag column, a checkbox column and the columns Reference number, Service and Status. Rows: WP-2026-04817, Work permit renewal, In review; BL-3051, Business licence, Action needed, selected with its row tinted and its checkbox on; PR-20418, Passport renewal, Approved. Twelve numbered markers: 1 on the frame corner, 2 on the header row, 3 on the Status header, 4 on the sort caret, 5 on the column resizer, 6 on a drag handle, 7 on a row checkbox, 8 on a reference cell, 9 on a cell, 10 on a row, 11 on the menu button and 12 on a row divider."
+  width="1200"
+  height="550"
+  caption="The parts of a table. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Frame**
+
+   Radius 16 with a 1px `border/base/subtle` line on `bg/surface/raised`. It scrolls sideways when the columns are wider than the frame. In code it is Table, inside an automatic frame.
+
+2. **Header row**
+
+   The column headers and the line under them. Turn on stickyHeader to keep it in view while the body scrolls. In code it is Table.Header.
+
+3. **Column header**
+
+   A short noun that names the data. In code it is Table.Column.
+
+4. **Sort caret**
+
+   A 14px caret on the sorted column only, pointing up for ascending and down for descending. In code it comes from allowsSorting and sortDescriptor.
+
+5. **Column resizer**
+
+   A 17 wide target with a 1px line at the end of a resizable column. In code it is Table.ColumnResizer.
+
+6. **Drag handle**
+
+   24 x 24 with a 16px drag icon in `icon/base/muted`. Rows drag only from here. In code it comes from dragAndDropHooks.
+
+7. **Selection checkbox**
+
+   Checkbox md, Select all in the header and one per row, with toggle selection. In code it comes from selectionMode multiple.
+
+8. **Row header cell**
+
+   The cell that identifies the row, such as the reference number. In code it is isRowHeader on its column.
+
+9. **Cell**
+
+   Holds text, a number, a badge or a button. In code it is Table.Cell.
+
+10. **Row**
+
+one record, with hover, selected, focus and disabled states. In code it is Table.Row. 11. **Row action**
+
+one button or link, or a menu button when there are more actions, in the last column. 12. **Row divider**
+
+a 1px `border/base/subtle` line under each row. The last row has none; the frame line closes the table.
+
+</DocsAnatomy>
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/table/table-do-1.webp" darkSrc="/images/docs/table/table-do-1-dark.webp" alt="A table with the headers Reference number, Submitted and Amount (MVR), and the rows WP-2026-04817, 21 Oct 2026, 250.00 and BL-3051, 14 Oct 2026, 1,500.00, with the amounts aligned right." width="1136" height="468">
+
+Name each column with a short noun in sentence case, and put the unit in the header: Amount (MVR).
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/table/table-dont-1.webp" darkSrc="/images/docs/table/table-dont-1-dark.webp" alt="A table with the headers Reference number, DATE SUBMITTED and Status:, and the rows WP-2026-04817, 21 Oct 2026, In review and BL-3051, 14 Oct 2026, Approved." width="1136" height="468">
+
+Don't write headers in capitals or end them with a colon. Headers name the data; they aren't labels to fill in.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/table/table-do-2.webp" darkSrc="/images/docs/table/table-do-2-dark.webp" alt="A table with the headers Reference number and Status. WP-2026-04817 shows an Action needed badge and BL-3051 an Approved badge." width="1136" height="468">
+
+Show the status as a word in a badge. Colour adds to the word.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/table/table-dont-2.webp" darkSrc="/images/docs/table/table-dont-2-dark.webp" alt="The same table where the Status column shows only small icon badges, one orange and one green, with no words." width="1136" height="468">
+
+Don't show a status by colour alone. People who can't tell the colours apart lose the meaning.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/table/table-do-3.webp" darkSrc="/images/docs/table/table-do-3-dark.webp" alt="A table with the headers Name, Island and Previous permit. Rows: Aishath Mariyam, Lh. Naifaru, Not applicable; Ibrahim Shareef, Malé, WP-2025-11402." width="1136" height="468">
+
+Fill every cell: write Not provided, None or Not applicable.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/table/table-dont-3.webp" darkSrc="/images/docs/table/table-dont-3-dark.webp" alt="The same table with a dash in place of Not applicable." width="1136" height="468">
+
+Don't leave a dash or a blank cell. Screen readers read it as dash, and nobody can tell why it is empty.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/table/table-do-4.webp" darkSrc="/images/docs/table/table-do-4-dark.webp" alt="A table with the headers Reference number and Service. Rows: WP-2026-04817, Work permit renewal, construction sector, shown in full; BL-3051, Business licence." width="1136" height="468">
+
+Let rows grow, so references, status words and amounts show in full. If a file name must be shortened, keep its end and the extension.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/table/table-dont-4.webp" darkSrc="/images/docs/table/table-dont-4-dark.webp" alt="The same table with the reference cut to &quot;WP-2026-0...&quot; and the service cut to &quot;Work permit renewal, constr...&quot;." width="1136" height="468">
+
+Don't cut off references or amounts. A shortened reference can't be checked or copied.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Table name
+
+Name every table with a visible heading it is labelled by. If there is no heading, use aria-label. Leave out the word table.
+
+| Do                     | Don't                                                       |
+| :--------------------- | :---------------------------------------------------------- |
+| Your applications      | Table (repeats the role and says nothing about the content) |
+| Payments in 2026       | Data Grid 1 (title case and meaningless)                    |
+| Who accessed your data |                                                             |
+
+### Column headers
+
+Write short nouns of 1 to 3 words that name the data, in sentence case, with no colon or full stop. Put units and currency in the header, such as Amount (MVR) or Size (MB), so cells hold just the number. Short headers keep columns narrow, and screen readers repeat them before each cell.
+
+| Do               | Don't                                  |
+| :--------------- | :------------------------------------- |
+| Reference number | What is your reference?                |
+| Submitted        | Date submitted:                        |
+| Amount (MVR)     | DATE SUBMITTED (all caps)              |
+|                  | Amt (unclear abbreviation in a header) |
+
+### Sortable headers
+
+Keep a sortable header to the column name only. Don't add Sort by, arrows or the direction in words; the caret shows the sort and screen readers announce it.
+
+| Do        | Don't                                                     |
+| :-------- | :-------------------------------------------------------- |
+| Submitted | Sort by date submitted (an instruction instead of a name) |
+
+### Dates and times
+
+Use short forms such as Oct only in table cells and other places where space truly requires it, never in sentences, headings or buttons.
+
+| Do                 | Don't                                                |
+| :----------------- | :--------------------------------------------------- |
+| 21 Oct 2026        | 10/21/2026 (numeric dates are ambiguous)             |
+| 21 Oct 2026, 09:00 | 21st Oct, 2026 9am (ordinal, comma and 12-hour time) |
+
+### Amounts
+
+Put MVR in the header and the number in the cell, aligned to the inline end. Match decimals in a column: when one amount has laari, show 2 decimals on all of them.
+
+| Do                                 | Don't                                   |
+| :--------------------------------- | :-------------------------------------- |
+| Fee (MVR): 250.00, 1,500.00, 12.50 | 250 MVR (code after the amount)         |
+| No fee                             | MVR 0.00 (write Free or No fee)         |
+|                                    | MVR 250, 1500 and Rf 75.5 in one column |
+
+### Status words
+
+Show the status word as text in a badge in the status column, using the shared status words. Each word keeps one intent everywhere: In review is info, Action needed is warning, Approved is positive.
+
+| Do            | Don't                       |
+| :------------ | :-------------------------- |
+| In review     | A coloured dot with no word |
+| Action needed | Processing                  |
+
+### References and places
+
+Show references exactly as issued, usually in the row header column. Use the agreed spelling for places.
+
+| Do                | Don't                                       |
+| :---------------- | :------------------------------------------ |
+| WP-2026-04817     | wp 2026 04817 (changed case and separators) |
+| A900101           |                                             |
+| Lh. Naifaru, Malé | K. Male (not the agreed spelling)           |
+
+### Empty cells
+
+| Do             | Don't                                |
+| :------------- | :----------------------------------- |
+| Not provided   | - (ambiguous and read aloud as dash) |
+| None           | N/A (abbreviation)                   |
+| Not applicable |                                      |
+
+### Empty and no results
+
+Replace the default No results found. Never leave it on a table that never had data or failed to load. Say why the table is empty and what to do next, with at most one action. After a search, repeat the term and suggest one next step.
+
+| Do                                                                                      | Don't                                                      |
+| :-------------------------------------------------------------------------------------- | :--------------------------------------------------------- |
+| No applications yet. Applications you start will appear here. Start an application.     | No results found. (generic, and suggests a search failed)  |
+| You have nothing to do. We will tell you when an application needs your attention.      | Nothing here! (vague, with an exclamation mark)            |
+| No results for ‘WP-2026-0481’. Check the reference number or search for something else. | Search returned 0 rows. (system wording with no next step) |
+| No payments match these filters. Clear filters.                                         |                                                            |
+
+### Row actions
+
+Start with a verb, 1 to 3 words. Extend the accessible name of repeated controls with the row.
+
+| Do                                          | Don't                                         |
+| :------------------------------------------ | :-------------------------------------------- |
+| View application                            | Details (no verb)                             |
+| Download receipt                            | Click here (says nothing about the result)    |
+| Menu button named Actions for WP-2026-04817 | Actions on every row, with no row in the name |
+|                                             | Three unnamed icon buttons in every row       |
+
+### Dhivehi copy
+
+Headers, cells and custom empty content come from your content, so pass them in the active language. Write Dhivehi natively rather than transliterating, and keep headers as short as the English, because Thaana renders wider. Pass the empty message in the active language through emptyMessage or renderEmptyState.
+
+## Related components
+
+| Component                                  | When to use it                                                                                             |
+| :----------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| [Badge](/docs/components/badge/)           | show the status word in a status column, with its intent.                                                  |
+| [Pagination](/docs/components/pagination/) | split tables of more than about 50 rows into pages, below the table, and keep the page number in the URL.  |
+| [Search](/docs/components/search/)         | find records by reference number or name, above the table.                                                 |
+| [Menu](/docs/components/menu/)             | hold several row actions in the last column, named with the row's reference.                               |
+| [Card](/docs/components/card/)             | show the details of one record, and records on narrow screens when every field matters.                    |
+| [Skeleton](/docs/components/skeleton/)     | fill the body with Skeleton rows while data loads, under the visible header.                               |
+| [Toast](/docs/components/toast/)           | offer Undo after a reversible removal, such as deleting a draft.                                           |
+| [Tags](/docs/components/tags/)             | show active filters above the table that people can remove one at a time.                                  |
+| [Checkbox](/docs/components/checkbox/)     | the table adds checkboxes for selection. To answer a form question, use Checkbox, Radio or Select instead. |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the table: selection, sorting, states, content options, spacing and the tokens behind them. Table has one density; there are no size or appearance variants.
+
+## Selection
+
+<DocsFigure
+  src="/images/docs/table/table-selection-1.webp"
+  darkSrc="/images/docs/table/table-selection-1-dark.webp"
+  alt="Four tables with the columns Reference number, Service and Status, and the rows WP-2026-04817, Work permit, In review; BL-3051, Business licence, Action needed; PR-20418, Passport, Approved. None: no checkboxes. Multiple, toggle: a checkbox in every row and a partly checked Select all in the header, with BL-3051 checked and tinted. Single: the BL-3051 row tinted, no checkboxes. Multiple, replace: the first two rows tinted, no checkboxes. Each table has its note below it."
+  width="2400"
+  height="1780"
+  caption="Selection none, multiple with toggle, single, and multiple with replace."
+/>
+
+| Mode              | In code                   | What people see                                                                 |
+| :---------------- | :------------------------ | :------------------------------------------------------------------------------ |
+| None (default)    | selectionMode none        | No selection. Rows can still open a record                                      |
+| Multiple, toggle  | selectionMode multiple    | A checkbox in every row and Select all in the header                            |
+| Single            | selectionMode single      | One row at a time, shown by the row tint, with no checkbox                      |
+| Multiple, replace | selectionBehavior replace | Selecting a row replaces the selection, like a file manager, with no checkboxes |
+
+Use the default toggle selection for multiple selection in service tables, so every row shows a checkbox people can see and tap. Replace behaviour depends on modifier keys and gives no visible cue that rows can be selected. With multiple selection, show the number selected and the bulk actions above the table, such as 3 selected, and keep the actions out of the way until something is selected.
+
+## Sorting
+
+<DocsFigure
+  src="/images/docs/table/table-sorting-1.webp"
+  darkSrc="/images/docs/table/table-sorting-1-dark.webp"
+  alt="Three small tables with the columns Reference and Submitted, and the rows WP-2026-04817, 21 Oct 2026 and BL-3051, 14 Oct 2026. Sortable, not sorted: no caret. Ascending: a caret pointing up after Submitted. Descending: a caret pointing down. Each has its note below it."
+  width="2400"
+  height="756"
+  caption="A sortable column that is not sorted, ascending and descending."
+/>
+
+- Only the column the table is sorted by shows a caret. A sortable column that is not sorted keeps the caret space empty.
+- The caret points up for ascending (A to Z, smallest or oldest first) and down for descending (newest first).
+- Sorting is controlled: set allowsSorting on the columns, pass sortDescriptor and onSortChange, and sort the items yourself.
+- Load a sortable table already sorted in the order that fits the task, and show that sort on its header: newest first for histories, nearest deadline first for tasks. Most people never change the sort. Keep the sort column and direction in the URL.
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/table/table-options-1.webp"
+  darkSrc="/images/docs/table/table-options-1-dark.webp"
+  alt="Two tables. Status column: Reference number, Service and Status, with In review, Action needed and Approved badges. Amounts: Payment, Paid and Amount (MVR), with Work permit fee, 21 Oct 2026, 250.00; Business licence fee, 14 Oct 2026, 1,500.00; Card replacement, 2 Oct 2026, 12.50, the amounts aligned right. Each has its note below it."
+  width="2400"
+  height="798"
+/>
+
+<DocsFigure
+  src="/images/docs/table/table-options-2.webp"
+  darkSrc="/images/docs/table/table-options-2-dark.webp"
+  alt="Two tables with the columns Reference number and Status. One row action: a View button at the end of each row. Several row actions: a menu button at the end of each row. Each has its note below it."
+  width="2400"
+  height="846"
+/>
+
+<DocsFigure
+  src="/images/docs/table/table-options-3.webp"
+  darkSrc="/images/docs/table/table-options-3-dark.webp"
+  alt='Two empty tables with the columns Reference number, Service and Status. First use: "No applications yet", "Applications you start will appear here." and a Start an application button. No results: "No results for ‘WP-2026-0481’. Check the reference number or search for something else." Each has its note below it.'
+  width="2400"
+  height="850"
+/>
+
+<DocsFigure
+  src="/images/docs/table/table-options-4.webp"
+  darkSrc="/images/docs/table/table-options-4-dark.webp"
+  alt="Two tables. Reorderable rows: Service centre and Island, with Hulhumalé service centre, Malé service centre and Addu City service centre, each with a drag handle. Resizable columns: Reference number, Service and Status with a resizer line at the end of each column. Each has its note below it."
+  width="2400"
+  height="876"
+  caption="Common tables built from the parts."
+/>
+
+- **Status column**: the status word in a badge, with the intent that word always has.
+- **Amounts**: the currency in the header and only the number in the cell, aligned to the inline end.
+- **One row action**: a button or link in the last column, its accessible name extended with the row, such as View WP-2026-04817.
+- **Several row actions**: a menu button in the last column, named with the row, such as Actions for WP-2026-04817.
+- **First use**: replace No results found. Say why the table is empty and what to do next, with at most one action. In code: renderEmptyState.
+- **No results**: after a search, repeat the term and suggest one next step. When filters hide every row, offer Clear filters. In code: emptyMessage.
+- **Reorderable rows**: rows drag from their handle. Also offer Move up and Move down, because dragging can't be the only way. In code: dragAndDropHooks.
+- **Resizable columns**: a resizer at the end of each resizable column. Give those columns a width and a minimum width. In code: Table.ResizableContainer and Table.ColumnResizer.
+- **Sticky header**: stickyHeader keeps the header row in view while the body scrolls. It is off by default and needs a bounded scrolling ancestor, such as a Table.ResizableContainer with a maximum height.
+
+## States
+
+<DocsFigure
+  src="/images/docs/table/table-states-1.webp"
+  darkSrc="/images/docs/table/table-states-1-dark.webp"
+  alt="Six tables with the columns Reference number, Service and Status. Default: WP-2026-04817, Work permit, In review and BL-3051, Business licence, Approved. Hover: the first row lightly tinted. Focus: a teal ring inside the first row. Selected: the first row tinted with its checkbox on and Select all partly checked. Disabled: a PR-19877, Passport, Expired row in faded text above BL-3051. Loading: the header row above grey Skeleton bars. Each has its note below it."
+  width="2400"
+  height="2222"
+  caption="Row states."
+/>
+
+| State    | When                                             | Visual change                                                                      |
+| :------- | :----------------------------------------------- | :--------------------------------------------------------------------------------- |
+| Default  | No interaction                                   | No fill                                                                            |
+| Hover    | Pointer over a row or a sortable header          | Fill `brand/neutral/alpha/100`                                                     |
+| Focus    | Keyboard focus on a row, cell or sortable header | 2px `border/focus` ring inside the edge                                            |
+| Selected | Row in selectedKeys                              | Fill `components/button/primary/subtle/default`, checkbox on with toggle selection |
+| Disabled | Row in disabledKeys                              | Text `text/disabled`. The row can't be focused, selected or opened                 |
+| Empty    | The body has no rows                             | Empty message in `text/base/muted`, default No results found.                      |
+
+- **Disabled rows**: keyboard navigation skips them. Show why in the row itself, for example a status of Expired or Cancelled, not in a tooltip. With disabledBehavior selection, rows keep their row actions and only selection is blocked. Select all skips disabled rows.
+- **Loading**: Table has no loading state of its own. Keep the header row visible and show Skeleton rows or Loading text in the body. Show the empty state only after the data has loaded. If loading fails, show an error with Try again, never the empty state.
+
+## Behaviour
+
+- **Opening a record**: make the identifying cell a link to the record page, or use row actions (onRowAction) with VeliProvider navigate. Row actions run on Enter, double click or tap.
+- **Removing rows**: confirm in a modal before withdrawing an application, or delete a draft at once and offer Undo in a toast. Never delete from one tap. Then move focus to the next row.
+- **Reordering**: rows drag only from their handle. Offer Move up and Move down actions, or a position field, as well. Update your items in onReorder; the table does not own their order.
+- **Search, filters and pages**: put search, active filters as tags and the result count above the table, and pagination below it. Table has none of these built in.
+- **Long tables**: use pagination for more than about 50 rows. Keep the page number, filters and search terms in the URL, and return people to the same place when they go back.
+- **Narrow screens**: keep the identifying column first and the status column next to it, and let the table scroll inside its frame. Don't hide the scrollbar.
+- **Dense dashboards**: dashboards may use tight rows and many columns, as long as text meets contrast, targets are at least 24 x 24 and the table scrolls inside its own frame.
+- **Row height**: rows have no fixed height. Long text wraps and the row grows.
+
+## Language and direction
+
+The Dhivehi example in the Figma page uses this copy:
+
+<DocsFigure
+  src="/images/docs/table/table-rtl-1.webp"
+  darkSrc="/images/docs/table/table-rtl-1-dark.webp"
+  alt="Two tables side by side. LTR, table: Name, Status and Updated, with Tourism licence, Approved, 12 Mar 2026 and Fishing permit, Pending, 10 Mar 2026. RTL, tableDv: the same table in Dhivehi, mirrored right to left, with the name column on the right, the status badges in the middle and the dates on the left."
+  width="2400"
+  height="596"
+  caption="The same table in English and in Dhivehi."
+/>
+
+| English         | Dhivehi                     |
+| :-------------- | :-------------------------- |
+| Name            | ނަން                        |
+| Status          | ޙާލަތު                      |
+| Updated         | ބަދަލުކުރި ތާރީޚު           |
+| Tourism licence | ފަތުރުވެރިކަމުގެ ލައިސަންސް |
+| Approved        | ފާސްކޮށްފައި                |
+| 12 Mar 2026     | 12 މާރިޗު 2026              |
+| Fishing permit  | މަސްވެރިކަމުގެ ހުއްދަ       |
+| Pending         | މަޑުކުރެވިފައި              |
+| 10 Mar 2026     | 10 މާރިޗު 2026              |
+
+- Under VeliProvider language dv the table is right to left: the first column sits on the right, and the Left and Right arrow keys follow the direction.
+- Let the table take its direction from VeliProvider. Don't set dir on the table element, because it reverses the column order. Set dir on a wrapper when a table must sit in a different direction from its page.
+- Keep references, amounts and dates in an element with dir set to ltr, such as WP-2026-04817, and use Latin digits.
+- Numbers align to the inline end of their column, the left side in Dhivehi.
+- Check column resizing and sideways scrolling in both directions.
+- Dhivehi rows are 52 high in code (53 with the divider), against 44 in English.
+- Select all, Select row, the move row label and the default empty message follow the language. The sort announcements, the resizer and the drag announcements come from React Aria and may stay English.
+
+<div className="preview" data-docs-markdown="interactive-example">
+  <TableRtlDemo client:visible />
+</div>
+
+Example configuration: selection multiple, the last row disabled, aria-label ހުއްދައަށް އެދޭ އެޕްލިކޭޝަންތައް.
+
+| Name                        | Status         |
+| :-------------------------- | :------------- |
+| ފަތުރުވެރިކަމުގެ ލައިސަންސް | ފާސްކޮށްފައި   |
+| މަސްވެރިކަމުގެ ހުއްދަ       | މަޑުކުރެވިފައި |
+| ވިޔަފާރި ރަޖިސްޓްރީކުރުން   | ބާތިލްކޮށްފައި |
+
+Column headers: ނަން (Name) and ޙާލަތު (Status).
+
+| Built-in string     | English           | Dhivehi                    |
+| :------------------ | :---------------- | :------------------------- |
+| Select all checkbox | Select all        | ހުރިހާ ރޯތަކެއް ޚިޔާރުކުރޭ |
+| Row checkbox        | Select row        | ރޯ ޚިޔާރުކުރޭ              |
+| Move row            | Move row          | ރޯ ތަރުތީބުކުރޭ            |
+| Empty message       | No results found. | ނަތީޖާއެއް ނުފެނުނު.       |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/table/table-spacing-1.svg"
+  darkSrc="/images/docs/table/table-spacing-1-dark.svg"
+  alt="Redlines for a sortable, resizable column header labelled Submitted with a caret: 44 high, 12 top and bottom, 16 sides, 6 from the label to the caret, and a 17 wide resizer at the end."
+  width="1200"
+  height="300"
+/>
+
+<DocsFigure
+  src="/images/docs/table/table-spacing-2.svg"
+  darkSrc="/images/docs/table/table-spacing-2-dark.svg"
+  alt="Redlines for a cell holding WP-2026-04817: 44 high, 12 top and bottom, 16 sides."
+  width="1200"
+  height="300"
+/>
+
+<DocsFigure
+  src="/images/docs/table/table-spacing-3.svg"
+  darkSrc="/images/docs/table/table-spacing-3-dark.svg"
+  alt="Redlines for the drag and selection columns: a 24 wide handle with 4 padding in a 56 wide column with rows 49 high (50 with the divider), and a checkbox in a 48 wide column with rows 47 high (48 with the divider)."
+  width="1200"
+  height="320"
+/>
+
+<DocsFigure
+  src="/images/docs/table/table-spacing-4.svg"
+  darkSrc="/images/docs/table/table-spacing-4-dark.svg"
+  alt="Redlines for the empty state, No results found., with 32 above and below and 16 at the sides."
+  width="1200"
+  height="320"
+  caption="All values in pixels at 1x."
+/>
+
+| Part             | Size                                                                           | Padding                     | Gaps and parts                                              |
+| :--------------- | :----------------------------------------------------------------------------- | :-------------------------- | :---------------------------------------------------------- |
+| Column header    | 44 high, 45 with the line under it                                             | 12 top and bottom, 16 sides | Label to caret 6; caret 14 x 14; resizer 17 wide at the end |
+| Cell             | 44 high, 45 with the row divider; grows with its content, 52 with an xs button | 12 top and bottom, 16 sides | None                                                        |
+| Selection column | 48 wide; rows 47 high, 48 with the divider                                     | 12 top, 15 bottom, 16 sides | Checkbox md, a 16 x 16 box                                  |
+| Drag column      | 56 wide; rows 49 high, 50 with the divider                                     | 12 top, 13 bottom, 16 sides | Handle 24 x 24 with padding 4, radius 6                     |
+| Empty state      | Fills the body                                                                 | 32 top and bottom, 16 sides | None                                                        |
+| Frame            | 1px line, radius 16                                                            | None                        | Row divider and header line 1px                             |
+
+<DocsFigure
+  src="/images/docs/table/table-radius-1.svg"
+  darkSrc="/images/docs/table/table-radius-1-dark.svg"
+  alt="Three cards. Frame: the top corner of a table marked 16. Drag handle: a focused handle marked 6. Skeleton bar: a loading bar marked 2. Each has its note below it."
+  width="1200"
+  height="324"
+  caption="The frame is the only rounded part: 16 (radius/2xl). Rows, cells and the header are square and the frame clips them. The drag handle uses 6 (radius/DEFAULT) and shows it only with the focus ring; skeleton bars use 2 (radius/xs)."
+/>
+
+## Typography
+
+| Element       | English                              | Dhivehi                                   | Colour token                                       |
+| :------------ | :----------------------------------- | :---------------------------------------- | :------------------------------------------------- |
+| Column header | Body sm medium, Inter Medium 14/20   | Dhivehi body sm medium, MV A Waheed 17/28 | `text/base/emphasis`                               |
+| Cell          | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`; disabled rows `text/disabled` |
+| Empty message | Body sm regular, Inter Regular 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`                                  |
+
+Badge, Button and Checkbox keep their own styles. Numbers, dates and references use Latin digits in both languages.
+
+## Tokens
+
+| Part                                     | Token                                      |
+| :--------------------------------------- | :----------------------------------------- |
+| Frame background                         | `bg/surface/raised`                        |
+| Frame line, header line and row dividers | `border/base/subtle`                       |
+| Column header text and sort caret        | `text/base/emphasis`                       |
+| Cell text                                | `text/base/DEFAULT`                        |
+| Disabled row text                        | `text/disabled`                            |
+| Empty message                            | `text/base/muted`                          |
+| Drag icon                                | `icon/base/muted`                          |
+| Row and sortable header hover            | `brand/neutral/alpha/100`                  |
+| Selected row                             | `components/button/primary/subtle/default` |
+| Focus ring and resizer while resizing    | `border/focus`                             |
+| Skeleton bar                             | `bg/skeleton`                              |
+
+Token names leave out the `semantics/` prefix. Override these tokens, not raw colours, when theming.
+
+## Motion
+
+| What moves                  | Duration                  | Easing  |
+| :-------------------------- | :------------------------ | :------ |
+| Row hover and selected fill | Default colour transition | Default |
+
+With reduced motion turned on, the row colour transition is turned off. Table adds no entrance or layout animation.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -364,3 +913,77 @@ Each part is available as a named export and on `Table`: `TableHeader` / `Table.
 ## Design and examples
 
 The [Figma Table baseline](https://www.figma.com/design/4h7LJTwcIvXiwx5a1hQJqk/Veli-Design-System?node-id=1977-6930) contains default, sorting, selection, empty, resize and reorder examples. Explore these and the additional selection, action, sticky and narrow-container states in Storybook using the link after the API tables.
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the table works with keyboards and screen readers, and what you still need to do. Table is a React Aria grid, so sorting, selection, resizing and drag semantics come built in.
+
+## Keyboard
+
+The table is one Tab stop. Tab moves on to the next control after the table.
+
+| Key                       | Action                                                                   |
+| :------------------------ | :----------------------------------------------------------------------- |
+| Arrow keys                | Move between rows and cells. Left and Right follow the reading direction |
+| Home or End               | Move to the first or last cell in the row                                |
+| Ctrl or Cmd + Home or End | Move to the first or last row                                            |
+| Page Up or Page Down      | Move by a page                                                           |
+| Typing                    | Jumps to the row whose text starts with the typed letters                |
+| Space                     | Toggles selection of the focused row, with toggle selection              |
+| Enter                     | Runs the row action, or sorts a focused sortable header                  |
+| Shift + arrow             | Extends the selection, with multiple selection                           |
+| Ctrl or Cmd + A           | Selects all rows, with multiple selection                                |
+| Escape                    | Clears the selection                                                     |
+
+Column resizer: Enter starts resize mode, arrow keys change the width, and Enter or Escape ends it. Drag handle: Enter starts the drag, Tab moves between drop targets, arrow keys choose the position, Enter drops and Escape cancels.
+
+When the table scrolls inside its frame, check that keyboard users can reach every column and that the focused cell scrolls into view.
+
+## Screen readers
+
+- The table renders a native table element with role grid. Give it an accessible name that says what it lists: a visible heading it is labelled by (aria-labelledby), or aria-label.
+- Mark the identifying column as the row header with isRowHeader. Screen readers announce it with each cell, and each row checkbox is named from it, such as Select row Tourism licence.
+- Sortable headers set aria-sort on the sorted column. React Aria announces the new sort.
+- Selected rows set aria-selected, and disabled rows aria-disabled.
+- The sort caret is decorative and hidden from assistive technology.
+- Name repeated row actions with the row: Actions for WP-2026-04817.
+
+## Focus
+
+<DocsFigure
+  src="/images/docs/table/table-focus-1.webp"
+  darkSrc="/images/docs/table/table-focus-1-dark.webp"
+  alt="Focus ring examples. Row: a teal ring inside the edge of a row reading Tourism licence, Tourism, Approved, 12 Mar 2026. Sortable column header: a ring inside the Submitted header. Column resizer: a ring outside the 17 wide target. Drag handle: a ring outside the 24 x 24 handle. Notes sit below each example."
+  width="2400"
+  height="1592"
+  caption="The 2px focus ring on a row, a sortable header, the column resizer and the drag handle."
+/>
+
+- Keyboard focus shows a 2px ring in `border/focus`. On rows, cells and sortable headers it sits inside the edge, so it never covers the next row. On the resizer and the drag handle it sits outside.
+- The ring shows on keyboard focus only, never on click or tap.
+- Checkbox, Button and Badge inside cells keep their own focus styles.
+- After removing the row that has focus, move focus to the next row.
+
+## Disabled
+
+Disabled rows can't be focused, selected or activated, and keyboard navigation skips them. Their faded text falls below the contrast minimum, which WCAG allows for content that can't be used. Show why the row is disabled as visible text in the row.
+
+## Target size
+
+Sort headers, checkboxes, drag handles, resizers and row actions are at least 24 x 24, also in dense tables. The drag handle is 24 x 24 and the resizer 17 wide by the header height.
+
+## Contrast
+
+Status is a word, never colour alone. Use the table's text, border and fill tokens as they are.
+
+## Reduced motion
+
+When the user prefers reduced motion, row colour transitions are turned off. Nothing extra is needed from you.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). It sets the direction, so the first column sits on the right and arrow keys follow it. Never set dir on the table element. Pass Dhivehi headers, cells and the empty message yourself.
+
+</DocsTab>

@@ -20,7 +20,7 @@ export default function rehypeDocTables() {
           const head = node.children.find((child) => child.tagName === 'thead');
           const row = head?.children.find((child) => child.tagName === 'tr');
           const columns = row?.children.filter((child) => child.tagName === 'th').length;
-          if (columns === 3 || columns === 4) {
+          if (columns >= 3) {
             parent.children[index] = {
               type: 'element',
               tagName: 'div',

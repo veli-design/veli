@@ -18,6 +18,7 @@ import rehypeDocTables from './src/lib/rehype-doc-tables.mjs';
 import rehypePreviewCode from './src/lib/rehype-preview-code.mjs';
 import { remarkDocsMarkdown } from './src/lib/remark-docs-markdown.mjs';
 import { remarkComponentTabs } from './src/lib/remark-component-tabs.mjs';
+import { remarkDocsTabs } from './src/lib/remark-docs-tabs.mjs';
 
 const site = process.env.PUBLIC_SITE_URL?.trim();
 
@@ -56,7 +57,7 @@ export default defineConfig({
       ],
     },
     processor: unified({
-      remarkPlugins: [remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
+      remarkPlugins: [remarkDocsTabs, remarkDocsMarkdown, remarkDocsSearch, remarkComponentTabs],
       rehypePlugins: [rehypePreviewCode, rehypeCodeBlocks, rehypeDocTables],
     }),
   },

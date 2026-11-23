@@ -188,8 +188,10 @@ function PaginationEllipsis({
       >
         <span aria-hidden="true">...</span>
       </Button>
-      <MenuPopover>
+      {/* Inherit the positioned root's available height so the menu cannot cover its trigger. */}
+      <MenuPopover className="flex max-h-[inherit] flex-col">
         <Menu
+          className="min-h-0 max-h-70 overflow-y-auto overscroll-y-contain"
           aria-label={menuLabel}
           dir={direction}
           lang={lang}

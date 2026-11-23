@@ -1,6 +1,6 @@
 ---
 title: Field
-description: Composable labels, descriptions, and errors for RadioGroup and CheckboxGroup.
+description: 'The label, help text and error message parts for radio groups, checkbox groups and custom controls that have none built in.'
 ---
 
 import {
@@ -9,11 +9,360 @@ import {
   FieldValidationDemo,
 } from '../../components/FieldExamples';
 
+import DocsResources from '../../components/docs/DocsResources.astro';
+import DocsFigure from '../../components/docs/DocsFigure.astro';
+import DocsGrid from '../../components/docs/DocsGrid.astro';
+import DocsGuideline from '../../components/docs/DocsGuideline.astro';
+import DocsAnatomy from '../../components/docs/DocsAnatomy.astro';
+
 # Field
 
-Use Field when a control has no built-in label slot. Today that means labelling [RadioGroup](/docs/components/radio/) and [CheckboxGroup](/docs/components/checkbox/). Place `FieldLabel` inside the group — not beside it.
+<DocsTab id="overview">
 
-Controls such as [Input](/docs/components/input/) already ship label, description, and error props. Keep using those.
+Field is the set of parts that give a form control its label, help text and error message when the control has no built-in ones, such as a radio group, a checkbox group or a custom control. The other Veli fields (Input, Text area, Select, Combobox, Date picker, Password input and Drop zone) carry the same three parts as props, so the content rules on this page apply to them too.
+
+<DocsResources
+  source="https://github.com/veli-design/veli/blob/main/packages/react/src/field.tsx"
+  storybook="https://storybook.veli.design/?path=/docs/components-field--docs"
+/>
+
+## When to use
+
+### Use Field parts when
+
+- A RadioGroup or CheckboxGroup needs a visible label, description or error message. Put FieldLabel, FieldDescription and FieldError inside the group.
+- A custom or native control needs a label and messages. Use Field, FieldLabel and FieldControl, or useFieldControlProps.
+- You need to show form library validation errors. Render them through FieldError inside the group.
+- One question needs several controls, such as island, house name and road for an address. Use FieldSet with FieldLegend, so the legend names the whole set.
+
+### Don't use Field parts when
+
+- The control already has label, description and errorMessage props, such as Input, Text area, Select or Combobox. Use those props instead.
+- The group already passes description or errorMessage. Use the props or the parts, not both, or the text shows twice.
+- You only need to name a single RadioGroup or CheckboxGroup. Don't wrap it in FieldSet; put FieldLabel inside the group.
+- The help is too long for one sentence. Use a [popover](/docs/components/popover/) opened by a button next to the label.
+
+<DocsFigure
+  src="/images/docs/field/field-intro-1.webp"
+  darkSrc="/images/docs/field/field-intro-1-dark.webp"
+  alt='A form card titled Collect your passport, with the line "Choose where to pick up your new passport and how we tell you it is ready." A radio group asks "Where will you collect your passport?" with the description "You can change this until 21 October 2026" and the options Immigration office, Malé (selected), Hulhumalé service centre and Addu City council office. A checkbox group asks "How should we contact you?" with the description "Choose all that apply" and the options SMS (checked) and Email. A Continue button sits below.'
+  width="2400"
+  height="1576"
+  caption="FieldLabel and FieldDescription give a radio group and a checkbox group their question and help."
+/>
+
+## Anatomy
+
+<DocsFigure
+  src="/images/docs/field/field-anatomy-1.svg"
+  darkSrc="/images/docs/field/field-anatomy-1-dark.svg"
+  alt='Two groups at size md with six numbered markers. A checkbox group: 1 on the label "How should we contact you?", 2 on the info icon after it, 3 on Optional and 4 on the description "Choose all that apply", above the options SMS (checked) and Email. A radio group: 5 on the red asterisk after "Where will you collect your passport?" and 6 on the error "Choose where to collect your passport", below the options Immigration office, Malé and Hulhumalé service centre.'
+  width="576"
+  height="480"
+  caption="The parts of a field, shown in a checkbox group and a radio group. Numbers match the list below."
+/>
+
+<DocsAnatomy>
+
+1. **Label**
+
+   Names the group or control. For a radio or checkbox group, write the question being asked. Put it inside the group so it names the group. In code it is FieldLabel.
+
+2. **Info icon**
+
+   A 16 x 16 icon button that opens a tooltip with a short hint. Input, Select and Text area add it after the label with infoTooltip. FieldLabel has none, so a group uses a popover next to the label for longer help.
+
+3. **Optional**
+
+   Built-in text after the label, in `text/base/subtle`. It switches to Dhivehi with the language and hides when the field is required. In code it is isOptional.
+
+4. **Description**
+
+   One line of help under the label. In code it is FieldDescription.
+
+5. **Required indicator**
+
+   The asterisk after the label, in `text/danger/muted`. It is hidden from screen readers; the group is announced as required instead. In code it is isRequired, and showRequiredIndicator hides it.
+
+6. **Error message**
+
+   Says what is wrong and how to fix it, at the end of the group. Several errors show as a list. In code it is FieldError, with children or errors.
+
+</DocsAnatomy>
+
+For custom layouts, Field also has layout parts: Field, FieldSet, FieldLegend, FieldGroup, FieldContent, FieldTitle, FieldSeparator and FieldControl.
+
+## Do's and don'ts
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/field/field-do-1.webp" darkSrc="/images/docs/field/field-do-1-dark.webp" alt="A radio group labelled &quot;Where will you collect your passport?&quot; with the options Immigration office, Malé and Hulhumalé service centre." width="1136" height="360">
+
+Put FieldLabel inside the group, so it names the group for everyone, including screen readers.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/field/field-dont-1.webp" darkSrc="/images/docs/field/field-dont-1-dark.webp" alt="The same two radio options, Immigration office, Malé and Hulhumalé service centre, with no label above them." width="1136" height="360">
+
+Don't leave a group without a label. People and screen readers can't tell what the options answer.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/field/field-do-2.webp" darkSrc="/images/docs/field/field-do-2-dark.webp" alt="A radio group labelled &quot;Where will you collect your passport?&quot; with the error &quot;Choose where to collect your passport&quot; below the options." width="1136" height="416">
+
+Say what is wrong and how to fix it, in the words of the label.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/field/field-dont-2.webp" darkSrc="/images/docs/field/field-dont-2-dark.webp" alt="The same radio group with the error &quot;Invalid input&quot; below the options." width="1136" height="416">
+
+Don't write a generic error. Invalid input doesn't say what to fix.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+<DocsGrid>
+
+<DocsGuideline kind="do" src="/images/docs/field/field-do-3.webp" darkSrc="/images/docs/field/field-do-3-dark.webp" alt="A checkbox group labelled &quot;How should we contact you?&quot; with the description &quot;Choose all that apply&quot; shown once, above the options SMS and Email." width="1136" height="472">
+
+Give the group its description once, with FieldDescription or the group's description prop.
+
+</DocsGuideline>
+
+<DocsGuideline kind="dont" src="/images/docs/field/field-dont-3.webp" darkSrc="/images/docs/field/field-dont-3-dark.webp" alt="The same checkbox group with the description &quot;Choose all that apply&quot; shown twice above the options." width="1136" height="472">
+
+Don't pass description on the group as well as FieldDescription. The text shows twice.
+
+</DocsGuideline>
+
+</DocsGrid>
+
+## Content guidelines
+
+### Labels
+
+A label names the value people give, in sentence case and with no colon. A RadioGroup or CheckboxGroup label asks the question, ending with a question mark. Every field needs a visible label; never let a placeholder be the label.
+
+| Do                                    | Don't                                                     |
+| :------------------------------------ | :-------------------------------------------------------- |
+| ID card number                        | Enter your ID card number (an instruction, not the value) |
+| Where will you collect your passport? | Atoll: (colon)                                            |
+| How should we contact you?            | Collection point: (a noun with a colon)                   |
+|                                       | PLAN (all caps)                                           |
+
+Call the card a National ID card in running text and the number on it an ID card number in labels. Never write NIC, NID, IC or National Identity Card Number.
+
+### Descriptions
+
+Add help only when the label needs context, as one short sentence with no full stop. Say where to find the value, what format it takes or why it is needed. When a value has a format people may not know, give an example starting with For example. For a CheckboxGroup, write Choose all that apply. Don't put links in a description.
+
+| Do                                      | Don't                                                                       |
+| :-------------------------------------- | :-------------------------------------------------------------------------- |
+| The number on the front of your ID card | Please fill in this field carefully. (please, adds nothing and a full stop) |
+| For example, A900101                    | Click here to find your number (a link and Click here)                      |
+| Choose all that apply                   |                                                                             |
+
+For help that is too long for a description, use a [popover](/docs/components/popover/) opened by a button next to the label.
+
+### Error messages
+
+Say what is wrong and how to fix it, in the words of the label. For a missing answer, start with Enter for text and Choose for choices. Use one sentence with no full stop, no please and no blame.
+
+| Do                                    | Don't                                             |
+| :------------------------------------ | :------------------------------------------------ |
+| Enter your ID card number             | Invalid input (generic, gives no fix)             |
+| Choose where to collect your passport | Please choose a plan. (please and a full stop)    |
+| Enter a date after 21 October 2026    | You forgot to enter your name (blames the person) |
+
+Show the same wording next to the field and in the error summary, one message per field at a time: the one that blocks progress first. After a submit with errors, show the error summary, titled There is a problem.
+
+Messages from a form library or schema follow the same rules. FieldError shows them as written and lists them when there are several.
+
+### Required and optional
+
+Mark whichever is rarer in the form. Use isOptional on FieldLabel to add Optional when most fields are required, or isRequired to show the asterisk when most are optional, with a line such as Fields marked with \* are required.
+
+| Do                                 |
+| :--------------------------------- |
+| Phone number Optional              |
+| Fields marked with \* are required |
+
+### Legends
+
+Write a FieldLegend as the question when the set asks one thing, or as a short heading for a set of separate questions. On a page that asks one question, the legend can be the page heading.
+
+| Do                    | Don't                                        |
+| :-------------------- | :------------------------------------------- |
+| What is your address? | Section 2 (says nothing about the questions) |
+| Contact details       |                                              |
+
+### Dhivehi copy
+
+FieldLabel has one built-in string, Optional, which switches to އިޚްތިޔާރީ when the language is Dhivehi and can't be reworded. Pass every label, description and error in English and Dhivehi yourself. Write Dhivehi natively rather than translating word for word, and keep it as short as the English.
+
+## Related components
+
+| Component                               | When to use it                                                                                                                               |
+| :-------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Radio](/docs/components/radio/)        | RadioGroup has no label prop, so put FieldLabel, and FieldDescription and FieldError when needed, inside it.                                 |
+| [Checkbox](/docs/components/checkbox/)  | CheckboxGroup has no label prop, so put FieldLabel inside it and use FieldDescription and FieldError or the group props for help and errors. |
+| [Input](/docs/components/input/)        | use the Input label, description and errorMessage props rather than Field parts. The content rules on this page still apply.                 |
+| [Text area](/docs/components/textarea/) | use the Text area label, description and errorMessage props rather than Field parts. The content rules on this page still apply.             |
+| [Popover](/docs/components/popover/)    | for help that is too long for a description, open a popover from a button next to the label.                                                 |
+| [Alert](/docs/components/alert/)        | after a submit with errors, show the error summary as a danger alert titled There is a problem, using the same words as each FieldError.     |
+
+</DocsTab>
+
+<DocsTab id="design">
+
+Visual specification for the field parts: sizes, states, spacing and typography. Values come from the design file, the shipped component and the guidelines.
+
+## Sizes
+
+FieldLabel, FieldDescription and FieldError take size sm, md or lg. In code, size defaults to md, or to the size of the surrounding Field. Use the size that matches the controls they describe, and one size in a form.
+
+<DocsFigure
+  src="/images/docs/field/field-sizes-1.webp"
+  darkSrc="/images/docs/field/field-sizes-1-dark.webp"
+  alt='Three groups labelled "How should we contact you?" with the description "Choose all that apply", at sizes sm, md and lg. The captions read: label in body sm, description and error in caption, with small controls in dense layouts; the default, with the same text styles as sm; label in body md, description and error in body sm, with lg controls.'
+  width="2400"
+  height="616"
+  caption="Sizes sm, md, the default, and lg."
+/>
+
+## States
+
+<DocsFigure
+  src="/images/docs/field/field-states-1.webp"
+  darkSrc="/images/docs/field/field-states-1-dark.webp"
+  alt='Three radio groups labelled "Where will you collect your passport?" at size md. Default: the label, the description "You can change this until 21 October 2026" and two options. Disabled: the label and options are muted, the description does not change. Invalid: the error "Choose where to collect your passport" shows below the options, in place of the description.'
+  width="2400"
+  height="752"
+  caption="Default, disabled and invalid, shown in a radio group."
+/>
+
+| State    | When                                          | Visual change                                                                                                                                                                                                    |
+| :------- | :-------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default  | No interaction                                | Label, then description                                                                                                                                                                                          |
+| Required | isRequired on the group, passed to FieldLabel | A red asterisk after the label                                                                                                                                                                                   |
+| Optional | isOptional on FieldLabel                      | Optional after the label, in a smaller, lighter style. Hidden when the field is required                                                                                                                         |
+| Invalid  | The group is invalid                          | FieldError shows. RadioGroup, CheckboxGroup and the shared fields replace the description prop with the error                                                                                                    |
+| Disabled | isDisabled on the group, passed to FieldLabel | The label, Optional and asterisk turn `text/disabled`, as in Checkbox, Radio and Switch. The description does not change. Input, Text area and Password input use `text/base/muted` for their own disabled label |
+
+## Content options
+
+<DocsFigure
+  src="/images/docs/field/field-options-1.webp"
+  darkSrc="/images/docs/field/field-options-1-dark.webp"
+  alt='Two examples. Optional question: a checkbox group "How should we contact you?" with Optional after the label, the description "Choose all that apply" and the options SMS and Email; isOptional on. Required question: a radio group "Where will you collect your passport?" with a red asterisk after the label; isRequired on.'
+  width="2400"
+  height="704"
+  caption="Mark whichever is rarer in the form: Optional when most questions are required, the asterisk when most are optional. Never mark one question both ways."
+/>
+
+<DocsFigure
+  src="/images/docs/field/field-options-2.webp"
+  darkSrc="/images/docs/field/field-options-2-dark.webp"
+  alt='Two examples. Info button: the label ID card number with an info icon after it; showInfoTooltip on. Several errors: a list of two errors, "ID card number must start with A" and "ID card number must be 7 characters".'
+  width="2400"
+  height="664"
+  caption="Input, Select and Text area add the info button. When a form library returns more than one message, FieldError lists them."
+/>
+
+## Behaviour
+
+- **Inside the group**: put FieldLabel inside the RadioGroup or CheckboxGroup it names. A label beside the group can't name it.
+- **Pass the group state**: pass the group's isRequired and isDisabled render state to the FieldLabel inside it, so the asterisk and the muted style match the group.
+- **Show errors after submit**: show FieldError after people submit, not while they type. Veli Form shows errors without blocking submission, so set the errors from your submit handler.
+- **Errors stand alone**: RadioGroup, CheckboxGroup and the shared fields replace the description with the error while invalid, so write errors that make sense without the help. This applies to the description prop; a FieldDescription child is not removed for you, so hide it yourself while the group is invalid. A single Checkbox keeps both.
+- **Several errors**: FieldError renders several errors as a list and renders nothing when there are none. Text you pass as children wins over the errors value.
+- **Form libraries**: pass React Hook Form, TanStack Form or Standard Schema errors into FieldError errors.
+- **Props or parts, not both**: don't pass description or errorMessage on a group that also uses FieldDescription or FieldError.
+- **Wrapping**: labels and messages wrap; never truncate them. They follow the layout and orientation of the group they sit in, and must stay readable at 200 percent text size.
+
+## Language and direction
+
+<DocsFigure
+  src="/images/docs/field/field-rtl-1.webp"
+  darkSrc="/images/docs/field/field-rtl-1-dark.webp"
+  alt='Two radio groups side by side. On the left, field, English: "Where will you collect your passport?" with Optional, the description "You can change this until 21 October 2026" and the options Immigration office, Malé (selected) and Hulhumalé service centre. On the right, fieldDv, Dhivehi, mirrored: the label ލޭބަލްގެ ލިޔުން with އިޚްތިޔާރީ, the description ތަފްޞީލު ލިޔުން and the options އޮޕްޝަން އޭ (selected) and އޮޕްޝަން ބީ, aligned right with the radios on the right.'
+  width="2400"
+  height="568"
+  caption="Field parts follow the reading direction."
+/>
+
+- Use fieldDv in Dhivehi forms. Its parts mirror: text aligns right, and the label row reads label, info button, Optional and asterisk from the right.
+- Dhivehi parts use the Dhivehi regular text styles and are taller than the English ones: at md the label is 28 high, the description and error 24. In the shared fields the label row, with its 8 below, is 36 high at sm and md and 40 at lg, against 28, 28 and 32 in English (Storybook). See Missing or unverified.
+- Labels and messages follow the reading direction set by VeliProvider.
+- Optional switches to އިޚްތިޔާރީ when the language is Dhivehi.
+- Keep Latin values left to right inside Dhivehi labels, descriptions and errors, and isolate them, such as WP-2026-04817, 7XX XXXX or name@example.mv.
+
+Example configuration: FieldLabel with isOptional.
+
+| Part                | English  | Dhivehi    |
+| :------------------ | :------- | :--------- |
+| Optional (built in) | Optional | އިޚްތިޔާރީ |
+
+## Spacing
+
+<DocsFigure
+  src="/images/docs/field/field-spacing-1.svg"
+  darkSrc="/images/docs/field/field-spacing-1-dark.svg"
+  alt='Spacing redlines for a label row at size md: "How should we contact you?", the info icon and Optional, 8 apart.'
+  width="1200"
+  height="252"
+/>
+
+<DocsFigure
+  src="/images/docs/field/field-spacing-2.svg"
+  darkSrc="/images/docs/field/field-spacing-2-dark.svg"
+  alt='Spacing redlines for a RadioGroup at size md: the label "Where will you collect your passport?", the description "You can change this until 21 October 2026", the options Immigration office, Malé and Hulhumalé service centre, and the error "Choose where to collect your passport", each 12 apart.'
+  width="1200"
+  height="292"
+  caption="All values in pixels at 1x. Field parts have no padding."
+/>
+
+| Property                                           | Value            |
+| :------------------------------------------------- | :--------------- |
+| Between parts inside a RadioGroup or CheckboxGroup | 12 (`spacing/3`) |
+| Label to info button, Optional and asterisk        | 8 (`spacing/2`)  |
+
+| Size | Label row                                                              | Description and error |
+| :--- | :--------------------------------------------------------------------- | :-------------------- |
+| sm   | Label 20 high, Optional and asterisk 16 high, info button 16 x 16      | 16 high               |
+| md   | Same as sm                                                             | 16 high               |
+| lg   | Label 24 high, Optional 20 high, asterisk 16 high, info button 16 x 16 | 20 high               |
+
+In Dhivehi each part is as tall as its Dhivehi line: the label 28 (lg 32), the description and error 24 (lg 28). Long labels and messages wrap onto more lines; never truncate them.
+
+In the shared fields, Storybook and Figma both put 8 below the label row and 4 above the message.
+
+## Typography
+
+sm and md use the same styles; lg steps up one size.
+
+| Element                  | English                      | Dhivehi                                   | Colour token                                  |
+| :----------------------- | :--------------------------- | :---------------------------------------- | :-------------------------------------------- |
+| Label, sm and md         | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/DEFAULT`; disabled `text/disabled` |
+| Label, lg                | Body md regular, Inter 16/24 | Dhivehi body md regular, MV Faseyha 17/32 | `text/base/DEFAULT`; disabled `text/disabled` |
+| Optional, sm and md      | Caption regular, Inter 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/subtle`; disabled `text/disabled`  |
+| Optional, lg             | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/subtle`; disabled `text/disabled`  |
+| Required indicator       | Caption regular, Inter 12/16 | Same Latin caption style                  | `text/danger/muted`; disabled `text/disabled` |
+| Description, sm and md   | Caption regular, Inter 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/base/muted`                             |
+| Description, lg          | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/base/muted`                             |
+| Error message, sm and md | Caption regular, Inter 12/16 | Dhivehi caption regular, MV Faseyha 14/24 | `text/danger/muted`                           |
+| Error message, lg        | Body sm regular, Inter 14/20 | Dhivehi body sm regular, MV Faseyha 16/28 | `text/danger/muted`                           |
+
+The info button icon uses `icon/base/default`, and `icon/disabled` when disabled.
+
+</DocsTab>
+
+<DocsTab id="code">
 
 ## Import
 
@@ -76,7 +425,7 @@ When the group is invalid, render `FieldError` inside it. Do not also pass `erro
 </RadioGroup>
 ```
 
-`FieldError` also accepts an `errors` value from React Hook Form, TanStack Form, or Standard Schema issues. See [Forms](/docs/patterns/forms/).
+`FieldError` also accepts an `errors` value from React Hook Form, TanStack Form, or Standard Schema issues. See [Forms](/patterns/forms/).
 
 ## API Reference
 
@@ -132,3 +481,44 @@ Renders React Aria `Text` with `slot="errorMessage"`. Multiple `errors` messages
 ## RTL and Language
 
 Label, description, and error follow the page `dir`. With `isOptional`, FieldLabel shows the localized Optional string from the Veli language (`en` / `dv`).
+
+</DocsTab>
+
+<DocsTab id="accessibility">
+
+How the field parts name and describe controls for assistive technology, and what you still need to check.
+
+## Screen readers
+
+- FieldLabel is a React Aria label. Inside a RadioGroup or CheckboxGroup it names the group, so screen readers read the question when people enter it.
+- FieldDescription and FieldError are linked to the group as its description, so they are read after the name.
+- FieldSet and FieldLegend use the native fieldset and legend, so the legend names every control in the set.
+- The required asterisk and Optional sit outside the label text, so neither is part of the accessible name. isRequired is still announced as required, but Optional is not announced.
+- Prefer a visible FieldLabel to aria-label. Use aria-labelledby only when a visible heading already names the group.
+
+## Errors
+
+Show every error in text, next to the control and in the error summary. Never show an error with colour, an icon or a border alone.
+
+## Custom controls
+
+When you wire a custom control with FieldControl or useFieldControlProps, check in the accessibility tree that it has the right role, the FieldLabel text as its name, and the description and error as its description.
+
+## Contrast
+
+| Element            | Contrast, light and dark  |
+| :----------------- | :------------------------ |
+| Label              | 7.3:1 or more             |
+| Info button icon   | 7.3:1 or more             |
+| Required indicator | 4.9:1 or more             |
+| Error message      | 4.9:1 or more             |
+| Optional           | 3.0:1 to 3.4:1            |
+| Description        | 4.96:1 light, 5.23:1 dark |
+
+Values are on `bg/surface/base` and `bg/surface/raised`; the description figures are measured on the page in Storybook. Optional is below the 4.5:1 text minimum. Disabled text is exempt. Use the field text tokens as they are. Don't override them with custom colours.
+
+## Right to left
+
+Set the language with VeliProvider (language dv). Labels and messages follow the direction, and Optional switches to Dhivehi. Pass Dhivehi labels, descriptions and errors yourself.
+
+</DocsTab>

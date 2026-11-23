@@ -242,7 +242,16 @@ function isSectionActive(section: (typeof docsSections)[number]) {
           const visibleSections = sections.filter(
             ({ link, heading }) => !link.hidden && !heading.closest('[hidden]'),
           );
-          const activeLine = Math.max(rootRect.top + 64, rootRect.bottom - 64 - remainingScroll);
+          // Match anchor landing positions, including editorial tabs' larger
+          // sticky-header clearance, without changing legacy page offsets.
+          const firstHeading = visibleSections[0]?.heading;
+          const anchorOffset = firstHeading
+            ? Number.parseFloat(getComputedStyle(firstHeading).scrollMarginTop) || 0
+            : 0;
+          const activeLine = Math.max(
+            rootRect.top + Math.max(64, anchorOffset + 1),
+            rootRect.bottom - 64 - remainingScroll,
+          );
           let active = visibleSections[0];
 
           for (const section of visibleSections) {
