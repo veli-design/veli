@@ -79,12 +79,6 @@ try {
             assert.ok(await page.title(), `Missing title: ${path}`);
             const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
             assert.equal(new URL(canonical).pathname, path, `Wrong canonical: ${path}`);
-            await page.screenshot({
-              path: resolve(
-                evidence,
-                `${width}-${colorScheme}-${path.replaceAll('/', '_') || 'home'}.png`,
-              ),
-            });
           }
           await page.goto(
             new URL('/iframe.html?id=components-button--playground&viewMode=story', storybook).href,

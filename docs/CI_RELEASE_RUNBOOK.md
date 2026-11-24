@@ -31,6 +31,14 @@ current package metadata without rewriting immutable published artifacts.
 
 ## Publish a release
 
+When a candidate needs Blocks updates, align the affected Blocks with the
+candidate package versions in a separate PR. After the bump, compare the
+affected Blocks locally against the last accepted versions, focusing on the
+relevant layouts, themes, languages and states. Include targeted before/after
+evidence in the Blocks PR when appearance changes. Review and merge that PR
+before merging `chore:release`, then validate the refreshed release candidate
+with the existing CI checks. No separate visual approval gate is required.
+
 1. **Prepare release** (`prepare-release.yml`) creates or refreshes the Changesets
    PR on main pushes. It versions packages but never publishes. Freshness checks
    before and after preparation reject obsolete events and queue current-main

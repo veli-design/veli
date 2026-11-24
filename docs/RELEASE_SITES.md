@@ -5,9 +5,10 @@ against local Wrangler static assets. The checks use the current route contract
 (including `/design/`, `/docs/` and all generated legacy redirects), rather than
 restoring the obsolete pre-migration URL fixture. They check representative
 mobile/desktop pages in light/dark preferences, load-island hydration, canonical
-paths, browser runtime errors, and the Storybook Button playground. Screenshots
-and a JSON report are written to the supplied evidence directory. This smoke
-suite does not replace review of visual parity or the hosted rollback rehearsal.
+paths, browser runtime errors, and the Storybook Button playground. The script
+writes a JSON report to the supplied evidence directory, without routine
+screenshots. This smoke suite does not replace review of visual parity or the
+hosted rollback rehearsal.
 
 After building both sites, run it locally with an isolated browser runtime:
 
