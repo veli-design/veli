@@ -266,9 +266,9 @@ test('app switcher keeps You are here on the current grid tile', async ({ page }
   expect(tile.pillWidth).toBeGreaterThan(70);
   expect(tile.pillWidth).toBeLessThan(tile.tileWidth - 24);
 
-  const infoIcon = page.locator('aside div').first();
-  await expect(infoIcon).toBeVisible();
-  const infoWidth = await page.locator('aside').evaluate((aside) => {
+  const infoPanel = page.getByRole('complementary');
+  await expect(infoPanel).toBeVisible();
+  const infoWidth = await infoPanel.evaluate((aside) => {
     const match = Array.from(aside.querySelectorAll('div')).find((el) => {
       const box = el.getBoundingClientRect();
       return box.width >= 80 && box.width <= 100 && Math.abs(box.width - box.height) < 2;
