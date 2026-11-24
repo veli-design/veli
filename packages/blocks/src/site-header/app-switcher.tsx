@@ -486,13 +486,21 @@ function SearchEmptyIllustration() {
       <div
         className="absolute top-6 left-[74px] h-[60px] w-[92px] rounded-3xl"
         style={{
+          // Figma: brand/neutral/400 under brand/neutral/alpha/100 → 300
           backgroundImage:
             'linear-gradient(180deg, var(--veli-color-neutral-alpha-100) 0%, var(--veli-color-neutral-alpha-300) 100%), linear-gradient(90deg, var(--veli-color-neutral-400) 0%, var(--veli-color-neutral-400) 100%)',
         }}
       />
-      <div className="border-surface-raised absolute top-[42px] left-[62px] size-[116px] rounded-[32px] border-[3px] border-solid bg-linear-to-b from-neutral-300 to-neutral-400" />
-      <div className="absolute top-[72px] left-[92px] flex size-14 items-center justify-center">
-        <SquaresFourIcon size={56} weight="fill" className="text-surface-raised" />
+      <div
+        className="absolute top-[42px] left-[62px] size-[116px] rounded-[32px] border-[3px] border-solid border-bg-surface-raised"
+        style={{
+          // Figma: brand/neutral/300 → brand/neutral/400
+          backgroundImage:
+            'linear-gradient(180deg, var(--veli-color-neutral-300) 0%, var(--veli-color-neutral-400) 100%)',
+        }}
+      />
+      <div className="absolute top-[72px] left-[92px] flex size-14 items-center justify-center text-bg-surface-raised">
+        <SquaresFourIcon size={56} weight="regular" />
       </div>
     </div>
   );
