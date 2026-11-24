@@ -174,14 +174,12 @@ function HeaderLogoButton({
   return (
     <AriaButton
       data-header-logo=""
-      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer items-center bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
-        title
-          ? isFloating
-            ? 'gap-3.5 rounded-xl py-2 ps-2 pe-1'
-            : 'gap-3.5 rounded-xl py-2.5 pe-1 ps-0'
-          : isFloating
-            ? 'shrink-0 gap-2 rounded-xl py-2 ps-2 pe-1'
-            : 'shrink-0 gap-2 rounded-xl py-3.5 pe-1 ps-0'
+      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+        title ? 'items-center' : 'items-start'
+      } ${
+        isFloating
+          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
+          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
       }`}
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
@@ -204,46 +202,35 @@ function HeaderLogoButton({
           <span className="relative block size-10 shrink-0" aria-hidden>
             {logo}
           </span>
-          <span className="flex min-w-0 items-center gap-2">
-            <span
-              className={`text-text-base-emphasis min-w-0 max-w-[320px] text-start transition-[font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
-                isFloating
-                  ? 'type-body-md-medium leading-6'
-                  : 'type-body-sm-medium min-[1121px]:type-body-md-medium leading-5 min-[1121px]:leading-6'
-              }`}
-              aria-hidden
-            >
-              {title}
-            </span>
-            <motion.span
-              className="text-text-base-strong inline-flex size-11 shrink-0 items-center justify-center"
-              animate={{
-                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              }}
-              transition={iconTransition}
-            >
-              <CaretDownIcon size={16} weight="regular" aria-hidden />
-            </motion.span>
+          <span
+            className={`text-text-base-emphasis min-w-0 max-w-[320px] text-start transition-[font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
+              isFloating
+                ? 'type-body-md-medium leading-6'
+                : 'type-body-sm-medium min-[1121px]:type-body-md-medium leading-5 min-[1121px]:leading-6'
+            }`}
+            aria-hidden
+          >
+            {title}
           </span>
         </>
       ) : (
-        <>
-          <span className="relative block shrink-0" aria-hidden>
-            {logo}
-          </span>
-          <motion.span
-            // Wordmark-only: lift onto the x-height (descenders pull the glyph-box center down).
-            // Use margin so this does not fight the rotate transform.
-            className="text-text-base-strong -mt-1.5 inline-flex size-11 shrink-0 items-center justify-center"
-            animate={{
-              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            }}
-            transition={iconTransition}
-          >
-            <CaretDownIcon size={16} weight="regular" aria-hidden />
-          </motion.span>
-        </>
+        <span className="relative block shrink-0" aria-hidden>
+          {logo}
+        </span>
       )}
+      <motion.span
+        // Wordmark-only: lift onto the x-height (descenders pull the glyph-box center down).
+        // Use margin so this does not fight the rotate transform.
+        className={`text-text-base-strong inline-flex size-8 shrink-0 items-center justify-center ${
+          title ? '' : '-mt-1.5'
+        }`}
+        animate={{
+          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+        }}
+        transition={iconTransition}
+      >
+        <CaretDownIcon size={16} weight="regular" aria-hidden />
+      </motion.span>
     </AriaButton>
   );
 }
