@@ -10,7 +10,9 @@ import {
   caretTransition,
   EASE_SPEC,
   officialBannerDetailsTransition,
-  officialBannerTransition,
+  officialBannerHideExpandedTransition,
+  officialBannerHideTransition,
+  officialBannerShowTransition,
 } from './motion';
 
 export type OfficialBannerLabels = {
@@ -63,6 +65,15 @@ export function OfficialWebsiteBanner({
     return () => observer.disconnect();
   }, [onDetailsHeightChange]);
 
+  const hiddenOffset = expanded ? '-8px' : '-36px';
+  const bannerTransition = prefersReducedMotion
+    ? { duration: 0.15, ease: EASE_SPEC }
+    : hidden
+      ? expanded
+        ? officialBannerHideExpandedTransition
+        : officialBannerHideTransition
+      : officialBannerShowTransition;
+
   return (
     <motion.aside
       initial={false}
@@ -71,12 +82,10 @@ export function OfficialWebsiteBanner({
           ? { opacity: hidden ? 0 : 1 }
           : {
               opacity: hidden ? 0 : 1,
-              transform: hidden ? 'translateY(-36px)' : 'translateY(0px)',
+              transform: hidden ? `translateY(${hiddenOffset})` : 'translateY(0px)',
             }
       }
-      transition={
-        prefersReducedMotion ? { duration: 0.15, ease: EASE_SPEC } : officialBannerTransition
-      }
+      transition={bannerTransition}
       className={`from-accent-100 to-surface-raised overflow-hidden bg-linear-to-b from-[31.843%] ${
         hidden ? 'pointer-events-none' : ''
       }`}
@@ -122,7 +131,9 @@ export function OfficialWebsiteBanner({
         id={detailsId}
         initial={false}
         animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
-        transition={prefersReducedMotion ? { duration: 0 } : officialBannerDetailsTransition}
+        transition={
+          prefersReducedMotion || hidden ? { duration: 0 } : officialBannerDetailsTransition
+        }
         onAnimationComplete={onResizeAnimationComplete}
         className="overflow-hidden"
         inert={!expanded || undefined}
@@ -131,7 +142,7 @@ export function OfficialWebsiteBanner({
         <div ref={detailsRef} className="flex flex-col gap-6 px-4 pt-6 md:px-8">
           <div className="grid gap-6 pb-4 md:grid-cols-2 md:gap-14">
             <div className="flex gap-2">
-              <BankIcon className="text-icon-primary size-6 shrink-0" aria-hidden />
+              <BankIcon weight="fill" className="text-icon-primary size-6 shrink-0" aria-hidden />
               <div className="flex min-w-0 flex-col gap-1">
                 <p className="type-body-md-semibold text-text-base-emphasis">
                   {labels.officialLinksTitle}
@@ -142,7 +153,11 @@ export function OfficialWebsiteBanner({
               </div>
             </div>
             <div className="flex gap-2">
-              <LockSimpleIcon className="text-accent-500 size-6 shrink-0" aria-hidden />
+              <LockSimpleIcon
+                weight="fill"
+                className="text-accent-500 size-6 shrink-0"
+                aria-hidden
+              />
               <div className="flex min-w-0 flex-col gap-1">
                 <p className="type-body-md-semibold text-text-base-emphasis">
                   {labels.secureWebsitesTitle}

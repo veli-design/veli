@@ -17,6 +17,7 @@ export default function Page() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');
   const [dark, setDark] = useState(false);
   const [long, setLong] = useState(false);
+  const [entityTitle, setEntityTitle] = useState<string | undefined>();
   return (
     <VeliProvider language={language} colorScheme={dark ? 'dark' : 'light'}>
       <div
@@ -30,6 +31,7 @@ export default function Page() {
           colorScheme={dark ? 'dark' : 'light'}
           onColorSchemeChange={(scheme) => setDark(scheme === 'dark')}
           flagSrc={FLAG_SRC}
+          title={entityTitle}
           actions={
             <Button intent="accent" appearance="fill" size="md">
               Sign In
@@ -42,7 +44,17 @@ export default function Page() {
             Fixture language
           </button>{' '}
           <button onClick={() => setDark(!dark)}>Fixture theme</button>{' '}
-          <button onClick={() => setLong(!long)}>Long labels</button>
+          <button onClick={() => setLong(!long)}>Long labels</button>{' '}
+          <button
+            type="button"
+            onClick={() =>
+              setEntityTitle(
+                'Ministry of Fisheries, Agriculture and Ocean Resources, Longer Affairs, National Planning, Coastal Administration, and Maritime Safety',
+              )
+            }
+          >
+            Long entity
+          </button>
           {/* Host editable outside the switcher panel — keyboard capture must not steal keys. */}
           <label className="mt-4 block">
             Host notes

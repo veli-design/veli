@@ -14,18 +14,17 @@ import {
 const labels: SiteHeaderLabels = {
   openAppSwitcher: 'Open app switcher',
   closeAppSwitcher: 'Close app switcher',
-  browse: 'Browse government services and sites',
-  introPrefix: 'Jump into any app to go deeper, or use search to find one.',
+  browse: 'Browse government apps and sites',
+  introPrefix: 'Jump into any app or site to go deeper, or use search to find one.',
   introEmphasis: 'Select Gov.mv to return home.',
   appsBlurb: 'Shared government services under one address.',
   sitesBlurb: 'Ministries and agencies at gov.mv.',
   apps: 'Apps',
   sites: 'Sites',
   youAreHere: 'You are here',
-  viewMore: 'View more',
-  viewLess: 'View less',
+  scrollToViewMore: 'Scroll to view more',
   searchAppsAndSites: 'Search apps and sites',
-  search: 'Search',
+  search: 'Start typing...',
   filter: 'Filter',
   showAll: 'Show all',
   appsOnly: 'Apps only',
@@ -48,6 +47,7 @@ const labels: SiteHeaderLabels = {
   noAppsMatch: (query) => `No apps match “${query}”`,
   noSitesMatch: (query) => `No sites match “${query}”`,
   noAppsOrSitesMatch: (query) => `No apps or sites match “${query}”`,
+  searchEmptyHint: 'Check the spelling, or clear the search to see all GOVMV apps and sites.',
   label: 'An Official website of the Maldives Government',
   howToIdentify: 'How to identify',
   officialLinksTitle: 'Official website links end with .gov.mv',
@@ -91,11 +91,16 @@ const apps: SiteHeaderSwitcherItem[] = [
     kind: 'app',
     href: '/',
     current: true,
+    iconSrc: '/blocks/example-app-govmv.svg',
     description: 'The official entry point for public services.',
-    sections: [
+    infoParagraphs: [
       {
-        title: 'Unified Experience',
-        body: 'Interact with tasks through apps listed under Your Apps.',
+        leadIn: 'Gov.mv',
+        body: 'is your single address for government public services, publications, and more. Open any app to go deeper into a specific service or entity, and select Gov.mv anytime to return home.',
+      },
+      {
+        leadIn: 'Every service app has a widget',
+        body: 'and your Gov.mv home brings them all together, a unified view of your government activity, with each widget acting as a shortcut into its app.',
       },
     ],
   },
@@ -104,6 +109,7 @@ const apps: SiteHeaderSwitcherItem[] = [
     name: 'My Applications',
     kind: 'app',
     href: '/about',
+    iconSrc: '/blocks/example-app-my-applications.svg',
     description: 'Track and continue government service applications.',
   },
   {
@@ -111,6 +117,7 @@ const apps: SiteHeaderSwitcherItem[] = [
     name: 'Locker',
     kind: 'app',
     href: '/privacy',
+    iconSrc: '/blocks/example-app-locker.svg',
     description: 'Secure storage for government documents.',
   },
 ];
@@ -137,6 +144,7 @@ const sites: SiteHeaderSwitcherItem[] = [
   kind: 'site' as const,
   href: `https://${id}.gov.mv`,
   external: true,
+  emblemSrc: '/blocks/example-organization-emblem.svg',
   description: `Official site for the ${name}.`,
 }));
 
@@ -148,6 +156,7 @@ export function ApplicationHeader({
   actions,
   /** Banner flag image URL owned by the application. */
   flagSrc,
+  title,
 }: {
   colorScheme?: SiteHeaderColorScheme;
   onColorSchemeChange?: (scheme: SiteHeaderColorScheme) => void;
@@ -155,6 +164,7 @@ export function ApplicationHeader({
   onLanguageChange?: (id: string) => void;
   actions?: ReactNode;
   flagSrc: string;
+  title?: string;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -181,6 +191,7 @@ export function ApplicationHeader({
           Gov.mv
         </span>
       }
+      title={title}
       pathname={pathname}
       desktopNavItems={desktopNavItems}
       mobileNavItems={desktopNavItems}

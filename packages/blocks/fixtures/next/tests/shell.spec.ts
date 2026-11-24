@@ -20,16 +20,16 @@ test('app switcher fades main and hides preview banner; Escape restores them', a
   const trigger = page.getByRole('button', { name: 'Open app switcher' });
   await trigger.click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   await expect(content).toHaveAttribute('aria-hidden', 'true');
   await expect(page.locator('[data-preview-banner-region]')).toHaveAttribute('aria-hidden', 'true');
 
   await page.keyboard.press('Escape');
-  await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
-  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Browse government apps and sites' })).toHaveCount(
+    0,
+  );
   // Main chrome clears with switcherOpen; the banner waits for switcherRendered
   // (collapse animation / transitionend).
   await expect(content).not.toHaveAttribute('aria-hidden', 'true');
@@ -49,7 +49,7 @@ test('reduced motion still fades chrome when the app switcher opens', async ({ p
 
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
   await expect(page.locator('[data-shell-chrome="content"]')).toHaveAttribute(
     'aria-hidden',

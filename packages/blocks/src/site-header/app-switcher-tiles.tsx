@@ -3,26 +3,31 @@ import { SignInIcon } from '@phosphor-icons/react';
 
 /** Fallback when the host has not set --veli-header-site-tile-gradient. */
 export const SITE_TILE_GRADIENT_FALLBACK =
-  'radial-gradient(circle at 50% 0%, #fbfcfb 0%, #e0e2dd 100%)';
+  'radial-gradient(circle at 50% 0%, rgb(155 180 155 / 0.04) 0%, rgb(44 66 11 / 0.09) 100%)';
 
 /** Dark-mode fallback when the host has not set --veli-header-site-tile-gradient. */
 export const SITE_TILE_GRADIENT_DARK_FALLBACK =
-  'radial-gradient(circle at 50% 0%, #0e0e0d 0%, #191a18 50%, #252624 100%)';
+  'radial-gradient(circle at 50% 0%, rgb(14 14 13 / 0.4) 0%, rgb(37 38 36 / 0.55) 100%)';
 
 /** Fallback when the host has not set --veli-header-govmv-tile-gradient. */
 export const GOVMV_TILE_GRADIENT_FALLBACK =
   'radial-gradient(circle at 50% 2%, #5bccca 0%, #47a8a9 25%, #348388 50%, #205f68 75%, #0c3a47 100%)';
 
-/** Fallback when the host has not set --veli-header-info-panel-glow. */
+/**
+ * Fallback when the host has not set --veli-header-info-panel-glow.
+ * Uses green-200 so light (#d5ffd3) and dark (#071900) track the document theme.
+ */
 export const INFO_PANEL_GLOW_FALLBACK =
-  'radial-gradient(ellipse 100% 80% at 50% 0%, rgb(213 255 211) 0%, rgb(255 255 255 / 0%) 63%)';
-
-/** Dark-mode fallback when the host has not set --veli-header-info-panel-glow. */
-export const INFO_PANEL_GLOW_DARK_FALLBACK =
-  'radial-gradient(ellipse 236.72% 100% at 50% 0%, rgb(35 115 10) 0%, rgb(18 57 5 / 50%) 31.478%, transparent 62.957%)';
+  'linear-gradient(to bottom, var(--veli-color-green-200) 0%, transparent 32.5%)';
 
 export type SiteHeaderSwitcherSection = {
   title: string;
+  body: string;
+};
+
+/** Bold lead-in + body for info-card paragraphs (Gov.mv handoff layout). */
+export type SiteHeaderSwitcherInfoParagraph = {
+  leadIn: string;
   body: string;
 };
 
@@ -53,6 +58,11 @@ export type SiteHeaderSwitcherItem = {
   /** Emblem overlay URL used with tileGradient (ministry-style tiles). */
   emblemSrc?: string;
   sections?: SiteHeaderSwitcherSection[];
+  /**
+   * When set, the info card shows these paragraphs (bold lead-in + body) instead
+   * of the title, description, and sections layout.
+   */
+  infoParagraphs?: SiteHeaderSwitcherInfoParagraph[];
 };
 
 function SignInBadge() {
@@ -66,24 +76,12 @@ function SignInBadge() {
 function TileIconWithBadge({
   item,
   selected,
-  size = 'tile',
 }: {
   item: SiteHeaderSwitcherItem;
   selected?: boolean;
-  size?: 'tile' | 'row';
 }) {
-  const icon = <SwitcherTileIcon item={item} selected={selected} size={size} />;
+  const icon = <SwitcherTileIcon item={item} selected={selected} />;
   if (item.badge !== 'signin') return icon;
-  if (size === 'row') {
-    return (
-      <span className="relative inline-grid size-8 shrink-0 place-items-start">
-        <span className="col-start-1 row-start-1">{icon}</span>
-        <span className="bg-status-neutral-emphasis col-start-1 row-start-1 ms-5 -mt-0.5 flex rounded-full p-0.5 text-white shadow-sm">
-          <SignInIcon size={8} weight="bold" aria-hidden />
-        </span>
-      </span>
-    );
-  }
   return (
     <span className="relative inline-grid size-14 place-items-start">
       <span className="col-start-1 row-start-1">{icon}</span>
@@ -97,29 +95,27 @@ function AppIconShell({
   gradient,
   darkGradient,
   selected,
-  size = 'tile',
+  /** Full-bleed artwork already includes fill and corners; skip inset depth. */
+  artwork = false,
   className = '',
 }: {
   children?: ReactNode;
   gradient?: string;
   darkGradient?: string;
   selected?: boolean;
-  size?: 'tile' | 'row';
+  artwork?: boolean;
   className?: string;
 }) {
-  const shellRadius =
-    size === 'row' ? 'rounded-[8px]' : selected ? 'rounded-[18px]' : 'rounded-[20px]';
-  const box = size === 'row' ? 'size-8 rounded-[9px]' : 'size-14 rounded-[20px]';
+  // Current-app ring: primary/700 only — no white gap stroke on the artwork.
   const chrome = selected
-    ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-teal-500)]'
-    : size === 'row'
-      ? 'border border-transparent'
-      : 'border border-base-subtle';
+    ? 'overflow-visible shadow-[0_0_0_3px_var(--veli-color-primary-700)]'
+    : '';
+  const depth = artwork
+    ? ''
+    : 'shadow-[inset_0_0_8px_0_var(--veli-color-effects-shadow-depth-100)]';
   return (
-    <div className={`relative shrink-0 ${box} ${chrome} ${className}`}>
-      <div
-        className={`absolute inset-0 overflow-hidden shadow-[inset_0_0_8px_0_var(--veli-color-effects-shadow-depth-100)] ${shellRadius}`}
-      >
+    <div className={`relative size-14 shrink-0 rounded-[20px] ${chrome} ${className}`}>
+      <div className={`absolute inset-0 overflow-hidden rounded-[20px] ${depth}`}>
         {gradient && darkGradient ? (
           <>
             <span
@@ -162,13 +158,13 @@ function DualToneFill({ light, dark }: { light: string; dark?: string }) {
 export function SwitcherTileIcon({
   item,
   selected,
-  size = 'tile',
 }: {
   item: SiteHeaderSwitcherItem;
   selected?: boolean;
-  size?: 'tile' | 'row';
 }) {
-  if (item.tileGradient || item.emblemSrc) {
+  const useSiteShell = item.kind === 'site' || Boolean(item.tileGradient || item.emblemSrc);
+
+  if (useSiteShell) {
     const gradient = item.tileGradient;
     return (
       <AppIconShell
@@ -181,15 +177,10 @@ export function SwitcherTileIcon({
             : `var(--veli-header-site-tile-gradient, ${SITE_TILE_GRADIENT_DARK_FALLBACK})`
         }
         selected={selected}
-        size={size}
       >
         {item.emblemSrc ? (
           <span
-            className={
-              size === 'row'
-                ? 'absolute inset-0 m-auto block h-[22px] w-5 bg-contain bg-center bg-no-repeat'
-                : 'absolute start-2.5 top-[7px] block h-[42px] w-9 bg-contain bg-center bg-no-repeat'
-            }
+            className="absolute start-2.5 top-[7px] block h-[42px] w-9 bg-contain bg-center bg-no-repeat"
             style={{ backgroundImage: `url('${item.emblemSrc}')` }}
             aria-hidden
           />
@@ -200,7 +191,7 @@ export function SwitcherTileIcon({
 
   if (item.iconSrc) {
     return (
-      <AppIconShell selected={selected} size={size}>
+      <AppIconShell selected={selected} artwork>
         <DualToneFill light={item.iconSrc} dark={item.iconDarkSrc} />
       </AppIconShell>
     );
@@ -210,7 +201,6 @@ export function SwitcherTileIcon({
     <AppIconShell
       gradient={`var(--veli-header-govmv-tile-gradient, ${GOVMV_TILE_GRADIENT_FALLBACK})`}
       selected={selected}
-      size={size}
     />
   );
 }
@@ -218,7 +208,7 @@ export function SwitcherTileIcon({
 export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
   if (item.largeIconSrc) {
     return (
-      <div className="relative size-[95px] shrink-0 overflow-hidden rounded-4xl shadow-md">
+      <div className="relative size-[88px] shrink-0 overflow-hidden rounded-[28px]">
         <DualToneFill light={item.largeIconSrc} dark={item.largeIconDarkSrc} />
       </div>
     );
@@ -227,7 +217,7 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
   if (item.emblemSrc) {
     return (
       <span
-        className="block size-[95px] shrink-0 bg-contain bg-center bg-no-repeat"
+        className="block h-[88px] w-[76px] shrink-0 bg-contain bg-center bg-no-repeat"
         style={{ backgroundImage: `url('${item.emblemSrc}')` }}
         aria-hidden
       />
@@ -236,15 +226,26 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
 
   if (item.iconSrc) {
     return (
-      <div className="relative size-[95px] shrink-0 overflow-hidden rounded-4xl shadow-md">
+      <div className="relative size-[88px] shrink-0 overflow-hidden rounded-[28px]">
         <DualToneFill light={item.iconSrc} dark={item.iconDarkSrc} />
       </div>
     );
   }
 
+  if (item.kind === 'site') {
+    return (
+      <div
+        className="relative size-[88px] shrink-0 overflow-hidden rounded-[28px]"
+        style={{
+          backgroundImage: `var(--veli-header-site-tile-gradient, ${SITE_TILE_GRADIENT_FALLBACK})`,
+        }}
+      />
+    );
+  }
+
   return (
     <div
-      className="relative flex size-[95px] items-center justify-center rounded-4xl shadow-md"
+      className="relative flex size-[88px] items-center justify-center rounded-[28px]"
       style={{
         backgroundImage: `var(--veli-header-govmv-tile-gradient, ${GOVMV_TILE_GRADIENT_FALLBACK})`,
       }}
@@ -252,49 +253,26 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
   );
 }
 
+/** Two fluid columns below sm, three fluid columns from sm until xl, then 165px tracks. */
 const tileGridClass =
-  'grid grid-cols-3 gap-x-2 gap-y-4 md:grid-cols-4 xl:grid-cols-5 xl:gap-x-14 xl:gap-y-4';
+  'grid grid-cols-2 items-start gap-2 sm:grid-cols-3 xl:grid-cols-[repeat(auto-fill,165px)] xl:justify-between xl:gap-x-1 xl:gap-y-2';
 
-/** Presentational tile/row chrome for a ListBoxItem. */
+/** Presentational tile chrome for a ListBoxItem. */
 export function SwitcherItemContent({
   item,
   youAreHereLabel,
-  layout,
 }: {
   item: SiteHeaderSwitcherItem;
   youAreHereLabel: string;
-  layout: 'grid' | 'list';
 }) {
   const isCurrent = Boolean(item.current);
-
-  if (layout === 'list') {
-    return (
-      <>
-        <TileIconWithBadge item={item} selected={isCurrent} size="row" />
-        <span className="flex min-w-0 flex-1 items-center gap-3">
-          <p className="type-body-md-medium text-text-base-strong min-w-0 truncate">{item.name}</p>
-          {isCurrent ? (
-            <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong shrink-0 rounded-3xl px-1.5 py-0.5 tracking-[0.18px]">
-              {youAreHereLabel}
-            </span>
-          ) : null}
-        </span>
-      </>
-    );
-  }
 
   return (
     <>
       <TileIconWithBadge item={item} selected={isCurrent} />
-      <p
-        className={`type-body-sm-medium text-text-base w-full max-w-28 ${
-          item.kind === 'site' ? 'line-clamp-2' : 'truncate'
-        }`}
-      >
-        {item.name}
-      </p>
+      <p className="type-caption-medium text-text-base w-full xl:max-w-[141px]">{item.name}</p>
       {isCurrent ? (
-        <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong w-full max-w-28 rounded-3xl px-1.5 py-0.5 text-center tracking-[0.18px]">
+        <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong rounded-3xl px-1.5 py-0.5 text-center tracking-[0.18px] whitespace-nowrap">
           {youAreHereLabel}
         </span>
       ) : null}
@@ -302,20 +280,8 @@ export function SwitcherItemContent({
   );
 }
 
-export function switcherItemClassName({
-  layout,
-  highlighted,
-}: {
-  layout: 'grid' | 'list';
-  highlighted: boolean;
-}) {
-  if (layout === 'list') {
-    return `flex w-full cursor-pointer items-center gap-3 rounded-2xl p-2 text-start outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${
-      highlighted ? 'bg-neutral-alpha-200' : 'bg-transparent'
-    }`;
-  }
-
-  return `flex min-h-[132px] w-full cursor-pointer flex-col items-center gap-1 rounded-[28px] px-1 py-4 text-center outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${
+export function switcherItemClassName(highlighted: boolean) {
+  return `flex w-full xl:w-[165px] cursor-pointer flex-col items-center gap-1.5 rounded-[28px] p-3 text-center outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${
     highlighted ? 'bg-neutral-alpha-200' : 'bg-transparent'
   }`;
 }

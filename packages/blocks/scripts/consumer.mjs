@@ -102,10 +102,22 @@ for (const name of [
 }
 
 mkdirSync(resolve(target, 'public/blocks'), { recursive: true });
-cpSync(
-  resolve(packageRoot, '../../apps/storybook/public/blocks/example-organization-emblem.svg'),
-  resolve(target, 'public/blocks/example-organization-emblem.svg'),
-);
+const blocksPublic = resolve(packageRoot, '../../apps/storybook/public/blocks');
+for (const name of [
+  'example-organization-emblem.svg',
+  'example-app-govmv.svg',
+  'example-app-services.svg',
+  'example-app-my-applications.svg',
+  'example-app-locker.svg',
+  'example-app-wallet.svg',
+  'example-app-inbox.svg',
+  'example-app-gov-account.svg',
+  'example-app-corpid.svg',
+  'example-app-gov-support.svg',
+  'example-app-government-entities.svg',
+]) {
+  cpSync(resolve(blocksPublic, name), resolve(target, 'public/blocks', name));
+}
 
 mkdirSync(resolve(target, 'public/fonts'), { recursive: true });
 cpSync(

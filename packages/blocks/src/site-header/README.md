@@ -1,6 +1,6 @@
 ## Core package baseline
 
-Version 0.12.0 targets Veli React 0.20.x and tokens 0.11.x. Install the applicable new core versions
+Version 0.14.0 targets Veli React 0.20.x and tokens 0.11.x. Install the applicable new core versions
 before adding or updating this application-owned source. The approved typography
 metrics and subtle-button colors can change wrapping and element height. Previous
 block archives retain their existing requirements.
@@ -32,7 +32,7 @@ Optional host CSS variables (built-in fallbacks match the gov.mv reference, incl
   --veli-header-ease-drawer: var(--veli-ease-drawer, cubic-bezier(0.32, 0.72, 0, 1));
   --veli-header-site-tile-gradient: var(
     --site-tile-gradient,
-    radial-gradient(circle at 50% 0%, #fbfcfb 0%, #e0e2dd 100%)
+    radial-gradient(circle at 50% 0%, rgb(155 180 155 / 0.04) 0%, rgb(44 66 11 / 0.09) 100%)
   );
   --veli-header-govmv-tile-gradient: radial-gradient(
     circle at 50% 2%,
@@ -44,23 +44,14 @@ Optional host CSS variables (built-in fallbacks match the gov.mv reference, incl
   );
   --veli-header-info-panel-glow: var(
     --info-panel-glow,
-    radial-gradient(ellipse 100% 80% at 50% 0%, rgb(213 255 211) 0%, rgb(255 255 255 / 0%) 63%)
+    linear-gradient(to bottom, var(--veli-color-green-200) 0%, transparent 32.5%)
   );
 }
 
 .dark {
   --veli-header-site-tile-gradient: var(
     --site-tile-gradient,
-    radial-gradient(circle at 50% 0%, #0e0e0d 0%, #191a18 50%, #252624 100%)
-  );
-  --veli-header-info-panel-glow: var(
-    --info-panel-glow,
-    radial-gradient(
-      ellipse 236.72% 100% at 50% 0%,
-      rgb(35 115 10) 0%,
-      rgb(18 57 5 / 50%) 31.478%,
-      transparent 62.957%
-    )
+    radial-gradient(circle at 50% 0%, rgb(14 14 13 / 0.4) 0%, rgb(37 38 36 / 0.55) 100%)
   );
 }
 ```
@@ -80,11 +71,11 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 `SiteHeader` is a client component. Supply serializable data and application-owned callbacks:
 
-- `logo` (ReactNode) and optional `title` for ministry mode.
+- `logo` (ReactNode) and optional `title` for ministry mode. The title wraps within 320px and the bar grows with it. It does not truncate.
 - `pathname` so scroll mode resets on navigation.
 - `desktopNavItems` / `mobileNavItems`: `{ href, label, current?, external? }`.
-- `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, and `sections`. Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
-- `labels`: every user-facing string, including `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, and `noAppsOrSitesMatch` functions. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. Sites render in the order supplied; that order is the default directory order.
+- `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, `sections`, and optional `infoParagraphs` (bold lead-in + body; replaces the title/description/sections info-card layout when set). Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
+- `labels`: every user-facing string, including `scrollToViewMore`, `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, `noAppsOrSitesMatch`, and `searchEmptyHint`. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. `showingApps` and `showingSites` supply the filtered result line ("Showing all Sites: " plus the count). Sites render in the order supplied; that order is the default directory order. Demo copy uses “Browse government apps and sites”, the longer intro line, and search placeholder “Start typing...”.
 - `languages`, `language`, `onLanguageChange`.
 - `colorScheme`, `onColorSchemeChange` (`light` | `dark` | `system`).
 - `onNavigate(href)` for in-app switcher tiles.
@@ -98,7 +89,7 @@ Keep labels, routing, authentication, API calls, account panels, and persistence
 
 ## Accessibility and responsive behavior
 
-Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. The switcher apps and sites are a React Aria listbox: Show all uses a grid layout, Apps only and Sites only use a stack. Arrow keys move the highlight (hover treatment, without a focus ring) and Enter opens the highlighted app or site. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
+Preserve the header landmark, dialog semantics when the app switcher expands, Escape dismissal, and focus return to the logo trigger. Apps and sites are a React Aria listbox in a grid for Show all, Apps only, and Sites only. The card body scrolls. "Scroll to view more" is a button shown only while that body is at the top and more tiles sit below. While it is hidden it is removed from pointer and keyboard access. Arrow keys move the highlight (hover treatment, without a focus ring) and Enter opens the highlighted app or site. Link groups and language controls must keep readable names in English/LTR and Dhivehi/RTL. The official banner shows the target language as a direct switch for the two configured languages. Respect `prefers-reduced-motion` (the scroll control still appears, and its scroll is instant). Desktop navigation is shown from 1121px wide. At 1120px and below, the header uses the mobile menu. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 

@@ -16,7 +16,7 @@ test('copied footer renders, hydrates, preserves keyboard focus and Next navigat
   await expect(footer).toHaveCount(1);
   // Scope to the footer — site-header also exposes an About nav link.
   const about = footer.getByRole('link', { name: 'About', exact: true });
-  await page.getByRole('button', { name: 'Long labels' }).focus();
+  await page.getByRole('button', { name: 'Long entity' }).focus();
   await page.keyboard.press('Tab');
   await expect(page.getByRole('textbox', { name: 'Host notes' })).toBeFocused();
   await page.keyboard.press('Tab');

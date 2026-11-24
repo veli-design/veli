@@ -10,6 +10,9 @@ export const EASE_SPEC = [0.19, 1, 0.22, 1] as const;
 
 export const DURATION = {
   fade: 0.3,
+  chromeFadeOut: 0.14,
+  switcherContentEnter: 0.28,
+  switcherContentExit: 0.14,
   menuOpen: 0.32,
   menuClose: 0.22,
   panelExpand: 0.48,
@@ -20,6 +23,8 @@ export const DURATION = {
   infoPanel: 0.15,
   navItem: 0.24,
   officialBanner: 0.24,
+  officialBannerHide: 0.14,
+  officialBannerHideExpanded: 0.11,
   officialBannerDetails: 0.28,
   headerDock: 0.3,
   navStagger: 0,
@@ -35,6 +40,7 @@ export const HEADER_DOCK_MS = DURATION.headerDock * 1000;
 export const OFFICIAL_BANNER_MS = DURATION.officialBanner * 1000;
 
 export const fadeTransition = { duration: DURATION.fade, ease: EASE_DRAWER };
+export const chromeFadeOutTransition = { duration: DURATION.chromeFadeOut, ease: EASE_OUT };
 export const mobileMenuOpenTransition = { duration: DURATION.menuOpen, ease: EASE_SPEC };
 export const mobileMenuCloseTransition = { duration: DURATION.menuClose, ease: EASE_SPEC };
 export const logoSwapTransition = { duration: DURATION.logoSwap, ease: EASE_DRAWER };
@@ -45,6 +51,18 @@ export const navItemEntranceTransition = { duration: DURATION.navItem, ease: EAS
 export const officialBannerTransition = {
   duration: DURATION.officialBanner,
   ease: EASE_SPEC,
+};
+export const officialBannerHideTransition = {
+  duration: DURATION.officialBannerHide,
+  ease: EASE_OUT,
+};
+export const officialBannerHideExpandedTransition = {
+  duration: DURATION.officialBannerHideExpanded,
+  ease: EASE_OUT,
+};
+export const officialBannerShowTransition = {
+  duration: DURATION.panelCollapse,
+  ease: EASE_DRAWER,
 };
 export const officialBannerDetailsTransition = {
   duration: DURATION.officialBannerDetails,
@@ -67,6 +85,10 @@ export const searchResultReducedTransition = {
 /** Unified header surface geometry for centered and inline-start morphs. */
 export function surfaceGeometryTransitionFor(open: boolean) {
   const ms = open ? EXPAND_MS : COLLAPSE_MS;
+  // Delay the card shadow until halfway through entrance so it lands as the card rests;
+  // clear it in the first half of collapse so no shadow edge streaks upward.
+  const shadowMs = Math.round(ms * 0.5);
+  const shadowDelay = open ? shadowMs : 0;
   return [
     `inset-inline-start ${ms}ms ${EASE_DRAWER_CSS}`,
     `top ${ms}ms ${EASE_DRAWER_CSS}`,
@@ -74,7 +96,7 @@ export function surfaceGeometryTransitionFor(open: boolean) {
     `max-width ${ms}ms ${EASE_DRAWER_CSS}`,
     `height ${ms}ms ${EASE_DRAWER_CSS}`,
     `border-radius ${ms}ms ${EASE_DRAWER_CSS}`,
-    `box-shadow ${ms}ms ${EASE_DRAWER_CSS}`,
+    `box-shadow ${shadowMs}ms ${EASE_OUT_CSS} ${shadowDelay}ms`,
     `padding-top ${ms}ms ${EASE_DRAWER_CSS}`,
     `background-color ${ms}ms ${EASE_DRAWER_CSS}`,
     `backdrop-filter ${ms}ms ${EASE_DRAWER_CSS}`,

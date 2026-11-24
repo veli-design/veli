@@ -12,8 +12,9 @@ The following materials are excluded from both original-work grants:
   `apps/web/public/images/veli-mark.svg` and `veli-design-*.svg` in
   `apps/web/public/images/marketing/`, and `home-hero.svg` in
   `apps/web/src/assets/marketing/`.
-- Government and organisation identifiers: `govmv-logo*.svg`, `maldives-flag.svg`
-  and `example-organization-emblem.svg` in both apps' `public/blocks/` directories;
+- Government and organisation identifiers: `govmv-logo*.svg`, `maldives-flag.svg`,
+  `example-organization-emblem.svg`, and `example-app-*.svg` in both apps'
+  `public/blocks/` directories;
   `govmv-wordmark.svg`, `government-emblem*.svg`, and `mindco-wordmark.svg`
   in `apps/web/public/images/marketing/`; `adoption-emblem.png` in that directory;
   and `home-govmv.svg` in `apps/web/src/assets/marketing/`.
