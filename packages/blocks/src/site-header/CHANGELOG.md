@@ -12,6 +12,7 @@
 
 ### Fixed
 
+- Hold the search result line at the top of the card when a new query resets the scroll position.
 - Match the desktop directory frame. Tile names wrap in a 133px box, the "You are here" pill hugs its label, and five 165px tiles in the 920px card keep a 24px gutter. A divider separates Apps and Sites. The current tile's ring sits outside the icon, with a 2px gap and a 5px teal stroke. The info card icon is 88px, and its light fallback fade is a linear green wash that ends at 32.5% of the card height.
 
 ### Removed
