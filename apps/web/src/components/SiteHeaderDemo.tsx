@@ -11,8 +11,8 @@ import {
 const labels: SiteHeaderLabels = {
   openAppSwitcher: 'Open app switcher',
   closeAppSwitcher: 'Close app switcher',
-  browse: 'Browse government services and sites',
-  introPrefix: 'Jump into any app to go deeper, or use search to find one.',
+  browse: 'Browse government apps and sites',
+  introPrefix: 'Jump into any app or site to go deeper, or use search to find one.',
   introEmphasis: 'Select Gov.mv to return home.',
   appsBlurb: 'Shared government services under one address.',
   sitesBlurb: 'Ministries and agencies at gov.mv.',
@@ -21,7 +21,7 @@ const labels: SiteHeaderLabels = {
   youAreHere: 'You are here',
   scrollToViewMore: 'Scroll to view more',
   searchAppsAndSites: 'Search apps and sites',
-  search: 'Search',
+  search: 'Start typing...',
   filter: 'Filter',
   showAll: 'Show all',
   appsOnly: 'Apps only',
@@ -67,13 +67,25 @@ const apps: SiteHeaderSwitcherItem[] = [
     kind: 'app',
     href: '#ownership-and-prerequisites',
     current: true,
+    iconSrc: '/blocks/example-app-govmv.svg',
     description: 'The official entry point for public services.',
+    infoParagraphs: [
+      {
+        leadIn: 'Gov.mv',
+        body: 'is your single address for government public services, publications, and more. Open any app to go deeper into a specific service or entity, and select Gov.mv anytime to return home.',
+      },
+      {
+        leadIn: 'Every service app has a widget',
+        body: 'and your Gov.mv home brings them all together, a unified view of your government activity, with each widget acting as a shortcut into its app.',
+      },
+    ],
   },
   {
     id: 'applications',
     name: 'My Applications',
     kind: 'app',
     href: '#api',
+    iconSrc: '/blocks/example-app-my-applications.svg',
     description: 'Track and continue government service applications.',
   },
   {
@@ -81,6 +93,7 @@ const apps: SiteHeaderSwitcherItem[] = [
     name: 'Locker',
     kind: 'app',
     href: '#changelog',
+    iconSrc: '/blocks/example-app-locker.svg',
     description: 'Secure storage for government documents.',
   },
 ];
@@ -106,6 +119,7 @@ const sites: SiteHeaderSwitcherItem[] = [
   name,
   kind: 'site' as const,
   href: '#accessibility-and-responsive-behavior',
+  emblemSrc: '/blocks/example-organization-emblem.svg',
   description: `Official site for the ${name}.`,
 }));
 

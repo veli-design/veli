@@ -15,7 +15,7 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
   const trigger = page.getByRole('button', { name: 'Open app switcher' });
   await trigger.click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
@@ -25,9 +25,9 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
   await expect(page.getByRole('option', { name: 'My Applications' })).toBeVisible();
 
   await page.keyboard.press('Escape');
-  await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
-  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Browse government apps and sites' })).toHaveCount(
+    0,
+  );
   await expect(trigger).toBeFocused();
   expect(errors).toEqual([]);
 });
@@ -126,7 +126,7 @@ test('app switcher leaves host textarea and header actions keys alone while open
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   const govmv = page.getByRole('option', { name: /Gov\.mv/ });
@@ -160,7 +160,7 @@ test('app switcher leaves host textarea and header actions keys alone while open
   });
   await expect(page).toHaveURL(/\/$/);
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   // Faded host actions stay inert; keys must not redirect into Search.
@@ -207,9 +207,9 @@ test('app switcher Filter arrow opens the menu and type-to-search reaches Search
   await expect(search).toHaveValue('Lock');
 
   await page.keyboard.press('Escape');
-  await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
-  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Browse government apps and sites' })).toHaveCount(
+    0,
+  );
 
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   const filter = page.getByRole('button', { name: 'Filter' });
@@ -261,7 +261,7 @@ test('app switcher keeps You are here on the current grid tile', async ({ page }
   });
   expect(tile.direction).toBe('column');
   expect(tile.clamp === 'none' || tile.clamp === '').toBe(true);
-  expect(tile.labelMax).toBe('133px');
+  expect(tile.labelMax).toBe('141px');
   expect(tile.iconWidth).toBe(56);
   expect(tile.pillWidth).toBeGreaterThan(70);
   expect(tile.pillWidth).toBeLessThan(tile.tileWidth - 24);
@@ -388,6 +388,6 @@ test('reduced motion still opens the app switcher', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 });

@@ -19,7 +19,11 @@ import { Button } from '@veli-design/react/button';
 import { motion, useReducedMotion } from 'motion/react';
 
 import { AppSwitcher, type SiteHeaderAppSwitcherLabels } from './app-switcher';
-import type { SiteHeaderSwitcherItem } from './app-switcher-tiles';
+import type {
+  SiteHeaderSwitcherInfoParagraph,
+  SiteHeaderSwitcherItem,
+  SiteHeaderSwitcherSection,
+} from './app-switcher-tiles';
 import {
   HeaderLanguageMenu,
   schemeFromThemeOption,
@@ -30,8 +34,12 @@ import {
   type SiteHeaderThemeOption,
 } from './header-controls';
 import {
+  caretTransition,
+  chromeFadeOutTransition,
   COLLAPSE_MS,
+  DURATION,
   EASE_DRAWER_CSS,
+  EASE_OUT,
   EXPAND_MS,
   fadeTransition,
   HEADER_DOCK_MS,
@@ -39,7 +47,6 @@ import {
   mobileMenuOpenTransition,
   OFFICIAL_BANNER_MS,
   surfaceGeometryTransitionFor,
-  caretTransition,
 } from './motion';
 import { MobileNavPanel, ShellNavLink, type SiteHeaderNavItem } from './mobile-nav';
 import { OfficialWebsiteBanner, type OfficialBannerLabels } from './official-banner';
@@ -52,6 +59,8 @@ import {
 export type {
   SiteHeaderNavItem,
   SiteHeaderSwitcherItem,
+  SiteHeaderSwitcherSection,
+  SiteHeaderSwitcherInfoParagraph,
   SiteHeaderColorScheme,
   SiteHeaderLanguageOption,
   SiteHeaderThemeOption,
@@ -70,6 +79,10 @@ export type SiteHeaderLabels = SiteHeaderAppSwitcherLabels &
 
 /** Figma open panel: 24px top pad above the nav row */
 const OPEN_PAD_TOP = 24;
+/** Lead-in so expanded banner details dissolve in place before the header rises across them. */
+const BANNER_EXPANDED_EXIT_LEAD_MS = 90;
+/** Delay before silently resetting expanded banner state while the switcher covers the page. */
+const BANNER_EXPANDED_RESET_MS = 260;
 
 function subscribeCanHover(onChange: () => void) {
   const mq = window.matchMedia('(hover: hover) and (pointer: fine)');
@@ -107,7 +120,9 @@ function DesktopNav({
     <motion.nav
       className="hidden min-w-0 flex-1 items-center min-[1121px]:flex"
       animate={{ opacity: hidden ? 0 : 1 }}
-      transition={prefersReducedMotion ? { duration: 0 } : fadeTransition}
+      transition={
+        prefersReducedMotion ? { duration: 0 } : hidden ? chromeFadeOutTransition : fadeTransition
+      }
       style={{ pointerEvents: hidden ? 'none' : 'auto' }}
       aria-label={primaryNavLabel}
       aria-hidden={hidden || undefined}
@@ -116,7 +131,7 @@ function DesktopNav({
       {navItems.map((item) => {
         const { href, label, external, current } = item;
         const className = current
-          ? 'type-body-md-medium text-text-base-emphasis bg-primary-subtle duration-fast ease-out-quad inline-flex h-9 items-center justify-center rounded-4xl px-5 transition-[transform,background-color] active:scale-[1.02]'
+          ? 'type-body-md-medium text-text-base-emphasis bg-primary-alpha-200 duration-fast ease-out-quad inline-flex h-9 items-center justify-center rounded-4xl px-5 transition-[transform,background-color] active:scale-[1.02]'
           : 'type-body-md-medium text-text-base hover:bg-neutral-alpha-200 active:bg-neutral-alpha-300 duration-fast ease-out-quad inline-flex h-9 items-center justify-center rounded-2xl px-5 transition-[transform,background-color] active:scale-[1.02]';
         return renderLink ? (
           <span key={href} className={hidden ? 'pointer-events-none' : undefined}>
@@ -170,17 +185,24 @@ function HeaderLogoButton({
 }) {
   const canHover = useCanHover();
   const iconTransition = prefersReducedMotion ? { duration: 0 } : caretTransition;
+  // Closed and open share the hover-pill pad. The open row already matches the
+  // panel inset (px-6 / xl:px-12), so a matching negative start margin keeps
+  // the mark on that inset while the fill keeps the pad.
+  const logoShiftMs = isExpanded ? EXPAND_MS : COLLAPSE_MS;
+  const logoTransition = prefersReducedMotion
+    ? undefined
+    : `color 150ms, background-color 150ms, border-color 150ms, text-decoration-color 150ms, fill 150ms, stroke 150ms, margin-inline-start ${logoShiftMs}ms ${EASE_DRAWER_CSS}, padding-inline-start ${logoShiftMs}ms ${EASE_DRAWER_CSS}`;
+  const logoShape = `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${
+    title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'
+  }`;
 
   return (
     <AriaButton
       data-header-logo=""
-      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent focus-visible:ring-2 focus-visible:outline-none motion-reduce:transition-none ${
         title ? 'items-center' : 'items-start'
-      } ${
-        isFloating
-          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
-          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
-      }`}
+      } ${isExpanded ? '-ms-2 lg:-ms-3 ' : ''}${logoShape}`}
+      style={logoTransition ? { transition: logoTransition } : undefined}
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
       aria-haspopup="dialog"
@@ -261,7 +283,9 @@ function HeaderActions({
       <motion.div
         className="flex items-center gap-2"
         animate={{ opacity: isOpen ? 0 : 1 }}
-        transition={prefersReducedMotion ? { duration: 0 } : fadeTransition}
+        transition={
+          prefersReducedMotion ? { duration: 0 } : isOpen ? chromeFadeOutTransition : fadeTransition
+        }
         style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
         aria-hidden={isOpen || undefined}
         inert={isOpen || undefined}
@@ -389,6 +413,8 @@ export function SiteHeader({
   const navRowRef = useRef<HTMLDivElement>(null);
   const [barHeight, setBarHeight] = useState(HEADER_HEIGHT);
   const unrenderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const expandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const resetBannerTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const { mode: scrollMode, floatingMotion } = useHeaderScrollMode(
     pathname,
@@ -442,7 +468,7 @@ export function SiteHeader({
   const isDockingAtTop =
     scrollMode === 'top' && !isHeaderHidden && !isRendered && !isMobileMenuVisible;
   const anchorExpandedSurfaceToStart = isRendered && !openedFromFloating;
-  const officialBannerHidden = floatingLayout || isRendered || isMobileMenuOpen;
+  const officialBannerHidden = floatingLayout || isOpen || isMobileMenuOpen;
   const officialBannerHeight =
     OFFICIAL_BANNER_COLLAPSED_HEIGHT + (officialBannerExpanded ? officialBannerDetailsHeight : 0);
   const headerTopOffset =
@@ -485,9 +511,10 @@ export function SiteHeader({
     !prefersReducedMotion && !isExpanded && !floatingLayout && !isOpen && !isRendered
       ? `top ${isOfficialBannerResizing ? COLLAPSE_MS : OFFICIAL_BANNER_MS}ms ${EASE_DRAWER_CSS}`
       : undefined;
-  const layoutSpacerTransition = prefersReducedMotion
-    ? undefined
-    : `height ${isOfficialBannerResizing ? COLLAPSE_MS : OFFICIAL_BANNER_MS}ms ${EASE_DRAWER_CSS}`;
+  const layoutSpacerTransition =
+    prefersReducedMotion || isOpen || isRendered
+      ? undefined
+      : `height ${isOfficialBannerResizing ? COLLAPSE_MS : OFFICIAL_BANNER_MS}ms ${EASE_DRAWER_CSS}`;
 
   const clearUnrenderTimeout = useCallback(() => {
     if (unrenderTimeoutRef.current == null) return;
@@ -495,18 +522,60 @@ export function SiteHeader({
     unrenderTimeoutRef.current = null;
   }, []);
 
+  const clearPendingBannerTimers = useCallback(() => {
+    if (expandTimeoutRef.current != null) {
+      clearTimeout(expandTimeoutRef.current);
+      expandTimeoutRef.current = null;
+    }
+    if (resetBannerTimeoutRef.current != null) {
+      clearTimeout(resetBannerTimeoutRef.current);
+      resetBannerTimeoutRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearUnrenderTimeout();
+      clearPendingBannerTimers();
+    };
+  }, [clearPendingBannerTimers, clearUnrenderTimeout]);
+
   const openMenu = useCallback(() => {
     clearUnrenderTimeout();
+    clearPendingBannerTimers();
+    const bannerWasExpanded = officialBannerExpanded;
     setOpenedFromFloating(floatingLayout);
-    setOfficialBannerExpanded(false);
     setIsMobileMenuOpen(false);
     setIsMobileMenuVisible(false);
     setIsRendered(true);
     setIsOpen(true);
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setIsExpanded(true));
-    });
-  }, [clearUnrenderTimeout, floatingLayout]);
+
+    if (prefersReducedMotion) {
+      setOfficialBannerExpanded(false);
+      setIsExpanded(true);
+      return;
+    }
+
+    if (bannerWasExpanded) {
+      expandTimeoutRef.current = setTimeout(() => {
+        expandTimeoutRef.current = null;
+        setIsExpanded(true);
+      }, BANNER_EXPANDED_EXIT_LEAD_MS);
+      resetBannerTimeoutRef.current = setTimeout(() => {
+        resetBannerTimeoutRef.current = null;
+        setOfficialBannerExpanded(false);
+      }, BANNER_EXPANDED_RESET_MS);
+      return;
+    }
+
+    setIsExpanded(true);
+  }, [
+    clearPendingBannerTimers,
+    clearUnrenderTimeout,
+    floatingLayout,
+    officialBannerExpanded,
+    prefersReducedMotion,
+  ]);
 
   const focusLogo = useCallback(() => {
     const active = document.activeElement;
@@ -518,10 +587,12 @@ export function SiteHeader({
   }, []);
 
   const closeMenu = useCallback(() => {
+    clearPendingBannerTimers();
     focusLogo();
+    const wasExpanded = isExpanded;
     setIsExpanded(false);
     setIsOpen(false);
-    if (prefersReducedMotion) {
+    if (prefersReducedMotion || !wasExpanded) {
       clearUnrenderTimeout();
       setIsRendered(false);
       return;
@@ -532,7 +603,7 @@ export function SiteHeader({
       unrenderTimeoutRef.current = null;
       setIsRendered(false);
     }, COLLAPSE_MS + 50);
-  }, [clearUnrenderTimeout, focusLogo, prefersReducedMotion]);
+  }, [clearPendingBannerTimers, clearUnrenderTimeout, focusLogo, isExpanded, prefersReducedMotion]);
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
@@ -680,9 +751,9 @@ export function SiteHeader({
         aria-hidden={isHeaderHidden || undefined}
         onTransitionEnd={onSurfaceTransitionEnd}
         className={[
-          'bg-surface-raised fixed inset-x-0 z-40 mx-auto flex flex-col outline-none motion-reduce:transition-none',
+          'fixed inset-x-0 mx-auto flex flex-col outline-none motion-reduce:transition-none',
           isExpanded || isRendered ? 'overflow-hidden' : 'overflow-visible',
-          isOpen || isMobileMenuVisible ? 'z-60' : 'z-40',
+          isOpen || isRendered || isMobileMenuVisible ? 'z-60' : 'z-40',
           isExpanded
             ? openedFromFloating
               ? 'top-2 h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:h-[calc(100dvh-1.5rem)] lg:w-[calc(100%-4rem)]'
@@ -691,13 +762,14 @@ export function SiteHeader({
               ? 'top-2 w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:w-[calc(100%-4rem)]'
               : 'top-0 w-full max-w-[100vw]',
           isExpanded ? 'rounded-[24px]' : floatingLayout ? 'rounded-[36px]' : 'rounded-none',
-          isExpanded || showFloatingChrome
+          isExpanded
             ? 'shadow-[0_24px_64px_var(--veli-color-effects-shadow-depth-200)]'
-            : 'shadow-none',
+            : showFloatingChrome
+              ? 'shadow-lg'
+              : 'shadow-none',
           showFloatingChrome && !isExpanded
-            ? 'bg-surface-raised/90 shadow-lg backdrop-blur-[18px]'
-            : '',
-          !isExpanded && !showFloatingChrome ? 'bg-transparent' : '',
+            ? 'bg-surface-raised/90 backdrop-blur-[18px]'
+            : 'bg-surface-raised',
           isHeaderHidden
             ? floatingLayout
               ? 'pointer-events-none -translate-y-1 opacity-0'
@@ -761,23 +833,29 @@ export function SiteHeader({
         {isRendered ? (
           <motion.div
             className="flex min-h-0 flex-1 flex-col"
-            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
             animate={
               prefersReducedMotion
                 ? { opacity: isExpanded ? 1 : 0 }
                 : {
                     opacity: isExpanded ? 1 : 0,
-                    y: isExpanded ? 0 : -12,
+                    y: isExpanded ? 0 : -8,
                   }
             }
             transition={
               prefersReducedMotion
                 ? { duration: 0 }
-                : {
-                    ...fadeTransition,
-                    duration: isExpanded ? fadeTransition.duration : 0.2,
-                    delay: isExpanded ? 0.1 : 0,
-                  }
+                : isExpanded
+                  ? {
+                      ...fadeTransition,
+                      duration: DURATION.switcherContentEnter,
+                      delay: 0.14,
+                    }
+                  : {
+                      duration: DURATION.switcherContentExit,
+                      ease: EASE_OUT,
+                      delay: 0,
+                    }
             }
             style={{ pointerEvents: isExpanded ? 'auto' : 'none' }}
             aria-hidden={!isExpanded || undefined}

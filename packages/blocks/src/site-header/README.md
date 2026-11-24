@@ -32,7 +32,7 @@ Optional host CSS variables (built-in fallbacks match the gov.mv reference, incl
   --veli-header-ease-drawer: var(--veli-ease-drawer, cubic-bezier(0.32, 0.72, 0, 1));
   --veli-header-site-tile-gradient: var(
     --site-tile-gradient,
-    radial-gradient(circle at 50% 0%, #fbfcfb 0%, #e0e2dd 100%)
+    radial-gradient(circle at 50% 0%, rgb(155 180 155 / 0.04) 0%, rgb(44 66 11 / 0.09) 100%)
   );
   --veli-header-govmv-tile-gradient: radial-gradient(
     circle at 50% 2%,
@@ -44,23 +44,14 @@ Optional host CSS variables (built-in fallbacks match the gov.mv reference, incl
   );
   --veli-header-info-panel-glow: var(
     --info-panel-glow,
-    radial-gradient(ellipse 100% 80% at 50% 0%, rgb(213 255 211) 0%, rgb(255 255 255 / 0%) 63%)
+    linear-gradient(to bottom, var(--veli-color-green-200) 0%, transparent 32.5%)
   );
 }
 
 .dark {
   --veli-header-site-tile-gradient: var(
     --site-tile-gradient,
-    radial-gradient(circle at 50% 0%, #0e0e0d 0%, #191a18 50%, #252624 100%)
-  );
-  --veli-header-info-panel-glow: var(
-    --info-panel-glow,
-    radial-gradient(
-      ellipse 236.72% 100% at 50% 0%,
-      rgb(35 115 10) 0%,
-      rgb(18 57 5 / 50%) 31.478%,
-      transparent 62.957%
-    )
+    radial-gradient(circle at 50% 0%, rgb(14 14 13 / 0.4) 0%, rgb(37 38 36 / 0.55) 100%)
   );
 }
 ```
@@ -83,8 +74,8 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 - `logo` (ReactNode) and optional `title` for ministry mode. The title wraps within 320px and the bar grows with it. It does not truncate.
 - `pathname` so scroll mode resets on navigation.
 - `desktopNavItems` / `mobileNavItems`: `{ href, label, current?, external? }`.
-- `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, and `sections`. Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
-- `labels`: every user-facing string, including `scrollToViewMore`, `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, `noAppsOrSitesMatch`, and `searchEmptyHint`. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. `showingApps` and `showingSites` supply the filtered result line ("Showing all Sites: " plus the count). Sites render in the order supplied; that order is the default directory order.
+- `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, `sections`, and optional `infoParagraphs` (bold lead-in + body; replaces the title/description/sections info-card layout when set). Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
+- `labels`: every user-facing string, including `scrollToViewMore`, `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, `noAppsOrSitesMatch`, and `searchEmptyHint`. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. `showingApps` and `showingSites` supply the filtered result line ("Showing all Sites: " plus the count). Sites render in the order supplied; that order is the default directory order. Demo copy uses “Browse government apps and sites”, the longer intro line, and search placeholder “Start typing...”.
 - `languages`, `language`, `onLanguageChange`.
 - `colorScheme`, `onColorSchemeChange` (`light` | `dark` | `system`).
 - `onNavigate(href)` for in-app switcher tiles.

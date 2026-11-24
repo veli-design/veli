@@ -10,7 +10,9 @@ import {
   caretTransition,
   EASE_SPEC,
   officialBannerDetailsTransition,
-  officialBannerTransition,
+  officialBannerHideExpandedTransition,
+  officialBannerHideTransition,
+  officialBannerShowTransition,
 } from './motion';
 
 export type OfficialBannerLabels = {
@@ -63,6 +65,15 @@ export function OfficialWebsiteBanner({
     return () => observer.disconnect();
   }, [onDetailsHeightChange]);
 
+  const hiddenOffset = expanded ? '-8px' : '-36px';
+  const bannerTransition = prefersReducedMotion
+    ? { duration: 0.15, ease: EASE_SPEC }
+    : hidden
+      ? expanded
+        ? officialBannerHideExpandedTransition
+        : officialBannerHideTransition
+      : officialBannerShowTransition;
+
   return (
     <motion.aside
       initial={false}
@@ -71,12 +82,10 @@ export function OfficialWebsiteBanner({
           ? { opacity: hidden ? 0 : 1 }
           : {
               opacity: hidden ? 0 : 1,
-              transform: hidden ? 'translateY(-36px)' : 'translateY(0px)',
+              transform: hidden ? `translateY(${hiddenOffset})` : 'translateY(0px)',
             }
       }
-      transition={
-        prefersReducedMotion ? { duration: 0.15, ease: EASE_SPEC } : officialBannerTransition
-      }
+      transition={bannerTransition}
       className={`from-accent-100 to-surface-raised overflow-hidden bg-linear-to-b from-[31.843%] ${
         hidden ? 'pointer-events-none' : ''
       }`}
@@ -122,7 +131,9 @@ export function OfficialWebsiteBanner({
         id={detailsId}
         initial={false}
         animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
-        transition={prefersReducedMotion ? { duration: 0 } : officialBannerDetailsTransition}
+        transition={
+          prefersReducedMotion || hidden ? { duration: 0 } : officialBannerDetailsTransition
+        }
         onAnimationComplete={onResizeAnimationComplete}
         className="overflow-hidden"
         inert={!expanded || undefined}
