@@ -192,8 +192,12 @@ function HeaderLogoButton({
   const logoTransition = prefersReducedMotion
     ? undefined
     : `color 150ms, background-color 150ms, border-color 150ms, text-decoration-color 150ms, fill 150ms, stroke 150ms, margin-inline-start ${logoShiftMs}ms ${EASE_DRAWER_CSS}, padding-inline-start ${logoShiftMs}ms ${EASE_DRAWER_CSS}`;
+  // Dhivehi body line boxes are taller than English. Two lines plus py-2
+  // make this button as tall as the header. RTL uses 2px of vertical
+  // padding so the button sits inside the 72px bar. The 56px minimum
+  // matches the one-line height py-2 already produces.
   const logoShape = `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${
-    title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'
+    title ? 'gap-3 lg:gap-4 rtl:min-h-14 rtl:py-0.5' : 'shrink-0 gap-2'
   }`;
 
   return (
