@@ -278,6 +278,23 @@ test('app switcher keeps You are here on the current grid tile', async ({ page }
   expect(infoWidth).toBe(88);
 });
 
+test('app switcher shows the search empty state when nothing matches', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
+  await search.fill('aasandha');
+
+  await expect(page.getByText('No apps or sites match “aasandha”', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Check the spelling, or clear the search to see all GOVMV apps and sites.', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole('option')).toHaveCount(0);
+});
+
 test('app switcher shows a scroll hint and keeps filtered results in the grid', async ({
   page,
 }) => {

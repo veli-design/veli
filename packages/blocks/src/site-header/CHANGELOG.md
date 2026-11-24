@@ -3,6 +3,7 @@
 ### Added
 
 - Add `scrollToViewMore`. The app switcher shows that control at the bottom of the card while the list is at the top and more tiles sit below. Choosing it scrolls the card by 60% of the visible height.
+- Add a search empty state with the stacked tile illustration, title, and `searchEmptyHint` copy when a query matches nothing.
 
 ### Changed
 

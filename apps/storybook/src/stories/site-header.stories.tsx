@@ -44,6 +44,7 @@ const labelsEn: SiteHeaderLabels = {
   noAppsMatch: (query) => `No apps match “${query}”`,
   noSitesMatch: (query) => `No sites match “${query}”`,
   noAppsOrSitesMatch: (query) => `No apps or sites match “${query}”`,
+  searchEmptyHint: 'Check the spelling, or clear the search to see all GOVMV apps and sites.',
   label: 'An Official website of the Maldives Government',
   howToIdentify: 'How to identify',
   officialLinksTitle: 'Official website links end with .gov.mv',
@@ -96,6 +97,8 @@ const labelsDv: SiteHeaderLabels = {
   noAppsMatch: (query) => `“${query}” އާ ގުޅޭ އެޕެއް ނުފެނުނު`,
   noSitesMatch: (query) => `“${query}” އާ ގުޅޭ ސައިޓެއް ނުފެނުނު`,
   noAppsOrSitesMatch: (query) => `“${query}” އާ ގުޅޭ އެޕެއް ނުވަތަ ސައިޓެއް ނުފެނުނު`,
+  searchEmptyHint:
+    'ސްޕެލިންގް ޗެކް ކުރައްވާ، ނުވަތަ ހުރިހާ GOVMV އެޕްތަކާއި ސައިޓްތައް ފެންނަން ސަރޗް ކްލިއަރ ކުރައްވާ۔',
   label: 'މިއީ ދިވެހި ސަރުކާރުގެ ރަސްމީ ވެބްސައިޓެއް',
   howToIdentify: 'ރަސްމީ ސައިޓެއްކަން ދެނެގަންނާނީ',
   officialLinksTitle: 'ރަސްމީ ވެބްސައިޓްތަކުގެ ލިންކު .gov.mv އިން ނިމޭނެ',

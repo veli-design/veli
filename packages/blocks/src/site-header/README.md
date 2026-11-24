@@ -84,7 +84,7 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 - `pathname` so scroll mode resets on navigation.
 - `desktopNavItems` / `mobileNavItems`: `{ href, label, current?, external? }`.
 - `apps` / `sites`: switcher tiles with `id`, `name`, `kind`, `href`, `description`, optional artwork URLs, `current`, `badge: 'signin'`, `external`, and `sections`. Use `current` for “You are here”; use `badge: 'signin'` when the destination requires authentication (independent flags — avoid setting both on one tile).
-- `labels`: every user-facing string, including `scrollToViewMore`, `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, and `noAppsOrSitesMatch`. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. `showingApps` and `showingSites` supply the filtered result line ("Showing all Sites: " plus the count). Sites render in the order supplied; that order is the default directory order.
+- `labels`: every user-facing string, including `scrollToViewMore`, `searchSummary`, `showingApps`, `showingSites`, `noAppsMatch`, `noSitesMatch`, `noAppsOrSitesMatch`, and `searchEmptyHint`. `showAll`, `appsOnly`, and `sitesOnly` label the switcher filter. `showingApps` and `showingSites` supply the filtered result line ("Showing all Sites: " plus the count). Sites render in the order supplied; that order is the default directory order.
 - `languages`, `language`, `onLanguageChange`.
 - `colorScheme`, `onColorSchemeChange` (`light` | `dark` | `system`).
 - `onNavigate(href)` for in-app switcher tiles.

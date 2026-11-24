@@ -54,6 +54,7 @@ const labels: SiteHeaderLabels = {
   noAppsMatch: (query) => `No apps match “${query}”`,
   noSitesMatch: (query) => `No sites match “${query}”`,
   noAppsOrSitesMatch: (query) => `No apps or sites match “${query}”`,
+  searchEmptyHint: 'Check the spelling, or clear the search to see all GOVMV apps and sites.',
   label: 'An Official website of the Maldives Government',
   howToIdentify: 'How to identify',
   officialLinksTitle: 'Official website links end with .gov.mv',

@@ -12,8 +12,8 @@ import {
 import {
   CheckIcon,
   FunnelSimpleIcon,
-  MagnifyingGlassIcon,
   MouseScrollIcon,
+  SquaresFourIcon,
 } from '@phosphor-icons/react';
 import { Button } from '@veli-design/react/button';
 import { Divider } from '@veli-design/react/divider';
@@ -80,6 +80,8 @@ export type SiteHeaderAppSwitcherLabels = {
   noAppsMatch: (query: string) => string;
   noSitesMatch: (query: string) => string;
   noAppsOrSitesMatch: (query: string) => string;
+  /** Hint under the empty search title (spelling / clear search). */
+  searchEmptyHint: string;
 };
 
 export type AppSwitcherFilter = 'all' | 'apps' | 'sites';
@@ -313,7 +315,7 @@ function SearchResults({
       ? filterSummary
         ? `${filterSummary.lead}${filterSummary.countLabel}`
         : `${summary.countLabel}${summary.rest}`
-      : noMatches;
+      : `${noMatches}. ${labels.searchEmptyHint}`;
 
   const itemsById = useMemo(() => {
     const map = new Map<string, SiteHeaderSwitcherItem>();
@@ -459,16 +461,40 @@ function SearchResults({
           {searching && total === 0 ? (
             <motion.div
               key="empty"
-              className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-28"
+              role="status"
+              className="flex flex-1 flex-col items-center justify-center gap-4 px-4 py-16"
               {...emptyMotion}
             >
-              <MagnifyingGlassIcon size={32} className="text-text-base" aria-hidden />
-              <p className="type-body-md-medium text-text-base text-center">{noMatches}</p>
+              <SearchEmptyIllustration />
+              <div className="flex w-full max-w-[352px] flex-col items-center gap-2 text-center">
+                <p className="type-body-lg-semibold text-text-base-emphasis w-full">{noMatches}</p>
+                <p className="type-body-sm-regular text-text-base-muted w-full">
+                  {labels.searchEmptyHint}
+                </p>
+              </div>
             </motion.div>
           ) : null}
         </AnimatePresence>
       </div>
     </LayoutGroup>
+  );
+}
+
+function SearchEmptyIllustration() {
+  return (
+    <div className="relative h-[180px] w-[240px] shrink-0" aria-hidden>
+      <div
+        className="absolute top-6 left-[74px] h-[60px] w-[92px] rounded-3xl"
+        style={{
+          backgroundImage:
+            'linear-gradient(180deg, var(--veli-color-neutral-alpha-100) 0%, var(--veli-color-neutral-alpha-300) 100%), linear-gradient(90deg, var(--veli-color-neutral-400) 0%, var(--veli-color-neutral-400) 100%)',
+        }}
+      />
+      <div className="border-surface-raised absolute top-[42px] left-[62px] size-[116px] rounded-[32px] border-[3px] border-solid bg-linear-to-b from-neutral-300 to-neutral-400" />
+      <div className="absolute top-[72px] left-[92px] flex size-14 items-center justify-center">
+        <SquaresFourIcon size={56} weight="fill" className="text-surface-raised" />
+      </div>
+    </div>
   );
 }
 
