@@ -1,3 +1,9 @@
+## 0.14.1
+
+### Fixed
+
+- In RTL, reduce the ministry logo button's vertical padding so a two-line name sits inside the header bar. A one-line name keeps the same button height.
+
 ## 0.14.0
 
 ### Added
@@ -10,7 +16,6 @@
 
 ### Fixed
 
-- In RTL, reduce the ministry logo button's vertical padding so a two-line name sits inside the header bar. A one-line name keeps the same button height.
 - Line the open app switcher logo up with the panel content. While the switcher is open, the logo button shifts left by its start padding so the mark shares the title inset and the hover fill keeps that padding. Below xl that inset is also the search field and the tile grid. The closed bar keeps its logo padding.
 - Match switcher app artwork and ministry emblems to the directory frame: site tiles use the soft alpha radial wash with a 36×42 emblem, app tiles render full-bleed icons without a default border, and `kind: 'site'` keeps the site shell when `emblemSrc` is omitted.
 - Match the info card glow to the Figma linear green-200 wash that fades out at 32.5% height in light and dark.
