@@ -131,7 +131,7 @@ export function OfficialWebsiteBanner({
         <div ref={detailsRef} className="flex flex-col gap-6 px-4 pt-6 md:px-8">
           <div className="grid gap-6 pb-4 md:grid-cols-2 md:gap-14">
             <div className="flex gap-2">
-              <BankIcon className="text-icon-primary size-6 shrink-0" aria-hidden />
+              <BankIcon weight="fill" className="text-icon-primary size-6 shrink-0" aria-hidden />
               <div className="flex min-w-0 flex-col gap-1">
                 <p className="type-body-md-semibold text-text-base-emphasis">
                   {labels.officialLinksTitle}
@@ -142,7 +142,11 @@ export function OfficialWebsiteBanner({
               </div>
             </div>
             <div className="flex gap-2">
-              <LockSimpleIcon className="text-accent-500 size-6 shrink-0" aria-hidden />
+              <LockSimpleIcon
+                weight="fill"
+                className="text-accent-500 size-6 shrink-0"
+                aria-hidden
+              />
               <div className="flex min-w-0 flex-col gap-1">
                 <p className="type-body-md-semibold text-text-base-emphasis">
                   {labels.secureWebsitesTitle}
