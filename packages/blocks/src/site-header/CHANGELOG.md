@@ -1,15 +1,12 @@
-## 0.13.0
+## 0.14.0
 
 ### Added
 
-- Add `scrollToViewMore`. The app switcher shows that control at the bottom of the card while the list is at the top and more tiles sit below. Choosing it scrolls the card by 60% of the visible height.
 - Add a search empty state with the stacked tile illustration, title, and `searchEmptyHint` copy when a query matches nothing. The illustration uses brand neutral and surface-raised tokens from the Figma frame.
 
 ### Changed
 
-- Show every app and site in one scrolling grid. Apps only and Sites only keep that grid and a result line such as "Showing all Sites: 17 results". The grid uses two fluid columns below sm and three fluid columns from sm until xl. The xl card keeps 165px tiles. Names wrap instead of truncating.
-- Let the entity name wrap inside 320px, and let the header bar grow with that name. Desktop navigation shows from 1121px. The mobile menu is used at 1120px and below.
-- Fade the top and bottom edges of the scrolling card. The bottom fade is 96px behind the scroll control and 32px at 60% opacity after that control hides.
+- Use two fluid columns below sm and three fluid columns from sm until xl. The xl card keeps 165px tiles. Let the entity name wrap inside 320px, and let the header bar grow with that name. Desktop navigation shows from 1121px. The mobile menu is used at 1120px and below.
 
 ### Fixed
 
@@ -27,8 +24,18 @@
 - Keep a 16px gap above the “No apps match” / “No sites match” divider when search returns only one group, so the last tiles are not flush against that line.
 - Clear the desktop info panel when search or filter leaves no navigable tiles, instead of keeping a stale selection preview.
 - Remove the border around the apps and sites list below 1280px. The desktop card keeps that border.
-- Use three columns for apps and sites from sm up. Extra-small screens keep two columns. The xl card uses 165px tracks.
-- Stretch switcher tiles across the two-column grid below sm and the three-column grid from sm until xl. The 165px tile width, 141px name box, and wide gutters start at xl, so resizing from 600px to 639px no longer leaves short tiles in a two-column grid.
+- Stretch switcher tiles across the two-column and three-column grids. The 165px tile width, 141px name box, and wide gutters start at xl, so resizing through the two-column range no longer leaves short left-aligned tiles.
+
+## 0.13.0
+
+### Added
+
+- Add `scrollToViewMore`. The app switcher shows that control at the bottom of the card while the list is at the top and more tiles sit below. Choosing it scrolls the card by 60% of the visible height.
+
+### Changed
+
+- Show every app and site in one scrolling grid. Apps only and Sites only keep that grid and a result line such as "Showing all Sites: 17 results". Tiles stay 165px wide from 600px up and use two columns below that. Names wrap instead of truncating.
+- Fade the top and bottom edges of the scrolling card. The bottom fade is 96px behind the scroll control and 32px at 60% opacity after that control hides.
 
 ### Removed
 
