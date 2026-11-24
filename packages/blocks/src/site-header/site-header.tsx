@@ -174,12 +174,14 @@ function HeaderLogoButton({
   return (
     <AriaButton
       data-header-logo=""
-      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
-        title ? 'items-center' : 'items-start'
-      } ${
-        isFloating
-          ? `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
-          : `rounded-xl py-2 ps-2 pe-1 lg:ps-3 lg:pe-2 ${title ? 'gap-3 lg:gap-4' : 'shrink-0 gap-2'}`
+      className={`hover:bg-button-secondary-subtle focus-visible:ring-border-focus pointer-events-auto flex min-w-0 cursor-pointer items-center bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none ${
+        title
+          ? isFloating
+            ? 'gap-3.5 rounded-xl py-2 ps-2 pe-1'
+            : 'gap-3.5 rounded-xl py-2.5 pe-1 ps-0'
+          : isFloating
+            ? 'shrink-0 gap-2 rounded-xl py-2 ps-2 pe-1'
+            : 'shrink-0 gap-2 rounded-xl py-3.5 pe-1 ps-0'
       }`}
       aria-label={isOpen ? closeLabel : openLabel}
       aria-expanded={isOpen}
@@ -202,35 +204,46 @@ function HeaderLogoButton({
           <span className="relative block size-10 shrink-0" aria-hidden>
             {logo}
           </span>
-          <span
-            className={`text-text-base-emphasis min-w-0 max-w-[320px] text-start transition-[font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
-              isFloating
-                ? 'type-body-md-medium leading-[1.5]'
-                : 'type-caption-medium leading-[1.34] tracking-[0.18px] lg:type-body-md-medium lg:leading-[1.5] lg:tracking-normal'
-            }`}
-            aria-hidden
-          >
-            {title}
+          <span className="flex min-w-0 items-center gap-2">
+            <span
+              className={`text-text-base-emphasis min-w-0 max-w-[320px] text-start transition-[font-size] duration-300 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] motion-reduce:transition-none ${
+                isFloating
+                  ? 'type-body-md-medium leading-6'
+                  : 'type-body-sm-medium min-[1121px]:type-body-md-medium leading-5 min-[1121px]:leading-6'
+              }`}
+              aria-hidden
+            >
+              {title}
+            </span>
+            <motion.span
+              className="text-text-base-strong inline-flex size-11 shrink-0 items-center justify-center"
+              animate={{
+                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+              transition={iconTransition}
+            >
+              <CaretDownIcon size={16} weight="regular" aria-hidden />
+            </motion.span>
           </span>
         </>
       ) : (
-        <span className="relative block shrink-0" aria-hidden>
-          {logo}
-        </span>
+        <>
+          <span className="relative block shrink-0" aria-hidden>
+            {logo}
+          </span>
+          <motion.span
+            // Wordmark-only: lift onto the x-height (descenders pull the glyph-box center down).
+            // Use margin so this does not fight the rotate transform.
+            className="text-text-base-strong -mt-1.5 inline-flex size-11 shrink-0 items-center justify-center"
+            animate={{
+              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
+            transition={iconTransition}
+          >
+            <CaretDownIcon size={16} weight="regular" aria-hidden />
+          </motion.span>
+        </>
       )}
-      <motion.span
-        // Wordmark-only: lift onto the x-height (descenders pull the glyph-box center down).
-        // Use margin so this does not fight the rotate transform.
-        className={`text-text-base-strong inline-flex size-8 shrink-0 items-center justify-center ${
-          title ? '' : '-mt-1.5'
-        }`}
-        animate={{
-          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-        }}
-        transition={iconTransition}
-      >
-        <CaretDownIcon size={16} weight="bold" aria-hidden />
-      </motion.span>
     </AriaButton>
   );
 }
@@ -238,7 +251,6 @@ function HeaderLogoButton({
 function HeaderActions({
   isOpen,
   isMobileMenuOpen,
-  isFloating,
   prefersReducedMotion,
   onToggleMobileMenu,
   actions,
@@ -246,7 +258,6 @@ function HeaderActions({
 }: {
   isOpen: boolean;
   isMobileMenuOpen: boolean;
-  isFloating: boolean;
   prefersReducedMotion: boolean | null;
   onToggleMobileMenu: () => void;
   actions?: ReactNode;
@@ -259,11 +270,9 @@ function HeaderActions({
       : mobileMenuCloseTransition;
 
   return (
-    <div
-      className={`ms-auto flex shrink-0 items-center ${isFloating ? 'gap-2' : 'gap-2 lg:gap-4'}`}
-    >
+    <div className="ms-auto flex shrink-0 items-center gap-2">
       <motion.div
-        className={`flex items-center ${isFloating ? 'gap-2' : 'gap-2 lg:gap-4'}`}
+        className="flex items-center gap-2"
         animate={{ opacity: isOpen ? 0 : 1 }}
         transition={prefersReducedMotion ? { duration: 0 } : fadeTransition}
         style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
@@ -290,7 +299,7 @@ function HeaderActions({
                 transition={iconTransition}
                 aria-hidden
               >
-                <ListIcon size={16} weight="bold" />
+                <ListIcon size={16} weight="regular" />
               </motion.span>
               <motion.span
                 className="col-start-1 row-start-1 inline-flex"
@@ -299,7 +308,7 @@ function HeaderActions({
                 transition={iconTransition}
                 aria-hidden
               >
-                <XIcon size={16} weight="bold" />
+                <XIcon size={16} weight="regular" />
               </motion.span>
             </span>
           </Button>
@@ -632,11 +641,14 @@ export function SiteHeader({
     [onColorSchemeChange],
   );
 
+  // Figma docked bar: 32px page inset; 40px gap for wordmark, 32px when a title is present.
   const navRowPadding = isExpanded
     ? 'gap-2 px-6 xl:px-12'
     : floatingLayout
-      ? 'gap-2 ps-2 pe-2 lg:gap-10 lg:ps-6 lg:pe-3.5'
-      : 'gap-2 ps-2 pe-4 lg:gap-12 lg:px-8 lg:ps-5';
+      ? 'gap-2 ps-2 pe-2 min-[1121px]:gap-8 min-[1121px]:ps-6 min-[1121px]:pe-3.5'
+      : title
+        ? 'gap-2 px-4 min-[1121px]:gap-8 min-[1121px]:px-8'
+        : 'gap-2 px-4 min-[1121px]:gap-10 min-[1121px]:px-8';
 
   return (
     <div className={`relative ${className}`}>
@@ -752,7 +764,6 @@ export function SiteHeader({
           <HeaderActions
             isOpen={isOpen}
             isMobileMenuOpen={isMobileMenuOpen}
-            isFloating={floatingLayout && !isExpanded}
             prefersReducedMotion={prefersReducedMotion}
             onToggleMobileMenu={toggleMobileMenu}
             actions={actions}
