@@ -10,6 +10,10 @@
 - Let the entity name wrap inside 320px, and let the header bar grow with that name. Desktop navigation shows from 1121px. The mobile menu is used at 1120px and below.
 - Fade the top and bottom edges of the scrolling card. The bottom fade is 96px behind the scroll control and 32px at 60% opacity after that control hides.
 
+### Fixed
+
+- Match the desktop directory frame. Tile names wrap in a 133px box, the "You are here" pill hugs its label, and five 165px tiles in the 920px card keep a 24px gutter. A divider separates Apps and Sites. The current tile's ring sits outside the icon, with a 2px gap and a 5px teal stroke. The info card icon is 88px, and its light fallback fade is a linear green wash that ends at 32.5% of the card height.
+
 ### Removed
 
 - Remove View more, View less, and the list layout for filtered apps and sites. Pass `scrollToViewMore` instead of `viewMore` and `viewLess`.

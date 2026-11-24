@@ -376,7 +376,7 @@ function SearchResults({
                 escapeKeyBehavior="none"
                 shouldFocusOnHover
                 onAction={onAction}
-                className={`${tileGridClass} pt-4 outline-none xl:px-4`}
+                className={`${tileGridClass} pt-4 outline-none`}
                 renderEmptyState={() => null}
               >
                 <ListBoxSection id="apps" className="contents">
@@ -384,7 +384,7 @@ function SearchResults({
                     title={labels.apps}
                     blurb={labels.appsBlurb}
                     searching={searching}
-                    headingClassName="flex flex-col gap-2 ps-0 pt-0 pb-2 xl:ps-4 xl:pt-6"
+                    headingClassName="flex flex-col gap-2 ps-0 pt-0 pb-2 xl:ps-4"
                     prefersReducedMotion={prefersReducedMotion}
                   />
                   {shownApps.map((item) => (
@@ -408,7 +408,9 @@ function SearchResults({
                 escapeKeyBehavior="none"
                 shouldFocusOnHover
                 onAction={onAction}
-                className={`${tileGridClass} pt-4 outline-none xl:px-4`}
+                className={`${tileGridClass} outline-none ${
+                  showApps ? 'border-border-base-muted mt-4 border-t pt-4' : 'pt-4'
+                }`}
                 renderEmptyState={() => null}
               >
                 <ListBoxSection id="sites" className="contents">
@@ -416,7 +418,7 @@ function SearchResults({
                     title={labels.sites}
                     blurb={labels.sitesBlurb}
                     searching={searching}
-                    headingClassName="flex flex-col gap-2 ps-0 pt-4 pb-2 xl:ps-4 xl:pt-6"
+                    headingClassName="flex flex-col gap-2 ps-0 pt-4 pb-2 xl:ps-4 xl:pt-0"
                     prefersReducedMotion={prefersReducedMotion}
                   />
                   {shownSites.map((item) => (

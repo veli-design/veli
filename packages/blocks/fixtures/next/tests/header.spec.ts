@@ -244,13 +244,38 @@ test('app switcher keeps You are here on the current grid tile', async ({ page }
     const name = Array.from(option.querySelectorAll('p')).find((el) =>
       el.textContent?.includes('Gov.mv'),
     );
+    const pill = Array.from(option.querySelectorAll('span')).find((el) =>
+      el.textContent?.includes('You are here'),
+    );
+    const icon = option.querySelector('div');
+    const tileBox = option.getBoundingClientRect();
+    const pillBox = pill?.getBoundingClientRect();
     return {
       direction: getComputedStyle(option).flexDirection,
       clamp: name ? getComputedStyle(name).webkitLineClamp : '',
+      labelMax: name ? getComputedStyle(name).maxWidth : '',
+      pillWidth: pillBox ? Math.round(pillBox.width) : 0,
+      tileWidth: Math.round(tileBox.width),
+      iconWidth: icon ? Math.round(icon.getBoundingClientRect().width) : 0,
     };
   });
   expect(tile.direction).toBe('column');
   expect(tile.clamp === 'none' || tile.clamp === '').toBe(true);
+  expect(tile.labelMax).toBe('133px');
+  expect(tile.iconWidth).toBe(56);
+  expect(tile.pillWidth).toBeGreaterThan(70);
+  expect(tile.pillWidth).toBeLessThan(tile.tileWidth - 24);
+
+  const infoIcon = page.locator('aside div').first();
+  await expect(infoIcon).toBeVisible();
+  const infoWidth = await page.locator('aside').evaluate((aside) => {
+    const match = Array.from(aside.querySelectorAll('div')).find((el) => {
+      const box = el.getBoundingClientRect();
+      return box.width >= 80 && box.width <= 100 && Math.abs(box.width - box.height) < 2;
+    });
+    return match ? Math.round(match.getBoundingClientRect().width) : 0;
+  });
+  expect(infoWidth).toBe(88);
 });
 
 test('app switcher shows a scroll hint and keeps filtered results in the grid', async ({
@@ -288,6 +313,21 @@ test('app switcher shows a scroll hint and keeps filtered results in the grid', 
   expect(box.direction).toBe('column');
   expect(box.width).toBe(165);
   expect(box.columns).toContain('165px');
+
+  await page.setViewportSize({ width: 1600, height: 966 });
+  const gutter = await defence.evaluate((el) => {
+    const next = el.nextElementSibling;
+    if (!(next instanceof HTMLElement)) return null;
+    const a = el.getBoundingClientRect();
+    const b = next.getBoundingClientRect();
+    return {
+      gap: Math.round(b.left - a.right),
+      sameRow: Math.abs(a.top - b.top) < 2,
+    };
+  });
+  expect(gutter?.sameRow).toBe(true);
+  expect(gutter?.gap).toBeGreaterThanOrEqual(18);
+  expect(gutter?.gap).toBeLessThanOrEqual(24);
 
   const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
   await search.fill('Locker');

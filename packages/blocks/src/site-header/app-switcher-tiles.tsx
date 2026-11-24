@@ -15,7 +15,7 @@ export const GOVMV_TILE_GRADIENT_FALLBACK =
 
 /** Fallback when the host has not set --veli-header-info-panel-glow. */
 export const INFO_PANEL_GLOW_FALLBACK =
-  'radial-gradient(ellipse 100% 80% at 50% 0%, rgb(213 255 211) 0%, rgb(255 255 255 / 0%) 63%)';
+  'linear-gradient(to bottom, #d5ffd3 0%, rgb(255 255 255 / 0%) 32.5%)';
 
 /** Dark-mode fallback when the host has not set --veli-header-info-panel-glow. */
 export const INFO_PANEL_GLOW_DARK_FALLBACK =
@@ -93,16 +93,12 @@ function AppIconShell({
   selected?: boolean;
   className?: string;
 }) {
-  const shellRadius = selected ? 'rounded-[18px]' : 'rounded-[20px]';
-  const box = 'size-14 rounded-[20px]';
   const chrome = selected
-    ? 'border-icon-base-inverted border-2 shadow-[0_0_0_2px_var(--veli-color-teal-500)]'
+    ? 'shadow-[0_0_0_2px_var(--veli-color-white),0_0_0_5px_var(--veli-color-teal-500)]'
     : 'border border-base-subtle';
   return (
-    <div className={`relative shrink-0 ${box} ${chrome} ${className}`}>
-      <div
-        className={`absolute inset-0 overflow-hidden shadow-[inset_0_0_8px_0_var(--veli-color-effects-shadow-depth-100)] ${shellRadius}`}
-      >
+    <div className={`relative size-14 shrink-0 rounded-[20px] ${chrome} ${className}`}>
+      <div className="absolute inset-0 overflow-hidden rounded-[20px] shadow-[inset_0_0_8px_0_var(--veli-color-effects-shadow-depth-100)]">
         {gradient && darkGradient ? (
           <>
             <span
@@ -193,7 +189,7 @@ export function SwitcherTileIcon({
 export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
   if (item.largeIconSrc) {
     return (
-      <div className="relative size-[95px] shrink-0 overflow-hidden rounded-4xl shadow-md">
+      <div className="relative size-[88px] shrink-0 overflow-hidden rounded-[28px]">
         <DualToneFill light={item.largeIconSrc} dark={item.largeIconDarkSrc} />
       </div>
     );
@@ -202,7 +198,7 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
   if (item.emblemSrc) {
     return (
       <span
-        className="block size-[95px] shrink-0 bg-contain bg-center bg-no-repeat"
+        className="block h-[88px] w-[76px] shrink-0 bg-contain bg-center bg-no-repeat"
         style={{ backgroundImage: `url('${item.emblemSrc}')` }}
         aria-hidden
       />
@@ -211,7 +207,7 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
 
   if (item.iconSrc) {
     return (
-      <div className="relative size-[95px] shrink-0 overflow-hidden rounded-4xl shadow-md">
+      <div className="relative size-[88px] shrink-0 overflow-hidden rounded-[28px]">
         <DualToneFill light={item.iconSrc} dark={item.iconDarkSrc} />
       </div>
     );
@@ -219,7 +215,7 @@ export function SwitcherLargeIcon({ item }: { item: SiteHeaderSwitcherItem }) {
 
   return (
     <div
-      className="relative flex size-[95px] items-center justify-center rounded-4xl shadow-md"
+      className="relative flex size-[88px] items-center justify-center rounded-[28px]"
       style={{
         backgroundImage: `var(--veli-header-govmv-tile-gradient, ${GOVMV_TILE_GRADIENT_FALLBACK})`,
       }}
@@ -244,11 +240,11 @@ export function SwitcherItemContent({
   return (
     <>
       <TileIconWithBadge item={item} selected={isCurrent} />
-      <p className="type-caption-medium text-text-base w-full min-[600px]:max-w-[141px]">
+      <p className="type-caption-medium text-text-base w-full min-[600px]:max-w-[133px]">
         {item.name}
       </p>
       {isCurrent ? (
-        <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong w-full rounded-3xl px-1.5 py-0.5 text-center tracking-[0.18px] min-[600px]:max-w-[141px]">
+        <span className="type-caption-medium bg-status-info-subtle text-text-primary-strong rounded-3xl px-1.5 py-0.5 text-center tracking-[0.18px] whitespace-nowrap">
           {youAreHereLabel}
         </span>
       ) : null}
