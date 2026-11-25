@@ -163,6 +163,7 @@ test('empty tray plays the supplied artwork and keeps a themed still for reduced
   expect(await frame()).not.toBe(darkStill);
   await expect.poll(frame).toBe(darkStill);
   await replay.hover();
+  await expect(replay).toHaveCSS('cursor', 'default');
   await expect.poll(frame).not.toBe(darkStill);
   await tray.getByRole('heading', { name: 'Notifications' }).hover();
   await expect.poll(frame).toBe(darkStill);

@@ -110,7 +110,7 @@ export function NotificationEmptyArtwork({ replayLabel }: { replayLabel: string 
         <button
           type="button"
           aria-label={replayLabel}
-          className="absolute inset-0 cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-border-focus"
+          className="absolute inset-0 cursor-default rounded-lg focus-visible:outline-2 focus-visible:outline-border-focus"
           onPointerEnter={(event) => {
             if (event.pointerType !== 'touch') play('hover');
           }}

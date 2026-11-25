@@ -1,3 +1,9 @@
+## 0.11.1
+
+### Fixed
+
+- Keep the default cursor over the animated bell while preserving hover and replay.
+
 ## 0.11.0
 
 ### Added
