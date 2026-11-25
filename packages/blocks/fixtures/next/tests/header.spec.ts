@@ -15,7 +15,7 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
   const trigger = page.getByRole('button', { name: 'Open app switcher' });
   await trigger.click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
@@ -25,9 +25,9 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
   await expect(page.getByRole('option', { name: 'My Applications' })).toBeVisible();
 
   await page.keyboard.press('Escape');
-  await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
-  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Browse government apps and sites' })).toHaveCount(
+    0,
+  );
   await expect(trigger).toBeFocused();
   expect(errors).toEqual([]);
 });
@@ -114,7 +114,7 @@ test('app switcher filters to a site list and moves the highlight with arrows', 
   await expect(defence).toHaveAttribute('data-highlighted', 'true');
   // Selecting a filter returns focus to its trigger, whose arrows open the menu.
   await defence.focus();
-  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowRight');
   await expect(foreign).toHaveAttribute('data-highlighted', 'true');
   await expect(defence).not.toHaveAttribute('data-highlighted', 'true');
 });
@@ -126,7 +126,7 @@ test('app switcher leaves host textarea and header actions keys alone while open
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   const govmv = page.getByRole('option', { name: /Gov\.mv/ });
@@ -160,7 +160,7 @@ test('app switcher leaves host textarea and header actions keys alone while open
   });
   await expect(page).toHaveURL(/\/$/);
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 
   // Faded host actions stay inert; keys must not redirect into Search.
@@ -207,9 +207,9 @@ test('app switcher Filter arrow opens the menu and type-to-search reaches Search
   await expect(search).toHaveValue('Lock');
 
   await page.keyboard.press('Escape');
-  await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
-  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Browse government apps and sites' })).toHaveCount(
+    0,
+  );
 
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   const filter = page.getByRole('button', { name: 'Filter' });
@@ -231,7 +231,7 @@ test('app switcher Filter arrow opens the menu and type-to-search reaches Search
   await expect(search).toHaveValue('m');
 });
 
-test('app switcher list badge stays beside the current item name', async ({ page }) => {
+test('app switcher keeps You are here on the current grid tile', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
@@ -240,16 +240,146 @@ test('app switcher list badge stays beside the current item name', async ({ page
 
   const current = page.getByRole('option', { name: /Gov\.mv/ });
   await expect(current.getByText('You are here')).toBeVisible();
-  const badgeBesideName = await current.evaluate((option) => {
-    const badge = Array.from(option.querySelectorAll('span')).find(
-      (el) => el.textContent?.trim() === 'You are here',
-    );
+  const tile = await current.evaluate((option) => {
     const name = Array.from(option.querySelectorAll('p')).find((el) =>
       el.textContent?.includes('Gov.mv'),
     );
-    return Boolean(badge && name && badge.parentElement === name.parentElement);
+    const pill = Array.from(option.querySelectorAll('span')).find((el) =>
+      el.textContent?.includes('You are here'),
+    );
+    const icon = option.querySelector('div');
+    const tileBox = option.getBoundingClientRect();
+    const pillBox = pill?.getBoundingClientRect();
+    return {
+      direction: getComputedStyle(option).flexDirection,
+      clamp: name ? getComputedStyle(name).webkitLineClamp : '',
+      labelMax: name ? getComputedStyle(name).maxWidth : '',
+      pillWidth: pillBox ? Math.round(pillBox.width) : 0,
+      tileWidth: Math.round(tileBox.width),
+      iconWidth: icon ? Math.round(icon.getBoundingClientRect().width) : 0,
+    };
   });
-  expect(badgeBesideName).toBe(true);
+  expect(tile.direction).toBe('column');
+  expect(tile.clamp === 'none' || tile.clamp === '').toBe(true);
+  expect(tile.labelMax).toBe('141px');
+  expect(tile.iconWidth).toBe(56);
+  expect(tile.pillWidth).toBeGreaterThan(70);
+  expect(tile.pillWidth).toBeLessThan(tile.tileWidth - 24);
+
+  const infoPanel = page.getByRole('complementary');
+  await expect(infoPanel).toBeVisible();
+  const infoWidth = await infoPanel.evaluate((aside) => {
+    const match = Array.from(aside.querySelectorAll('div')).find((el) => {
+      const box = el.getBoundingClientRect();
+      return box.width >= 80 && box.width <= 100 && Math.abs(box.width - box.height) < 2;
+    });
+    return match ? Math.round(match.getBoundingClientRect().width) : 0;
+  });
+  expect(infoWidth).toBe(88);
+});
+
+test('app switcher shows the search empty state when nothing matches', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
+  await search.fill('aasandha');
+
+  await expect(page.getByText('No apps or sites match “aasandha”', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Check the spelling, or clear the search to see all GOVMV apps and sites.', {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole('option')).toHaveCount(0);
+});
+
+test('app switcher shows a scroll hint and keeps filtered results in the grid', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  await expect(page.getByRole('button', { name: 'View more', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'View less', exact: true })).toHaveCount(0);
+
+  const hint = page.locator('button', { hasText: 'Scroll to view more' });
+  await expect(hint).toBeVisible();
+  await expect(hint).toHaveAttribute('tabindex', '0');
+
+  const scroller = page.locator('[data-switcher-scroll]');
+  await hint.click();
+  await expect
+    .poll(() => scroller.evaluate((el) => (el as HTMLElement).scrollTop))
+    .toBeGreaterThan(4);
+
+  await page.getByRole('button', { name: 'Filter' }).click();
+  await page.getByRole('menuitemradio', { name: 'Sites only' }).click();
+  const defence = page.getByRole('option', { name: 'Minister of Defence and National Service' });
+  await expect(defence).toBeVisible();
+  const box = await defence.evaluate((el) => {
+    const grid = el.closest('[role="listbox"], [role="grid"]');
+    return {
+      direction: getComputedStyle(el).flexDirection,
+      width: Math.round(el.getBoundingClientRect().width),
+      columns: grid ? getComputedStyle(grid).gridTemplateColumns : '',
+    };
+  });
+  expect(box.direction).toBe('column');
+  expect(box.width).toBe(165);
+  expect(box.columns).toContain('165px');
+
+  await page.setViewportSize({ width: 1600, height: 966 });
+  const gutter = await defence.evaluate((el) => {
+    const next = el.nextElementSibling;
+    if (!(next instanceof HTMLElement)) return null;
+    const a = el.getBoundingClientRect();
+    const b = next.getBoundingClientRect();
+    return {
+      gap: Math.round(b.left - a.right),
+      sameRow: Math.abs(a.top - b.top) < 2,
+    };
+  });
+  expect(gutter?.sameRow).toBe(true);
+  expect(gutter?.gap).toBeGreaterThanOrEqual(18);
+  expect(gutter?.gap).toBeLessThanOrEqual(24);
+
+  const search = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
+  await search.fill('Locker');
+  await expect(hint).toHaveAttribute('aria-hidden', 'true');
+  await expect(hint).toHaveAttribute('tabindex', '-1');
+});
+
+test('entity name wraps and the mobile menu starts at 1120px', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Long entity' }).click();
+
+  const title = page.getByText(
+    'Ministry of Fisheries, Agriculture and Ocean Resources, Longer Affairs, National Planning, Coastal Administration, and Maritime Safety',
+  );
+  await expect(title).toBeVisible();
+  const metrics = await title.evaluate((el) => {
+    const style = getComputedStyle(el);
+    const header = el.closest('[data-header-surface]');
+    return {
+      width: Math.round(el.getBoundingClientRect().width),
+      clamp: style.webkitLineClamp,
+      headerHeight: header ? Math.round(header.getBoundingClientRect().height) : 0,
+    };
+  });
+  expect(metrics.width).toBeLessThanOrEqual(320);
+  expect(metrics.clamp === 'none' || metrics.clamp === '').toBe(true);
+  expect(metrics.headerHeight).toBeGreaterThan(72);
+
+  await page.setViewportSize({ width: 1120, height: 800 });
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeVisible();
+
+  await page.setViewportSize({ width: 1121, height: 800 });
+  await expect(page.getByRole('button', { name: 'Open menu' })).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
 });
 
 test('reduced motion still opens the app switcher', async ({ page }) => {
@@ -258,6 +388,6 @@ test('reduced motion still opens the app switcher', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Open app switcher' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Browse government services and sites' }),
+    page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
 });

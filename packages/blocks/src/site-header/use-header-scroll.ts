@@ -8,8 +8,6 @@ export const OFFICIAL_BANNER_COLLAPSED_HEIGHT = 36;
 const HEADER_TOP_THRESHOLD_PX = 24;
 const HEADER_SCROLL_DELTA_PX = 6;
 const HEADER_FLOATING_ACTIVATION_PX = 160;
-/** Collapsed banner + gap + header — used to inert top chrome once it's off-screen. */
-const HEADER_TOP_STACK_PX = OFFICIAL_BANNER_COLLAPSED_HEIGHT + 4 + HEADER_HEIGHT;
 
 /**
  * At the page top the fixed chrome tracks scrollY (scrolls away with the page).
@@ -20,6 +18,7 @@ export function useHeaderScrollMode(
   pathname: string,
   headerRef: RefObject<HTMLElement | null>,
   bannerExitRef: RefObject<HTMLElement | null>,
+  headerHeight: number,
 ): { mode: HeaderScrollMode; floatingMotion: boolean } {
   const [mode, setMode] = useState<HeaderScrollMode>('top');
   // Transitions stay off until the floating pill has been shown once, so the
@@ -30,6 +29,7 @@ export function useHeaderScrollMode(
   const floatingEnabledRef = useRef(false);
   const modeRef = useRef<HeaderScrollMode>('top');
   const clearExitRafRef = useRef<number | null>(null);
+  const topStackPx = OFFICIAL_BANNER_COLLAPSED_HEIGHT + 4 + headerHeight;
 
   const applyTopExitOffset = useCallback(
     (offset: number) => {
@@ -70,7 +70,7 @@ export function useHeaderScrollMode(
       lastYRef.current = y;
       setFloatingMotion(false);
       // Keep chrome translated off-screen until React commits opacity-0.
-      applyTopExitOffset(Math.max(y, HEADER_TOP_STACK_PX));
+      applyTopExitOffset(Math.max(y, topStackPx));
       const banner = bannerExitRef.current;
       if (banner) {
         banner.style.opacity = '0';
@@ -85,7 +85,7 @@ export function useHeaderScrollMode(
         });
       });
     },
-    [applyTopExitOffset, bannerExitRef, cancelPendingExitClear, commitMode],
+    [applyTopExitOffset, bannerExitRef, cancelPendingExitClear, commitMode, topStackPx],
   );
 
   useEffect(() => {
@@ -100,9 +100,16 @@ export function useHeaderScrollMode(
       commitMode(y < HEADER_TOP_THRESHOLD_PX ? 'top' : 'hidden');
     } else {
       applyTopExitOffset(y);
-      commitMode(y < HEADER_TOP_STACK_PX ? 'top' : 'hidden-top');
+      commitMode(y < topStackPx ? 'top' : 'hidden-top');
     }
-  }, [pathname, applyTopExitOffset, cancelPendingExitClear, clearBannerExitPaint, commitMode]);
+  }, [
+    pathname,
+    applyTopExitOffset,
+    cancelPendingExitClear,
+    clearBannerExitPaint,
+    commitMode,
+    topStackPx,
+  ]);
 
   useEffect(() => {
     lastYRef.current = window.scrollY;
@@ -124,7 +131,7 @@ export function useHeaderScrollMode(
           commitMode('top');
           return;
         }
-        commitMode(y < HEADER_TOP_STACK_PX ? 'top' : 'hidden-top');
+        commitMode(y < topStackPx ? 'top' : 'hidden-top');
         return;
       }
 
@@ -170,6 +177,7 @@ export function useHeaderScrollMode(
     cancelPendingExitClear,
     clearBannerExitPaint,
     commitMode,
+    topStackPx,
   ]);
 
   return { mode, floatingMotion };

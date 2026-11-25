@@ -105,7 +105,7 @@ export function MobileNavPanel({
           role="dialog"
           aria-modal="true"
           aria-label={labels.siteMenu}
-          className="bg-surface-raised fixed inset-0 z-50 flex h-dvh w-full origin-top flex-col gap-2.5 rounded-b-[32px] pb-5 outline-none lg:hidden"
+          className="bg-surface-raised fixed inset-0 z-50 flex h-dvh w-full origin-top flex-col gap-2.5 rounded-b-[32px] pb-5 outline-none min-[1121px]:hidden"
           initial={
             prefersReducedMotion
               ? { opacity: 0 }

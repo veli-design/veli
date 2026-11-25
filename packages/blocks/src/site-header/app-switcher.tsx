@@ -7,15 +7,14 @@ import {
   useMemo,
   useRef,
   useState,
-  useSyncExternalStore,
-  type ReactNode,
   type Ref,
+  type RefObject,
 } from 'react';
 import {
-  CaretDownIcon,
   CheckIcon,
   FunnelSimpleIcon,
-  MagnifyingGlassIcon,
+  MouseScrollIcon,
+  SquaresFourIcon,
 } from '@phosphor-icons/react';
 import { Button } from '@veli-design/react/button';
 import { Divider } from '@veli-design/react/divider';
@@ -32,7 +31,6 @@ import {
 } from 'react-aria-components';
 
 import {
-  INFO_PANEL_GLOW_DARK_FALLBACK,
   INFO_PANEL_GLOW_FALLBACK,
   SwitcherItemContent,
   SwitcherLargeIcon,
@@ -41,18 +39,22 @@ import {
   type SiteHeaderSwitcherItem,
 } from './app-switcher-tiles';
 import {
+  DURATION,
   EASE_DRAWER_CSS,
-  expandTilesTransition,
   infoPanelFadeTransition,
   searchResultExitTransition,
   searchResultReducedTransition,
   searchResultTransition,
 } from './motion';
-
-/** Collapsed tiles per section — one full row matching `tileGridClass` column counts. */
-const COLLAPSED_TILE_COUNT = { base: 3, md: 4, xl: 5 } as const;
-const BP_MD = 768;
-const BP_XL = 1280;
+import {
+  SCROLL_HINT_FRACTION,
+  bottomFadeOn,
+  bottomFadeSoft,
+  hintVisible,
+  topFadeOn,
+  useScrollEdges,
+  type ScrollEdges,
+} from './use-switcher-scroll';
 
 export type SiteHeaderAppSwitcherLabels = {
   browse: string;
@@ -63,8 +65,7 @@ export type SiteHeaderAppSwitcherLabels = {
   appsBlurb: string;
   sitesBlurb: string;
   youAreHere: string;
-  viewMore: string;
-  viewLess: string;
+  scrollToViewMore: string;
   searchAppsAndSites: string;
   search: string;
   filter: string;
@@ -81,6 +82,8 @@ export type SiteHeaderAppSwitcherLabels = {
   noAppsMatch: (query: string) => string;
   noSitesMatch: (query: string) => string;
   noAppsOrSitesMatch: (query: string) => string;
+  /** Hint under the empty search title (spelling / clear search). */
+  searchEmptyHint: string;
 };
 
 export type AppSwitcherFilter = 'all' | 'apps' | 'sites';
@@ -94,25 +97,22 @@ function menuSelectionEndIcon(isSelected: boolean) {
   ) : undefined;
 }
 
-function visibleSwitcherItems(
-  items: SiteHeaderSwitcherItem[],
-  collapsedCount: number,
-  expanded: boolean,
-  searching: boolean,
-  layout: 'grid' | 'list',
-) {
-  if (layout === 'list' || searching || expanded) return items;
-  return items.slice(0, collapsedCount);
+function readGridColumns(root: HTMLElement | null) {
+  const grid = root?.querySelector('[role="listbox"], [role="grid"]');
+  if (!(grid instanceof HTMLElement)) return 1;
+  const count = getComputedStyle(grid)
+    .gridTemplateColumns.split(' ')
+    .filter((part) => part.length > 0 && part !== 'none').length;
+  return Math.max(1, count);
 }
 
-/** Grid/list highlight step. Vertical moves stay column-aligned across apps → sites. */
+/** Highlight step. Vertical moves stay in column across apps, then sites. */
 function nextSwitcherIndex({
   index,
   key,
   columns,
   length,
   appCount,
-  layout,
   rtl,
 }: {
   index: number;
@@ -120,7 +120,6 @@ function nextSwitcherIndex({
   columns: number;
   length: number;
   appCount: number;
-  layout: 'grid' | 'list';
   rtl: boolean;
 }) {
   if (length === 0) return 0;
@@ -132,7 +131,7 @@ function nextSwitcherIndex({
     return next < 0 || next >= length ? index : next;
   }
 
-  const singleSection = layout === 'list' || appCount <= 0 || appCount >= length;
+  const singleSection = appCount <= 0 || appCount >= length;
   if (singleSection) {
     const delta = key === 'ArrowDown' ? step : -step;
     const next = index + delta;
@@ -162,88 +161,8 @@ function nextSwitcherIndex({
   return target < appCount ? target : appCount - 1;
 }
 
-function getCollapsedTileCount(width: number) {
-  if (width >= BP_XL) return COLLAPSED_TILE_COUNT.xl;
-  if (width >= BP_MD) return COLLAPSED_TILE_COUNT.md;
-  return COLLAPSED_TILE_COUNT.base;
-}
-
-function subscribeViewport(onChange: () => void) {
-  window.addEventListener('resize', onChange);
-  return () => window.removeEventListener('resize', onChange);
-}
-
-function useCollapsedTileCount() {
-  return useSyncExternalStore(
-    subscribeViewport,
-    () => getCollapsedTileCount(window.innerWidth),
-    () => COLLAPSED_TILE_COUNT.xl,
-  );
-}
-
-function ViewMore({
-  expanded,
-  onToggle,
-  prefersReducedMotion,
-  viewMore,
-  viewLess,
-}: {
-  expanded: boolean;
-  onToggle: () => void;
-  prefersReducedMotion: boolean | null;
-  viewMore: string;
-  viewLess: string;
-}) {
-  return (
-    <div className="relative flex w-full items-center justify-center gap-2.5 px-4 py-1">
-      <div className="bg-border-base-muted h-px min-w-0 flex-1" />
-      <Button
-        intent="primary"
-        appearance="ghost"
-        size="xs"
-        onPress={onToggle}
-        aria-expanded={expanded}
-      >
-        {expanded ? viewLess : viewMore}
-        <motion.span
-          className="inline-flex"
-          animate={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
-          transition={prefersReducedMotion ? { duration: 0 } : expandTilesTransition}
-        >
-          <CaretDownIcon size={12} weight="bold" aria-hidden />
-        </motion.span>
-      </Button>
-      <div className="bg-border-base-muted h-px min-w-0 flex-1" />
-    </div>
-  );
-}
-
-/** Extra grid rows expand above View more; overflow is clipped so the divider never overlaps tiles. */
-function ExpandableTileRest({
-  expanded,
-  prefersReducedMotion,
-  children,
-}: {
-  expanded: boolean;
-  prefersReducedMotion: boolean | null;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className="grid"
-      style={{
-        gridTemplateRows: expanded ? '1fr' : '0fr',
-        transition: prefersReducedMotion
-          ? undefined
-          : `grid-template-rows 300ms ${EASE_DRAWER_CSS}`,
-      }}
-    >
-      <div className="min-h-0 overflow-hidden" {...(!expanded ? { inert: true as const } : {})}>
-        {children}
-      </div>
-    </div>
-  );
-}
+const tileMoveMs = DURATION.searchResultMove * 1000;
+const tileEnterMs = DURATION.searchResultEnter * 1000;
 
 /** Fades for search results. Size changes reflow instantly; only position is animated. */
 function searchResultMotion(prefersReducedMotion: boolean | null) {
@@ -256,15 +175,216 @@ function searchResultMotion(prefersReducedMotion: boolean | null) {
   };
 }
 
+/**
+ * FLIP layout animation for React Aria ListBox tiles.
+ * ListBox commits its collection asynchronously after the parent render, so we observe
+ * child-list mutations on the group container (microtask before paint) and animate
+ * rendered option elements using ListBox-relative layout offsets (immune to scroll resets
+ * and parent layout transforms).
+ */
+function useSwitcherTileLayoutAnimation(
+  listRef: RefObject<HTMLDivElement | null>,
+  searching: boolean,
+  prefersReducedMotion: boolean | null,
+) {
+  const positionsRef = useRef<Map<string, { x: number; y: number }>>(new Map());
+  const animationsRef = useRef<Map<string, Animation>>(new Map());
+  const initializedRef = useRef(false);
+
+  const syncPositions = useCallback(() => {
+    const container = listRef.current;
+    if (!container) return;
+
+    const nodes = container.querySelectorAll<HTMLElement>('[data-switcher-item]');
+    if (nodes.length === 0) return;
+
+    const prevPositions = positionsRef.current;
+    const activeAnimations = animationsRef.current;
+    const nextPositions = new Map<string, { x: number; y: number }>();
+
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      for (const el of nodes) {
+        const id = el.dataset.switcherItem;
+        if (!id) continue;
+        nextPositions.set(id, { x: el.offsetLeft, y: el.offsetTop });
+      }
+      positionsRef.current = nextPositions;
+      return;
+    }
+
+    for (const el of nodes) {
+      const id = el.dataset.switcherItem;
+      if (!id) continue;
+
+      const nextX = el.offsetLeft;
+      const nextY = el.offsetTop;
+      nextPositions.set(id, { x: nextX, y: nextY });
+
+      const prev = prevPositions.get(id);
+      const running = activeAnimations.get(id);
+
+      if (!prev) {
+        running?.cancel();
+        if (typeof el.animate === 'function') {
+          const anim = el.animate([{ opacity: 0 }, { opacity: 1 }], {
+            duration: tileEnterMs,
+            easing: EASE_DRAWER_CSS,
+          });
+          activeAnimations.set(id, anim);
+          anim.onfinish = () => {
+            if (activeAnimations.get(id) === anim) activeAnimations.delete(id);
+          };
+        }
+        continue;
+      }
+
+      if (prefersReducedMotion) {
+        running?.cancel();
+        activeAnimations.delete(id);
+        continue;
+      }
+
+      // Preserve any in-flight transform so rapid typing retargets smoothly without snapping.
+      let carryX = 0;
+      let carryY = 0;
+      if (running) {
+        const transform = getComputedStyle(el).transform;
+        if (transform && transform !== 'none') {
+          const matrix = new DOMMatrixReadOnly(transform);
+          carryX = matrix.m41;
+          carryY = matrix.m42;
+        }
+        running.cancel();
+        activeAnimations.delete(id);
+      }
+
+      const dx = prev.x + carryX - nextX;
+      const dy = prev.y + carryY - nextY;
+      if (Math.abs(dx) < 0.5 && Math.abs(dy) < 0.5) continue;
+
+      if (typeof el.animate === 'function') {
+        const anim = el.animate(
+          [{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0px, 0px)' }],
+          {
+            duration: tileMoveMs,
+            easing: EASE_DRAWER_CSS,
+          },
+        );
+        activeAnimations.set(id, anim);
+        anim.onfinish = () => {
+          if (activeAnimations.get(id) === anim) activeAnimations.delete(id);
+        };
+      }
+    }
+
+    for (const [id, anim] of activeAnimations) {
+      if (!nextPositions.has(id)) {
+        anim.cancel();
+        activeAnimations.delete(id);
+      }
+    }
+
+    positionsRef.current = nextPositions;
+  }, [listRef, prefersReducedMotion]);
+
+  useLayoutEffect(() => {
+    const container = listRef.current;
+    if (!container) return;
+
+    syncPositions();
+    const observer = new MutationObserver(() => {
+      syncPositions();
+    });
+    observer.observe(container, { childList: true, subtree: true });
+
+    const activeAnimations = animationsRef.current;
+    return () => {
+      observer.disconnect();
+      for (const anim of activeAnimations.values()) anim.cancel();
+      activeAnimations.clear();
+    };
+  }, [listRef, syncPositions]);
+
+  // Heading blurb collapse/expand shifts tile rows even when the item list is unchanged.
+  useLayoutEffect(() => {
+    syncPositions();
+  }, [searching, syncPositions]);
+}
+
+function SwitcherTileGroup({
+  sectionId,
+  title,
+  blurb,
+  searching,
+  headingClassName,
+  listBoxClassName,
+  items,
+  selectedId,
+  youAreHereLabel,
+  onPreview,
+  onAction,
+  prefersReducedMotion,
+}: {
+  sectionId: 'apps' | 'sites';
+  title: string;
+  blurb: string;
+  searching: boolean;
+  headingClassName: string;
+  listBoxClassName: string;
+  items: SiteHeaderSwitcherItem[];
+  selectedId: string;
+  youAreHereLabel: string;
+  onPreview: (id: string) => void;
+  onAction: (key: Key) => void;
+  prefersReducedMotion: boolean | null;
+}) {
+  const groupRef = useRef<HTMLDivElement>(null);
+  useSwitcherTileLayoutAnimation(groupRef, searching, prefersReducedMotion);
+
+  return (
+    <div ref={groupRef} className="flex flex-col">
+      <ListBox
+        aria-label={title}
+        layout="grid"
+        orientation="vertical"
+        selectionMode="none"
+        escapeKeyBehavior="none"
+        shouldFocusOnHover
+        onAction={onAction}
+        className={`relative ${tileGridClass} outline-none ${listBoxClassName}`}
+        renderEmptyState={() => null}
+      >
+        <ListBoxSection id={sectionId} className="contents">
+          <SwitcherSectionHeader
+            title={title}
+            blurb={blurb}
+            searching={searching}
+            headingClassName={headingClassName}
+            prefersReducedMotion={prefersReducedMotion}
+          />
+          {items.map((item) => (
+            <SwitcherListBoxItem
+              key={item.id}
+              item={item}
+              selectedId={selectedId}
+              youAreHereLabel={youAreHereLabel}
+              onPreview={onPreview}
+            />
+          ))}
+        </ListBoxSection>
+      </ListBox>
+    </div>
+  );
+}
+
 function SwitcherListBoxItem({
   item,
-  layout,
   selectedId,
   youAreHereLabel,
   onPreview,
 }: {
   item: SiteHeaderSwitcherItem;
-  layout: 'grid' | 'list';
   selectedId: string;
   youAreHereLabel: string;
   onPreview: (id: string) => void;
@@ -279,15 +399,12 @@ function SwitcherListBoxItem({
       data-switcher-item={item.id}
       data-highlighted={highlighted ? 'true' : undefined}
       className={({ isFocused, isHovered }) =>
-        switcherItemClassName({
-          layout,
-          highlighted: isFocused || isHovered || highlighted,
-        })
+        switcherItemClassName(isFocused || isHovered || highlighted)
       }
       onFocus={() => onPreview(item.id)}
       onHoverStart={() => onPreview(item.id)}
     >
-      <SwitcherItemContent item={item} youAreHereLabel={youAreHereLabel} layout={layout} />
+      <SwitcherItemContent item={item} youAreHereLabel={youAreHereLabel} />
     </ListBoxItem>
   );
 }
@@ -296,19 +413,16 @@ function SwitcherSectionHeader({
   title,
   blurb,
   searching,
-  layout,
   headingClassName,
   prefersReducedMotion,
 }: {
   title: string;
   blurb: string;
   searching: boolean;
-  layout: 'grid' | 'list';
   headingClassName: string;
   prefersReducedMotion: boolean | null;
 }) {
-  const listLayout = layout === 'list';
-  const compactHeading = searching && !listLayout;
+  const compactHeading = searching;
 
   return (
     <Header className="col-span-full">
@@ -351,10 +465,6 @@ function SearchResults({
   apps,
   sites,
   showSites,
-  appsExpanded,
-  sitesExpanded,
-  onToggleApps,
-  onToggleSites,
   selectedId,
   labels,
   onPreview,
@@ -368,21 +478,15 @@ function SearchResults({
   apps: SiteHeaderSwitcherItem[];
   sites: SiteHeaderSwitcherItem[];
   showSites: boolean;
-  appsExpanded: boolean;
-  sitesExpanded: boolean;
-  onToggleApps: () => void;
-  onToggleSites: () => void;
   selectedId: string;
   labels: SiteHeaderAppSwitcherLabels;
   onPreview: (id: string) => void;
   onActivate: (item: SiteHeaderSwitcherItem) => void;
   prefersReducedMotion: boolean | null;
 }) {
-  const collapsedCount = useCollapsedTileCount();
   const appCount = apps.length;
   const siteCount = showSites ? sites.length : 0;
   const total = appCount + siteCount;
-  const layout: 'grid' | 'list' = filter === 'all' ? 'grid' : 'list';
   const summary = labels.searchSummary(query, appCount, siteCount);
   const filterSummary =
     filter === 'apps'
@@ -401,37 +505,8 @@ function SearchResults({
   };
   const showApps = filter !== 'sites' && (!searching || appCount > 0);
   const showSiteGroup = filter !== 'apps' && showSites && (!searching || siteCount > 0);
-  const collapseGrid = layout === 'grid' && !searching;
-  const shownApps = useMemo(
-    () =>
-      showApps ? visibleSwitcherItems(apps, collapsedCount, appsExpanded, searching, layout) : [],
-    [apps, appsExpanded, collapsedCount, layout, searching, showApps],
-  );
-  const shownSites = useMemo(
-    () =>
-      showSiteGroup
-        ? visibleSwitcherItems(sites, collapsedCount, sitesExpanded, searching, layout)
-        : [],
-    [collapsedCount, layout, searching, showSiteGroup, sites, sitesExpanded],
-  );
-  const appsCollapsed = useMemo(
-    () => (showApps && collapseGrid ? apps.slice(0, collapsedCount) : shownApps),
-    [apps, collapseGrid, collapsedCount, showApps, shownApps],
-  );
-  const appsRest = useMemo(
-    () => (showApps && collapseGrid ? apps.slice(collapsedCount) : []),
-    [apps, collapseGrid, collapsedCount, showApps],
-  );
-  const sitesCollapsed = useMemo(
-    () => (showSiteGroup && collapseGrid ? sites.slice(0, collapsedCount) : shownSites),
-    [collapseGrid, collapsedCount, showSiteGroup, shownSites, sites],
-  );
-  const sitesRest = useMemo(
-    () => (showSiteGroup && collapseGrid ? sites.slice(collapsedCount) : []),
-    [collapseGrid, collapsedCount, showSiteGroup, sites],
-  );
-  const appsHasMore = collapseGrid && apps.length > collapsedCount;
-  const sitesHasMore = collapseGrid && sites.length > collapsedCount;
+  const shownApps = useMemo(() => (showApps ? apps : []), [apps, showApps]);
+  const shownSites = useMemo(() => (showSiteGroup ? sites : []), [showSiteGroup, sites]);
   const noMatches =
     filter === 'apps'
       ? labels.noAppsMatch(query)
@@ -448,7 +523,7 @@ function SearchResults({
       ? filterSummary
         ? `${filterSummary.lead}${filterSummary.countLabel}`
         : `${summary.countLabel}${summary.rest}`
-      : noMatches;
+      : `${noMatches}. ${labels.searchEmptyHint}`;
 
   const itemsById = useMemo(() => {
     const map = new Map<string, SiteHeaderSwitcherItem>();
@@ -473,7 +548,7 @@ function SearchResults({
           {filterSummary && total > 0 ? (
             <motion.p
               key="filter-summary"
-              className="type-body-sm-regular text-text-base-muted ps-0 pt-4 pb-2 xl:ps-4"
+              className="type-body-sm-regular text-text-base-muted border-border-base-muted mb-4 border-b ps-0 pt-4 pb-4 xl:ps-4"
               {...resultMotion}
             >
               {filterSummary.lead}
@@ -495,187 +570,60 @@ function SearchResults({
           ) : null}
         </AnimatePresence>
 
-        {total > 0 ? (
-          <div
-            ref={listBoxRef}
-            role="region"
-            aria-label={labels.browse}
-            className="flex flex-col outline-none"
-          >
+        <div
+          ref={listBoxRef}
+          role="region"
+          aria-label={labels.browse}
+          aria-hidden={total === 0 || undefined}
+          className="flex flex-col outline-none"
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
             {showApps ? (
-              <div className="flex shrink-0 flex-col">
-                <ListBox
-                  aria-label={labels.apps}
-                  layout={layout === 'grid' ? 'grid' : 'stack'}
-                  orientation="vertical"
-                  selectionMode="none"
-                  escapeKeyBehavior="none"
-                  shouldFocusOnHover
+              <motion.div key="apps" className="flex flex-col" {...resultMotion}>
+                <SwitcherTileGroup
+                  sectionId="apps"
+                  title={labels.apps}
+                  blurb={labels.appsBlurb}
+                  searching={searching}
+                  headingClassName="flex flex-col gap-2 ps-0 pt-0 pb-2 xl:ps-4"
+                  listBoxClassName="pt-4"
+                  items={shownApps}
+                  selectedId={selectedId}
+                  youAreHereLabel={labels.youAreHere}
+                  onPreview={onPreview}
                   onAction={onAction}
-                  className={
-                    layout === 'list'
-                      ? 'flex flex-col gap-1 px-2 py-2 outline-none'
-                      : appsHasMore
-                        ? `${tileGridClass} pt-4 outline-none xl:px-4 xl:pt-4`
-                        : `${tileGridClass} py-4 outline-none xl:p-4`
-                  }
-                  renderEmptyState={() => null}
-                >
-                  <ListBoxSection id="apps" className="contents">
-                    <SwitcherSectionHeader
-                      title={labels.apps}
-                      blurb={labels.appsBlurb}
-                      searching={searching}
-                      layout={layout}
-                      headingClassName="flex flex-col gap-2 ps-0 pt-0 pb-2 xl:ps-4 xl:pt-6"
-                      prefersReducedMotion={prefersReducedMotion}
-                    />
-                    {appsCollapsed.map((item) => (
-                      <SwitcherListBoxItem
-                        key={item.id}
-                        item={item}
-                        layout={layout}
-                        selectedId={selectedId}
-                        youAreHereLabel={labels.youAreHere}
-                        onPreview={onPreview}
-                      />
-                    ))}
-                  </ListBoxSection>
-                </ListBox>
-                {appsHasMore ? (
-                  <>
-                    <ExpandableTileRest
-                      expanded={appsExpanded}
-                      prefersReducedMotion={prefersReducedMotion}
-                    >
-                      <ListBox
-                        aria-label={labels.apps}
-                        aria-hidden={!appsExpanded}
-                        layout="grid"
-                        orientation="vertical"
-                        selectionMode="none"
-                        escapeKeyBehavior="none"
-                        shouldFocusOnHover
-                        onAction={onAction}
-                        className={`${tileGridClass} pt-4 outline-none xl:px-4`}
-                        renderEmptyState={() => null}
-                      >
-                        {appsRest.map((item) => (
-                          <SwitcherListBoxItem
-                            key={item.id}
-                            item={item}
-                            layout={layout}
-                            selectedId={selectedId}
-                            youAreHereLabel={labels.youAreHere}
-                            onPreview={onPreview}
-                          />
-                        ))}
-                      </ListBox>
-                    </ExpandableTileRest>
-                    <div className="relative z-10 pt-2">
-                      <ViewMore
-                        expanded={appsExpanded}
-                        onToggle={onToggleApps}
-                        prefersReducedMotion={prefersReducedMotion}
-                        viewMore={labels.viewMore}
-                        viewLess={labels.viewLess}
-                      />
-                    </div>
-                  </>
-                ) : null}
-              </div>
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              </motion.div>
             ) : null}
             {showSiteGroup ? (
-              <div className="flex shrink-0 flex-col">
-                <ListBox
-                  aria-label={labels.sites}
-                  layout={layout === 'grid' ? 'grid' : 'stack'}
-                  orientation="vertical"
-                  selectionMode="none"
-                  escapeKeyBehavior="none"
-                  shouldFocusOnHover
-                  onAction={onAction}
-                  className={
-                    layout === 'list'
-                      ? 'flex flex-col gap-1 px-2 py-2 outline-none'
-                      : sitesHasMore
-                        ? `${tileGridClass} pt-4 outline-none xl:px-4 xl:pt-4`
-                        : `${tileGridClass} py-4 outline-none xl:p-4`
+              <motion.div key="sites" className="flex flex-col" {...resultMotion}>
+                <SwitcherTileGroup
+                  sectionId="sites"
+                  title={labels.sites}
+                  blurb={labels.sitesBlurb}
+                  searching={searching}
+                  headingClassName="flex flex-col gap-2 ps-0 pt-4 pb-2 xl:ps-4 xl:pt-0"
+                  listBoxClassName={
+                    showApps ? 'border-border-base-muted mt-4 border-t pt-4' : 'pt-4'
                   }
-                  renderEmptyState={() => null}
-                >
-                  <ListBoxSection id="sites" className="contents">
-                    <SwitcherSectionHeader
-                      title={labels.sites}
-                      blurb={labels.sitesBlurb}
-                      searching={searching}
-                      layout={layout}
-                      headingClassName="flex flex-col gap-2 ps-0 pt-4 pb-2 xl:ps-4 xl:pt-6"
-                      prefersReducedMotion={prefersReducedMotion}
-                    />
-                    {sitesCollapsed.map((item) => (
-                      <SwitcherListBoxItem
-                        key={item.id}
-                        item={item}
-                        layout={layout}
-                        selectedId={selectedId}
-                        youAreHereLabel={labels.youAreHere}
-                        onPreview={onPreview}
-                      />
-                    ))}
-                  </ListBoxSection>
-                </ListBox>
-                {sitesHasMore ? (
-                  <>
-                    <ExpandableTileRest
-                      expanded={sitesExpanded}
-                      prefersReducedMotion={prefersReducedMotion}
-                    >
-                      <ListBox
-                        aria-label={labels.sites}
-                        aria-hidden={!sitesExpanded}
-                        layout="grid"
-                        orientation="vertical"
-                        selectionMode="none"
-                        escapeKeyBehavior="none"
-                        shouldFocusOnHover
-                        onAction={onAction}
-                        className={`${tileGridClass} pt-4 outline-none xl:px-4`}
-                        renderEmptyState={() => null}
-                      >
-                        {sitesRest.map((item) => (
-                          <SwitcherListBoxItem
-                            key={item.id}
-                            item={item}
-                            layout={layout}
-                            selectedId={selectedId}
-                            youAreHereLabel={labels.youAreHere}
-                            onPreview={onPreview}
-                          />
-                        ))}
-                      </ListBox>
-                    </ExpandableTileRest>
-                    <div className="relative z-10 pt-2">
-                      <ViewMore
-                        expanded={sitesExpanded}
-                        onToggle={onToggleSites}
-                        prefersReducedMotion={prefersReducedMotion}
-                        viewMore={labels.viewMore}
-                        viewLess={labels.viewLess}
-                      />
-                    </div>
-                  </>
-                ) : null}
-              </div>
+                  items={shownSites}
+                  selectedId={selectedId}
+                  youAreHereLabel={labels.youAreHere}
+                  onPreview={onPreview}
+                  onAction={onAction}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              </motion.div>
             ) : null}
-          </div>
-        ) : null}
+          </AnimatePresence>
+        </div>
 
         <AnimatePresence mode="popLayout" initial={false}>
           {filter === 'all' && searching && total > 0 && appCount === 0 ? (
             <motion.p
               key="no-apps"
-              className="type-body-sm-medium text-text-base border-border-base-muted border-t ps-0 pt-4 pb-2 xl:ps-4"
+              className="type-body-sm-medium text-text-base border-border-base-muted mt-4 border-t ps-0 pt-4 pb-2 xl:ps-4"
               {...resultMotion}
             >
               {labels.noAppsMatch(query)}
@@ -684,7 +632,7 @@ function SearchResults({
           {filter === 'all' && searching && total > 0 && showSites && siteCount === 0 ? (
             <motion.p
               key="no-sites"
-              className="type-body-sm-medium text-text-base border-border-base-muted border-t ps-0 pt-4 pb-2 xl:ps-4"
+              className="type-body-sm-medium text-text-base border-border-base-muted mt-4 border-t ps-0 pt-4 pb-2 xl:ps-4"
               {...resultMotion}
             >
               {labels.noSitesMatch(query)}
@@ -694,16 +642,48 @@ function SearchResults({
           {searching && total === 0 ? (
             <motion.div
               key="empty"
-              className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-28"
+              role="status"
+              className="flex flex-1 flex-col items-center justify-center gap-4 px-4 py-16"
               {...emptyMotion}
             >
-              <MagnifyingGlassIcon size={32} className="text-text-base" aria-hidden />
-              <p className="type-body-md-medium text-text-base text-center">{noMatches}</p>
+              <SearchEmptyIllustration />
+              <div className="flex w-full max-w-[352px] flex-col items-center gap-2 text-center">
+                <p className="type-body-lg-semibold text-text-base-emphasis w-full">{noMatches}</p>
+                <p className="type-body-sm-regular text-text-base-muted w-full">
+                  {labels.searchEmptyHint}
+                </p>
+              </div>
             </motion.div>
           ) : null}
         </AnimatePresence>
       </div>
     </LayoutGroup>
+  );
+}
+
+function SearchEmptyIllustration() {
+  return (
+    <div className="relative h-[180px] w-[240px] shrink-0" aria-hidden>
+      <div
+        className="absolute top-6 left-[74px] h-[60px] w-[92px] rounded-3xl"
+        style={{
+          // Figma: brand/neutral/400 under brand/neutral/alpha/100 → 300
+          backgroundImage:
+            'linear-gradient(180deg, var(--veli-color-neutral-alpha-100) 0%, var(--veli-color-neutral-alpha-300) 100%), linear-gradient(90deg, var(--veli-color-neutral-400) 0%, var(--veli-color-neutral-400) 100%)',
+        }}
+      />
+      <div
+        className="absolute top-[42px] left-[62px] size-[116px] rounded-[32px] border-[3px] border-solid border-bg-surface-raised"
+        style={{
+          // Figma: brand/neutral/300 → brand/neutral/400
+          backgroundImage:
+            'linear-gradient(180deg, var(--veli-color-neutral-300) 0%, var(--veli-color-neutral-400) 100%)',
+        }}
+      />
+      <div className="absolute top-[72px] left-[92px] flex size-14 items-center justify-center text-bg-surface-raised">
+        <SquaresFourIcon size={56} weight="regular" />
+      </div>
+    </div>
   );
 }
 
@@ -875,6 +855,62 @@ function SearchFilterRow({
   );
 }
 
+function SwitcherScrollChrome({
+  edges,
+  label,
+  onHint,
+}: {
+  edges: ScrollEdges;
+  label: string;
+  onHint: () => void;
+}) {
+  const showHint = hintVisible(edges);
+  const showBottom = bottomFadeOn(edges);
+  const soft = bottomFadeSoft(edges);
+  const showTop = topFadeOn(edges);
+
+  return (
+    <>
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-px top-0 z-10 h-14 bg-linear-to-b from-surface-raised to-transparent transition-opacity duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none ${
+          showTop ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+      <div
+        aria-hidden
+        className={`pointer-events-none absolute inset-x-px bottom-0 z-10 transition-[opacity,height] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none xl:rounded-b-[32px] ${
+          showBottom ? (soft ? 'h-8 opacity-60' : 'h-24 opacity-100') : 'h-8 opacity-0'
+        }`}
+        style={{
+          background: soft
+            ? 'linear-gradient(transparent, var(--veli-color-bg-surface-raised))'
+            : 'linear-gradient(transparent, var(--veli-color-bg-surface-raised) 70%)',
+        }}
+      />
+      <button
+        type="button"
+        tabIndex={showHint ? 0 : -1}
+        aria-hidden={showHint ? undefined : true}
+        onClick={(event) => {
+          onHint();
+          event.currentTarget.blur();
+        }}
+        className={`type-body-sm-medium text-text-base-strong absolute inset-x-0 bottom-1.5 z-20 mx-auto flex w-max items-center rounded-full bg-transparent px-6 py-2 transition-[opacity,transform,background-color] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-neutral-alpha-200 motion-reduce:translate-y-0 motion-reduce:transition-none ${
+          showHint
+            ? 'pointer-events-auto translate-y-0 cursor-pointer opacity-100'
+            : 'pointer-events-none translate-y-1.5 opacity-0'
+        }`}
+      >
+        <span className="inline-flex items-center gap-1.5 transition-transform duration-[80ms] ease-out active:scale-[1.045]">
+          <MouseScrollIcon size={16} weight="bold" aria-hidden />
+          {label}
+        </span>
+      </button>
+    </>
+  );
+}
+
 export type AppSwitcherProps = {
   onClose: () => void;
   apps: SiteHeaderSwitcherItem[];
@@ -901,8 +937,6 @@ export function AppSwitcher({
   const [trackedInitialId, setTrackedInitialId] = useState(initialId);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<AppSwitcherFilter>('all');
-  const [appsExpanded, setAppsExpanded] = useState(false);
-  const [sitesExpanded, setSitesExpanded] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const listBoxRef = useRef<HTMLDivElement>(null);
@@ -982,40 +1016,33 @@ export function AppSwitcher({
     () => sites.filter((item) => !q || item.name.toLowerCase().includes(q)),
     [sites, q],
   );
-  const collapsedCount = useCollapsedTileCount();
-  const layout: 'grid' | 'list' = filter === 'all' ? 'grid' : 'list';
-  const columns = layout === 'list' ? 1 : collapsedCount;
   const searching = Boolean(q);
   const { navigable, navigableAppCount } = useMemo(() => {
-    const shownApps =
-      filter === 'sites'
-        ? []
-        : visibleSwitcherItems(filteredApps, collapsedCount, appsExpanded, searching, layout);
-    const shownSites =
-      filter === 'apps' || sites.length === 0
-        ? []
-        : visibleSwitcherItems(filteredSites, collapsedCount, sitesExpanded, searching, layout);
+    const shownApps = filter === 'sites' ? [] : filteredApps;
+    const shownSites = filter === 'apps' || sites.length === 0 ? [] : filteredSites;
     return {
       navigable: [...shownApps, ...shownSites],
       navigableAppCount: shownApps.length,
     };
-  }, [
-    appsExpanded,
-    collapsedCount,
-    filter,
-    filteredApps,
-    filteredSites,
-    layout,
-    searching,
-    sites.length,
-    sitesExpanded,
-  ]);
+  }, [filter, filteredApps, filteredSites, sites.length]);
 
+  // Empty search/filter must not keep a stale selection — that would leave the info panel
+  // describing a tile that is not on screen.
   const activeSelectedId =
-    navigable.length === 0 || navigable.some((item) => item.id === selectedId)
-      ? selectedId
-      : (navigable[0]?.id ?? selectedId);
-  const selected = allItems.find((item) => item.id === activeSelectedId) ?? apps[0] ?? sites[0];
+    navigable.length === 0
+      ? null
+      : navigable.some((item) => item.id === selectedId)
+        ? selectedId
+        : (navigable[0]?.id ?? null);
+  const selected =
+    activeSelectedId == null ? undefined : navigable.find((item) => item.id === activeSelectedId);
+  const scrollKey = `${filter}|${q}|${filteredApps.length}|${filteredSites.length}`;
+  const edges = useScrollEdges(scrollRef, scrollKey);
+
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = 0;
+  }, [filter, q]);
 
   useEffect(() => {
     const id = pendingScrollRef.current;
@@ -1023,73 +1050,25 @@ export function AppSwitcher({
     pendingScrollRef.current = null;
     const node = scrollRef.current?.querySelector(`[data-switcher-item="${CSS.escape(id)}"]`);
     if (node instanceof HTMLElement) node.scrollIntoView({ block: 'nearest' });
-  }, [activeSelectedId, filter, query]);
+  }, [activeSelectedId]);
 
   const applyFilter = (next: AppSwitcherFilter) => {
     setFilter(next);
-    const nextLayout = next === 'all' ? 'grid' : 'list';
-    const shownApps =
-      next === 'sites'
-        ? []
-        : visibleSwitcherItems(filteredApps, collapsedCount, appsExpanded, searching, nextLayout);
-    const shownSites =
-      next === 'apps' || sites.length === 0
-        ? []
-        : visibleSwitcherItems(filteredSites, collapsedCount, sitesExpanded, searching, nextLayout);
+    const shownApps = next === 'sites' ? [] : filteredApps;
+    const shownSites = next === 'apps' || sites.length === 0 ? [] : filteredSites;
     const first = shownApps[0] ?? shownSites[0];
-    if (!first) return;
-    pendingScrollRef.current = first.id;
-    setSelectedId(first.id);
+    if (first) setSelectedId(first.id);
   };
 
-  useEffect(() => {
-    const list = scrollRef.current;
-    if (!list) return;
-
-    const updateScrollFade = () => {
-      const maxFade = Math.min(69, Math.floor(list.clientHeight / 2));
-      const remaining = list.scrollHeight - list.clientHeight - list.scrollTop;
-      const top = Math.round(Math.min(Math.max(list.scrollTop, 0), maxFade));
-      const bottom = Math.round(Math.min(Math.max(remaining, 0), maxFade));
-      if (top < 1 && bottom < 1) {
-        list.style.removeProperty('mask-image');
-        list.style.removeProperty('-webkit-mask-image');
-        return;
-      }
-
-      const image = `linear-gradient(to bottom, transparent, #000 ${top}px, #000 calc(100% - ${bottom}px), transparent)`;
-      list.style.setProperty('mask-image', image);
-      list.style.setProperty('-webkit-mask-image', image);
-    };
-
-    updateScrollFade();
-    list.addEventListener('scroll', updateScrollFade, { passive: true });
-
-    const resizes = new ResizeObserver(updateScrollFade);
-    resizes.observe(list);
-    const content = list.firstElementChild;
-    const mutations = new MutationObserver((records) => {
-      for (const record of records) {
-        for (const node of record.removedNodes) {
-          if (node instanceof Element) resizes.unobserve(node);
-        }
-        for (const node of record.addedNodes) {
-          if (node instanceof Element) resizes.observe(node);
-        }
-      }
-      updateScrollFade();
+  const scrollByHint = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollBy({
+      top: Math.round(el.clientHeight * SCROLL_HINT_FRACTION),
+      behavior: reduce ? 'auto' : 'smooth',
     });
-    if (content) {
-      for (const child of content.children) resizes.observe(child);
-      mutations.observe(content, { childList: true });
-    }
-
-    return () => {
-      list.removeEventListener('scroll', updateScrollFade);
-      resizes.disconnect();
-      mutations.disconnect();
-    };
-  }, []);
+  };
 
   const activateItem = useCallback(
     (item: SiteHeaderSwitcherItem) => {
@@ -1133,8 +1112,7 @@ export function AppSwitcher({
       // Non-search fields inside the panel keep native editing (and host slots if any).
       if (inTextEntry && !inSearch) return;
 
-      // View more lives outside the listboxes so Tab can reach it. Arrow keys still
-      // move across apps/sites via navigable order (including while an option is focused).
+      // Arrow keys move across apps and sites, including while an option is focused.
       const inSwitcherOption =
         target instanceof Element && target.closest('[role="listbox"], [role="option"]');
 
@@ -1155,10 +1133,9 @@ export function AppSwitcher({
         const nextIndex = nextSwitcherIndex({
           index,
           key: event.key,
-          columns,
+          columns: readGridColumns(listBoxRef.current),
           length: navigable.length,
           appCount: navigableAppCount,
-          layout,
           rtl,
         });
         const id = navigable[nextIndex]?.id;
@@ -1180,17 +1157,9 @@ export function AppSwitcher({
 
     document.addEventListener('keydown', onKeyDown, true);
     return () => document.removeEventListener('keydown', onKeyDown, true);
-  }, [
-    activateItem,
-    activeSelectedId,
-    columns,
-    focusSwitcherOption,
-    layout,
-    navigable,
-    navigableAppCount,
-  ]);
+  }, [activateItem, activeSelectedId, focusSwitcherOption, navigable, navigableAppCount]);
 
-  if (!selected) return null;
+  if (allItems.length === 0) return null;
 
   return (
     <div
@@ -1221,8 +1190,8 @@ export function AppSwitcher({
           </div>
         </div>
 
-        <div className="xl:border-base-muted flex min-h-0 flex-1 flex-col overflow-hidden xl:rounded-[32px] xl:border xl:p-4">
-          <div className="hidden shrink-0 xl:block">
+        <div className="relative flex min-h-[360px] flex-[1_0_360px] flex-col overflow-hidden rounded-3xl min-[600px]:min-h-[420px] min-[600px]:flex-[1_0_420px] xl:rounded-[32px] xl:border xl:border-border-base-muted xl:p-4">
+          <div className="relative z-20 hidden shrink-0 bg-surface-raised xl:block">
             <SearchFilterRow
               inputRef={desktopSearchRef}
               query={query}
@@ -1232,85 +1201,111 @@ export function AppSwitcher({
               labels={labels}
             />
           </div>
-          <div
-            ref={scrollRef}
-            className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain"
-          >
-            <SearchResults
-              listBoxRef={listBoxRef}
-              query={query.trim()}
-              searching={searching}
-              filter={filter}
-              apps={filter === 'sites' ? [] : filteredApps}
-              sites={filter === 'apps' ? [] : filteredSites}
-              showSites={filter !== 'apps' && sites.length > 0}
-              appsExpanded={appsExpanded}
-              sitesExpanded={sitesExpanded}
-              onToggleApps={() => setAppsExpanded((value) => !value)}
-              onToggleSites={() => setSitesExpanded((value) => !value)}
-              selectedId={activeSelectedId}
-              labels={labels}
-              prefersReducedMotion={prefersReducedMotion}
-              onPreview={setSelectedId}
-              onActivate={activateItem}
+          <div className="relative min-h-0 flex-1">
+            {/*
+              In-flow scroller so search layout="position" has a real box.
+              layoutScroll keeps the query scroll reset out of that projection.
+              Fade and hint overlays stay absolute on the wrapper.
+            */}
+            <motion.div
+              ref={scrollRef}
+              layoutScroll
+              data-switcher-scroll=""
+              className="h-full overflow-y-auto overscroll-contain pb-[72px]"
+            >
+              <SearchResults
+                listBoxRef={listBoxRef}
+                query={query.trim()}
+                searching={searching}
+                filter={filter}
+                apps={filter === 'sites' ? [] : filteredApps}
+                sites={filter === 'apps' ? [] : filteredSites}
+                showSites={filter !== 'apps' && sites.length > 0}
+                selectedId={activeSelectedId ?? ''}
+                labels={labels}
+                prefersReducedMotion={prefersReducedMotion}
+                onPreview={setSelectedId}
+                onActivate={activateItem}
+              />
+            </motion.div>
+            <SwitcherScrollChrome
+              edges={edges}
+              label={labels.scrollToViewMore}
+              onHint={scrollByHint}
             />
           </div>
         </div>
       </div>
 
       <aside className="hidden min-h-0 w-[424px] shrink-0 flex-col xl:flex xl:pt-[76px]">
-        <div className="relative flex h-full min-h-[320px] flex-col overflow-auto rounded-[32px] p-10">
+        <div className="bg-surface-raised relative flex h-full min-h-[320px] flex-col overflow-auto rounded-[32px] p-10">
           {/*
-            Theme via `.dark` (not React context) so Storybook/document theme switches
-            always paint the correct glow. Hosts may override with --veli-header-info-panel-glow
-            on :root / .dark.
+            Linear green-200 wash to transparent at 32.5% (Figma Info Card). The green-200
+            token flips for `.dark`. Hosts may override with --veli-header-info-panel-glow.
           */}
           <span
-            className="pointer-events-none absolute inset-0 rounded-[32px] dark:hidden"
+            className="pointer-events-none absolute inset-0 rounded-[32px]"
             style={{
               backgroundImage: `var(--veli-header-info-panel-glow, ${INFO_PANEL_GLOW_FALLBACK})`,
             }}
             aria-hidden
           />
-          <span
-            className="pointer-events-none absolute inset-0 hidden rounded-[32px] dark:block"
-            style={{
-              backgroundImage: `var(--veli-header-info-panel-glow, ${INFO_PANEL_GLOW_DARK_FALLBACK})`,
-            }}
-            aria-hidden
-          />
           <div className="relative flex h-full min-h-0 flex-col">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div
-                key={selected.id}
-                initial={prefersReducedMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={prefersReducedMotion ? undefined : { opacity: 0 }}
-                transition={prefersReducedMotion ? { duration: 0 } : infoPanelFadeTransition}
-                className="flex flex-col gap-12"
-              >
-                <div className="flex flex-col gap-6">
-                  <SwitcherLargeIcon item={selected} />
-                  <div className="flex flex-col gap-2 ps-1 pb-6">
-                    <h3 className="type-subtitle-semibold text-text-base">{selected.name}</h3>
-                    <p className="type-body-sm-regular text-text-base">{selected.description}</p>
-                  </div>
-                </div>
-
-                {selected.sections?.length ? (
-                  <div className="flex flex-col gap-6 px-1">
-                    {selected.sections.map((section) => (
-                      <div key={section.title} className="flex flex-col gap-2">
-                        <Divider appearance="muted" className="w-full" />
-                        <div className="text-text-base flex flex-col gap-2">
-                          <p className="type-body-md-medium">{section.title}</p>
-                          <p className="type-body-sm-regular whitespace-pre-wrap">{section.body}</p>
+              {selected ? (
+                <motion.div
+                  key={selected.id}
+                  initial={prefersReducedMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={prefersReducedMotion ? undefined : { opacity: 0 }}
+                  transition={prefersReducedMotion ? { duration: 0 } : infoPanelFadeTransition}
+                  className="flex flex-col gap-12"
+                >
+                  {selected.infoParagraphs?.length ? (
+                    <div className="flex flex-col gap-6">
+                      <SwitcherLargeIcon item={selected} />
+                      <div className="flex flex-col gap-6 ps-1">
+                        {selected.infoParagraphs.map((paragraph) => (
+                          <p key={paragraph.leadIn} className="type-body-sm-regular text-text-base">
+                            <span className="type-body-sm-semibold text-text-base-strong">
+                              {paragraph.leadIn}
+                            </span>{' '}
+                            {paragraph.body}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex flex-col gap-6">
+                        <SwitcherLargeIcon item={selected} />
+                        <div className="flex flex-col gap-2 ps-1 pb-6">
+                          <h3 className="type-subtitle-semibold text-text-base">{selected.name}</h3>
+                          <p className="type-body-sm-regular text-text-base">
+                            {selected.description}
+                          </p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : null}
-              </motion.div>
+
+                      {selected.sections?.length ? (
+                        <div className="flex flex-col gap-6 px-1">
+                          {selected.sections.map((section) => (
+                            <div key={section.title} className="flex flex-col gap-2">
+                              <Divider appearance="muted" className="w-full" />
+                              <div className="text-text-base flex flex-col gap-2">
+                                <p className="type-body-md-medium">{section.title}</p>
+                                <p className="type-body-sm-regular whitespace-pre-wrap">
+                                  {section.body}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                    </>
+                  )}
+                </motion.div>
+              ) : null}
             </AnimatePresence>
           </div>
         </div>

@@ -1,3 +1,52 @@
+## 0.14.1
+
+### Fixed
+
+- In RTL, reduce the ministry logo button's vertical padding so a two-line name sits inside the header bar. A one-line name keeps the same button height.
+
+## 0.14.0
+
+### Added
+
+- Add a search empty state with the stacked tile illustration, title, and `searchEmptyHint` copy when a query matches nothing. The illustration uses brand neutral and surface-raised tokens from the Figma frame.
+
+### Changed
+
+- Use two fluid columns below sm and three fluid columns from sm until xl. The xl card keeps 165px tiles. Let the entity name wrap inside 320px, and let the header bar grow with that name. Desktop navigation shows from 1121px. The mobile menu is used at 1120px and below.
+
+### Fixed
+
+- Line the open app switcher logo up with the panel content. While the switcher is open, the logo button shifts left by its start padding so the mark shares the title inset and the hover fill keeps that padding. Below xl that inset is also the search field and the tile grid. The closed bar keeps its logo padding.
+- Match switcher app artwork and ministry emblems to the directory frame: site tiles use the soft alpha radial wash with a 36×42 emblem, app tiles render full-bleed icons without a default border, and `kind: 'site'` keeps the site shell when `emblemSrc` is omitted.
+- Match the info card glow to the Figma linear green-200 wash that fades out at 32.5% height in light and dark.
+- Match the docked nav bar to the Figma frame: 32px page inset, 32px/40px logo-to-nav gap, body-sm title below 1121px, and regular-weight switcher/menu icons.
+- Use the filled Bank and LockSimple icons in the official-website banner details, matching the directory frame.
+- Hold the search result line at the top of the card when a new query resets the scroll position.
+- Match the desktop directory handoff. Tile names wrap in a 141px box, the "You are here" pill hugs its label, and five 165px tiles in the 920px card keep a 24px gutter. A divider separates Apps and Sites. The current tile ring is a 3px primary/700 stroke with no white gap. The Gov.mv info card can use `infoParagraphs` (bold lead-in + body). The info card icon is 88px, and its light fallback fade is a linear green wash that ends at 32.5% of the card height.
+- Drop the baked-in white stroke from the Gov.mv demo tile artwork so only the current-app CSS ring draws focus chrome.
+- Smooth the app switcher entrance and exit motion: morph the opaque docked header directly into the card on Frame 0 (removing the multi-frame gap), delay the switcher chrome shadow until halfway through entrance, fade expanded official-banner details in place without height/divider clipping across banner or nav content, and return the official banner in lockstep with the switcher closing.
+- Use `primary-alpha-200` (teal/alpha/200) for the active desktop nav link background instead of `primary-subtle`.
+- Restore search result layout animations for app switcher groups (`layout="position"` + `AnimatePresence`) and `ListBox` tiles (FLIP position glide + fade-in when typing or clearing search).
+- Keep a 16px gap above the “No apps match” / “No sites match” divider when search returns only one group, so the last tiles are not flush against that line.
+- Clear the desktop info panel when search or filter leaves no navigable tiles, instead of keeping a stale selection preview.
+- Remove the border around the apps and sites list below 1280px. The desktop card keeps that border.
+- Stretch switcher tiles across the two-column and three-column grids. The 165px tile width, 141px name box, and wide gutters start at xl, so resizing through the two-column range no longer leaves short left-aligned tiles.
+
+## 0.13.0
+
+### Added
+
+- Add `scrollToViewMore`. The app switcher shows that control at the bottom of the card while the list is at the top and more tiles sit below. Choosing it scrolls the card by 60% of the visible height.
+
+### Changed
+
+- Show every app and site in one scrolling grid. Apps only and Sites only keep that grid and a result line such as "Showing all Sites: 17 results". Tiles stay 165px wide from 600px up and use two columns below that. Names wrap instead of truncating.
+- Fade the top and bottom edges of the scrolling card. The bottom fade is 96px behind the scroll control and 32px at 60% opacity after that control hides.
+
+### Removed
+
+- Remove View more, View less, and the list layout for filtered apps and sites. Pass `scrollToViewMore` instead of `viewMore` and `viewLess`.
+
 ## 0.12.2
 
 ### Fixed
