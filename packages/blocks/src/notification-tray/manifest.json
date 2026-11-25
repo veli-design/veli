@@ -1,16 +1,23 @@
 {
   "id": "notification-tray",
   "title": "Notification tray",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "status": "experimental",
   "description": "Responsive notification tray with app-owned data, filtering and actions.",
-  "files": ["notification-tray.tsx", "notification-tray-content.tsx"],
+  "files": [
+    "notification-tray.tsx",
+    "notification-tray-content.tsx",
+    "notification-empty-artwork.tsx",
+    "notification-empty.svg",
+    "notifications-empty.lottie"
+  ],
   "dependencies": {
     "@veli-design/react": "^0.20.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.22.0",
-    "@phosphor-icons/react": "^2.1.10"
+    "@phosphor-icons/react": "^2.1.10",
+    "@lottiefiles/dotlottie-web": "^0.80.0"
   },
   "setupDependencies": {
     "@veli-design/tokens": "^0.11.0",
@@ -24,6 +31,7 @@
     "react-aria-components": "1.22.0",
     "tailwindcss": "4.3.2",
     "next": "16.2.11",
-    "@phosphor-icons/react": "2.1.10"
+    "@phosphor-icons/react": "2.1.10",
+    "@lottiefiles/dotlottie-web": "0.80.0"
   }
 }

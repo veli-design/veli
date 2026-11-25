@@ -108,9 +108,12 @@ test('initial loading, empty, error, retry and stale rows remain distinct', asyn
     const tray = await openTray(page);
     if (state === 'loading') {
       await expect(tray.getByRole('status')).toHaveText('Loading notifications…');
-      await expect(tray.getByText('You do not have any notifications, yet.')).toHaveCount(0);
+      await expect(tray.getByText('No notifications', { exact: true })).toHaveCount(0);
     } else if (state === 'empty') {
-      await expect(tray.getByText('You do not have any notifications, yet.')).toBeVisible();
+      await expect(tray.getByText('No notifications', { exact: true })).toBeVisible();
+      await expect(
+        tray.getByText('You’re all caught up. New notifications will appear here.'),
+      ).toBeVisible();
     } else {
       await expect(tray.getByRole('alert')).toHaveText('Notifications could not be loaded.');
       await expect(tray.getByRole('listitem')).toHaveCount(state === 'error' ? 0 : 3);
@@ -124,6 +127,69 @@ test('initial loading, empty, error, retry and stale rows remain distinct', asyn
     await expect(tray).toBeHidden();
     await expect(page.getByRole('button', { name: /^Notifications/ })).toBeFocused();
   }
+});
+
+test('empty tray plays the supplied artwork and keeps a themed still for reduced motion', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/notifications');
+  await page.getByLabel('State').selectOption('empty');
+  let tray = await openTray(page);
+  await expect(tray).toHaveCSS('height', '603px');
+  let canvas = tray.locator('canvas');
+  const frame = () => canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL());
+  const replayName = 'Replay notification animation';
+  await expect(canvas).toHaveCSS('opacity', '1');
+  const artwork = (await canvas.boundingBox())!;
+  expect(artwork.height).toBeCloseTo(116, 1);
+  expect(artwork.width).toBeCloseTo(154.667, 1);
+  await expect(tray.getByRole('button', { name: replayName })).toHaveCount(0);
+  const lightStill = await frame();
+
+  await page.keyboard.press('Escape');
+  await expect(tray).toBeHidden();
+  await page.getByRole('button', { name: 'Change theme' }).click();
+  tray = await openTray(page);
+  canvas = tray.locator('canvas');
+  await expect(canvas).toHaveCSS('opacity', '1');
+  const darkStill = await frame();
+  expect(darkStill).not.toBe(lightStill);
+
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  const replay = tray.getByRole('button', { name: replayName });
+  await expect(replay).toBeVisible();
+  expect(await frame()).not.toBe(darkStill);
+  await expect.poll(frame).toBe(darkStill);
+  await replay.hover();
+  await expect.poll(frame).not.toBe(darkStill);
+  await tray.getByRole('heading', { name: 'Notifications' }).hover();
+  await expect.poll(frame).toBe(darkStill);
+  await replay.focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(frame).not.toBe(darkStill);
+});
+
+test.describe('empty tray on a touch device', () => {
+  test.use({ hasTouch: true, viewport: { width: 390, height: 844 } });
+
+  test('tapping the illustration replays the intro', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/notifications');
+    await page.getByLabel('State').selectOption('empty');
+    const tray = await openTray(page);
+    const replay = tray.getByRole('button', { name: 'Replay notification animation' });
+    const canvas = tray.locator('canvas');
+    const frame = () => canvas.evaluate((element: HTMLCanvasElement) => element.toDataURL());
+    await expect(canvas).toHaveCSS('opacity', '1');
+    const still = await frame();
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect(replay).toBeVisible();
+    await expect.poll(frame).toBe(still);
+    await replay.tap();
+    await expect.poll(frame).not.toBe(still);
+  });
 });
 
 for (const routing of ['next-link', 'provider'])

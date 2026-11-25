@@ -251,6 +251,9 @@ importers:
 
   packages/blocks:
     dependencies:
+      '@lottiefiles/dotlottie-web':
+        specifier: ^0.80.0
+        version: 0.80.0
       '@phosphor-icons/react':
         specifier: ^2.1.10
         version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)

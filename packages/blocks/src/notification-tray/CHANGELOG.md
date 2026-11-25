@@ -1,3 +1,14 @@
+## 0.11.0
+
+### Added
+
+- Show an animated empty state on desktop and mobile with light and dark bell artwork. The bell plays on open, responds to hover, and can be replayed by touch or keyboard. People who prefer reduced motion see a still bell.
+
+### Changed
+
+- Update the default empty-state copy and layout. Apps can still override the empty and unread-only messages and can translate the replay button label.
+- Bundle the animation and static illustration with the copied block. Install `@lottiefiles/dotlottie-web@^0.80.0` when updating an existing copy.
+
 ## 0.10.2
 
 ### Fixed
