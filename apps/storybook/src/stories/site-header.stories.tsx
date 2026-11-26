@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState, type ReactNode } from 'react';
+import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { addons } from 'storybook/internal/preview-api';
 import { Button } from '@veli-design/react/button';
 import { useVeliColorScheme, useVeliLanguage } from '@veli-design/react/provider';
@@ -845,6 +846,11 @@ function CurrentLocationPage({
   );
 }
 
+const LONG_MINISTRY_TITLE = 'Ministry of Education, Higher Education and Skills Development';
+const LONG_MINISTRY_TITLE_DV =
+  'މިނިސްޓްރީ އޮފް އެޑިޔުކޭޝަން، ހަޔަރ އެޑިޔުކޭޝަން އެންޑް ސްކިލްސް ޑިވެލޮޕްމަންޓް';
+const TOURISM_TITLE_DV = 'މިނިސްޓަރ އޮފް ޓޫރިޒަމް އެންޑް ސިވިލް އޭވިއޭޝަން';
+
 function HeaderStory({
   title,
   language = 'en',
@@ -885,13 +891,16 @@ function HeaderStory({
   const navServices = isDv ? 'ޚިދުމަތްތައް' : 'Services';
   const navAbout = isDv ? 'އަޅުގަނޑުމެންނާ ބެހޭ' : 'About';
   const navContact = isDv ? 'ގުޅުއްވުމަށް' : 'Contact';
+  const searchLabel = isDv ? 'ހޯއްދަވާ' : 'Search';
   const signIn = isDv ? 'ސައިންއިން' : 'Sign In';
   const scrollHint = isDv
     ? 'ފްލޯޓިންގ ހެޑަރ ބޭނުންކުރުމަށް ސްކްރޯލް ކުރައްވާ.'
     : 'Scroll to exercise the floating header.';
   const staticTitle = title
     ? isDv
-      ? 'މިނިސްޓަރ އޮފް ޓޫރިޒަމް އެންޑް ސިވިލް އޭވިއޭޝަން'
+      ? title === LONG_MINISTRY_TITLE
+        ? LONG_MINISTRY_TITLE_DV
+        : TOURISM_TITLE_DV
       : title
     : undefined;
   // Navigation stories follow the selected tile. Static stories (Ministry) keep their title.
@@ -957,10 +966,44 @@ function HeaderStory({
         }
         flagSrc="/blocks/maldives-flag.svg"
         actions={
-          <Button intent="accent" appearance="fill" size="md">
-            {signIn}
-          </Button>
+          <>
+            <Button
+              intent="secondary"
+              appearance="transparent"
+              size="md"
+              iconOnly
+              aria-label={searchLabel}
+            >
+              <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
+            </Button>
+            <Button intent="accent" appearance="fill" size="md">
+              {signIn}
+            </Button>
+          </>
         }
+        mobileActions={({ closeMenu }) => (
+          <>
+            <Button
+              intent="secondary"
+              appearance="transparent"
+              size="md"
+              className="w-full"
+              onPress={closeMenu}
+            >
+              <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
+              {searchLabel}
+            </Button>
+            <Button
+              intent="accent"
+              appearance="fill"
+              size="md"
+              className="w-full"
+              onPress={closeMenu}
+            >
+              {signIn}
+            </Button>
+          </>
+        )}
       />
       {trackCurrent ? (
         <CurrentLocationPage
@@ -993,6 +1036,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {};
 export const Ministry: Story = {
   args: { title: 'Minister of Tourism and Civil Aviation' },
+};
+export const LongMinistry: Story = {
+  args: { title: LONG_MINISTRY_TITLE },
 };
 export const EmptySites: Story = { args: { emptySites: true } };
 

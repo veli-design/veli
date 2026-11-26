@@ -7,6 +7,7 @@ import {
   SiteHeader,
   type SiteHeaderColorScheme,
   type SiteHeaderLabels,
+  type SiteHeaderMobileActions,
   type SiteHeaderNavItem,
   type SiteHeaderSwitcherItem,
 } from '../components/blocks/site-header/site-header';
@@ -154,6 +155,8 @@ export function ApplicationHeader({
   language = 'en',
   onLanguageChange,
   actions,
+  mobileActions,
+  barActions,
   /** Banner flag image URL owned by the application. */
   flagSrc,
   title,
@@ -163,6 +166,8 @@ export function ApplicationHeader({
   language?: string;
   onLanguageChange?: (id: string) => void;
   actions?: ReactNode;
+  mobileActions?: SiteHeaderMobileActions;
+  barActions?: ReactNode;
   flagSrc: string;
   title?: string;
 }) {
@@ -206,6 +211,8 @@ export function ApplicationHeader({
       onNavigate={(href) => router.push(href)}
       flagSrc={flagSrc}
       actions={actions}
+      mobileActions={mobileActions}
+      barActions={barActions}
       renderNavLink={(item, className, children, options) =>
         item.external ? (
           <a

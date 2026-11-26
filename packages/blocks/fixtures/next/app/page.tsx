@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { Button } from '@veli-design/react/button';
 import { VeliProvider } from '@veli-design/react/provider';
 import { ApplicationFooter } from '../footer-adapter';
@@ -23,6 +24,7 @@ export default function Page() {
   const [colorScheme, setColorScheme] = useState<SiteFooterColorScheme>('system');
   const [long, setLong] = useState(false);
   const [entityTitle, setEntityTitle] = useState<string | undefined>();
+  const [fallbackActions, setFallbackActions] = useState(false);
   const changeColorScheme = (next: SiteFooterColorScheme) => {
     setColorScheme(next);
     setDark(next === 'dark');
@@ -42,9 +44,47 @@ export default function Page() {
           flagSrc={FLAG_SRC}
           title={entityTitle}
           actions={
-            <Button intent="accent" appearance="fill" size="md">
-              Sign In
-            </Button>
+            <>
+              <Button
+                intent="secondary"
+                appearance="transparent"
+                size="md"
+                iconOnly
+                aria-label="Search"
+              >
+                <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
+              </Button>
+              <Button intent="accent" appearance="fill" size="md">
+                Sign In
+              </Button>
+            </>
+          }
+          mobileActions={
+            fallbackActions
+              ? undefined
+              : ({ closeMenu }) => (
+                  <>
+                    <Button
+                      intent="secondary"
+                      appearance="transparent"
+                      size="md"
+                      className="w-full"
+                      onPress={closeMenu}
+                    >
+                      <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
+                      Search
+                    </Button>
+                    <Button
+                      intent="accent"
+                      appearance="fill"
+                      size="md"
+                      className="w-full"
+                      onPress={closeMenu}
+                    >
+                      Sign In
+                    </Button>
+                  </>
+                )
           }
         />
         <main className="p-4">
@@ -63,6 +103,21 @@ export default function Page() {
             }
           >
             Long entity
+          </button>{' '}
+          <button
+            type="button"
+            onClick={() =>
+              setEntityTitle(
+                language === 'dv'
+                  ? 'މިނިސްޓްރީ އޮފް އެޑިޔުކޭޝަން، ހަޔަރ އެޑިޔުކޭޝަން އެންޑް ސްކިލްސް ޑިވެލޮޕްމަންޓް'
+                  : 'Ministry of Education, Higher Education and Skills Development',
+              )
+            }
+          >
+            Long ministry
+          </button>{' '}
+          <button type="button" onClick={() => setFallbackActions(!fallbackActions)}>
+            Fallback actions
           </button>
           {/* Host editable outside the switcher panel — keyboard capture must not steal keys. */}
           <label className="mt-4 block">
