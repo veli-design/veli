@@ -26,7 +26,6 @@ import {
   FilterBarClear,
 } from '@tradenetcorp/veli-blocks/filter-bar';
 import { parseDate } from '@internationalized/date';
-import { Heading } from 'react-aria-components';
 import { useState } from 'react';
 import { useVeliLanguage } from '@veli-design/react/provider';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -514,16 +513,7 @@ function FigmaReferenceExample() {
             <FilterBarPopover>
               <FilterBarTrigger label={messages.filters} />
               <FilterBarPanel label={messages.filters} className="w-[26.875rem]">
-                <div className="shrink-0 min-[601px]:px-4 min-[601px]:pb-2 min-[601px]:pt-4">
-                  <FilterBarPanelHeader closeLabel={messages.closeFilters}>
-                    <Heading
-                      slot="title"
-                      className="min-w-0 flex-1 type-body-lg-semibold text-base-strong"
-                    >
-                      {messages.filters}
-                    </Heading>
-                  </FilterBarPanelHeader>
-                </div>
+                <FilterBarPanelHeader title={messages.filters} closeLabel={messages.closeFilters} />
                 <FilterBarPanelBody className="max-h-[min(60dvh,32rem)]">
                   <div className="pb-3">
                     <DatePicker
