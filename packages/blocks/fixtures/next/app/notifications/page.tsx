@@ -194,6 +194,7 @@ export default function NotificationsPage() {
                       emptyTitle: 'އައު ނޯޓިފިކޭޝަނެއް ނެތް.',
                       emptyDescription: 'އައު މަޢުލޫމާތު މިތާ ފެންނާނެ.',
                       emptyUnreadTitle: 'ނުކިޔާ ނޯޓިފިކޭޝަނެއް ނެތް.',
+                      replayEmptyAnimation: 'އެނިމޭޝަން އަލުން ދައްކާ',
                       emptyUnreadDescription: 'ހުރިހާ ނޯޓިފިކޭޝަންތައް ކިޔާލެވިފައި.',
                       retry: 'އަލުން ބައްލަވާ',
                       loadMore: 'އިތުރަށް ބައްލަވާ',
