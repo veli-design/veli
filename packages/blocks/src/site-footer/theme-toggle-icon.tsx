@@ -10,6 +10,7 @@ const ICON_MORPH_DURATION = 0.195;
 // Phosphor bold Monitor, Sun, and Moon geometry, scaled from 256 to 24 units.
 // Circular arcs use cubic Beziers; each outline has 16 segments for direct morphing.
 // Keep the matching path command structures when editing these shapes.
+// Every outline runs counter-clockwise from its top-left, so no morph turns inside out.
 type ThemeIconScheme = SiteFooterColorScheme;
 
 type ThemeIconPath = { d: string; opacity: number };
@@ -17,7 +18,7 @@ type ThemeIconPath = { d: string; opacity: number };
 const themeIconPaths: Record<ThemeIconScheme, ThemeIconPath[]> = {
   system: [
     {
-      d: 'M4.5 4.5C6 4.5 8 4.5 9.5 4.5C11 4.5 13 4.5 14.5 4.5C16 4.5 18 4.5 19.5 4.5C20.3284 4.5 21 5.1716 21 6C21 7 21 8.5 21 9.5C21 10.5 21 12 21 13C21 14 21 15.5 21 16.5C21 17.3284 20.3284 18 19.5 18C18 18 16 18 14.5 18C13 18 11 18 9.5 18C8 18 6 18 4.5 18C3.6716 18 3 17.3284 3 16.5C3 15.5 3 14 3 13C3 12 3 10.5 3 9.5C3 8.5 3 7 3 6C3 5.1716 3.6716 4.5 4.5 4.5',
+      d: 'M3 6C3 7 3 8.5 3 9.5C3 10.5 3 12 3 13C3 14 3 15.5 3 16.5C3 17.3284 3.6716 18 4.5 18C6 18 8 18 9.5 18C11 18 13 18 14.5 18C16 18 18 18 19.5 18C20.3284 18 21 17.3284 21 16.5C21 15.5 21 14 21 13C21 12 21 10.5 21 9.5C21 8.5 21 7 21 6C21 5.1716 20.3284 4.5 19.5 4.5C18 4.5 16 4.5 14.5 4.5C13 4.5 11 4.5 9.5 4.5C8 4.5 6 4.5 4.5 4.5C3.6716 4.5 3 5.1716 3 6',
       opacity: 1,
     },
     {
@@ -51,7 +52,7 @@ const themeIconPaths: Record<ThemeIconScheme, ThemeIconPath[]> = {
   ],
   light: [
     {
-      d: 'M6.75 12C6.75 11.31056 6.885795 10.627871 7.149632 9.990912C7.41347 9.353953 7.800182 8.775197 8.287689 8.287689C8.775197 7.800182 9.353953 7.41347 9.990912 7.149632C10.627871 6.885795 11.31056 6.75 12 6.75C12.68944 6.75 13.372129 6.885795 14.009088 7.149632C14.646047 7.41347 15.224803 7.800182 15.712311 8.287689C16.199818 8.775197 16.58653 9.353953 16.850368 9.990912C17.114205 10.627871 17.25 11.31056 17.25 12C17.25 12.68944 17.114205 13.372129 16.850368 14.009088C16.58653 14.646047 16.199818 15.224803 15.712311 15.712311C15.224803 16.199818 14.646047 16.58653 14.009088 16.850368C13.372129 17.114205 12.68944 17.25 12 17.25C11.31056 17.25 10.627871 17.114205 9.990912 16.850368C9.353953 16.58653 8.775197 16.199818 8.287689 15.712311C7.800182 15.224803 7.41347 14.646047 7.149632 14.009088C6.885795 13.372129 6.75 12.68944 6.75 12',
+      d: 'M9.990912 7.149632C9.353953 7.41347 8.775197 7.800182 8.287689 8.287689C7.800182 8.775197 7.41347 9.353953 7.149632 9.990912C6.885795 10.627871 6.75 11.31056 6.75 12C6.75 12.68944 6.885795 13.372129 7.149632 14.009088C7.41347 14.646047 7.800182 15.224803 8.287689 15.712311C8.775197 16.199818 9.353953 16.58653 9.990912 16.850368C10.627871 17.114205 11.31056 17.25 12 17.25C12.68944 17.25 13.372129 17.114205 14.009088 16.850368C14.646047 16.58653 15.224803 16.199818 15.712311 15.712311C16.199818 15.224803 16.58653 14.646047 16.850368 14.009088C17.114205 13.372129 17.25 12.68944 17.25 12C17.25 11.31056 17.114205 10.627871 16.850368 9.990912C16.58653 9.353953 16.199818 8.775197 15.712311 8.287689C15.224803 7.800182 14.646047 7.41347 14.009088 7.149632C13.372129 6.885795 12.68944 6.75 12 6.75C11.31056 6.75 10.627871 6.885795 9.990912 7.149632',
       opacity: 1,
     },
     {
@@ -119,10 +120,8 @@ const themeIconPaths: Record<ThemeIconScheme, ThemeIconPath[]> = {
   ],
 };
 
-// Traverse the monitor outline in the moon's direction to avoid twisting on wrap.
-const themeIconWrapOutline =
-  'M3 6C3 7 3 8.5 3 9.5C3 10.5 3 12 3 13C3 14 3 15.5 3 16.5C3 17.3284 3.6716 18 4.5 18C6 18 8 18 9.5 18C11 18 13 18 14.5 18C16 18 18 18 19.5 18C20.3284 18 21 17.3284 21 16.5C21 15.5 21 14 21 13C21 12 21 10.5 21 9.5C21 8.5 21 7 21 6C21 5.1716 20.3284 4.5 19.5 4.5C18 4.5 16 4.5 14.5 4.5C13 4.5 11 4.5 9.5 4.5C8 4.5 6 4.5 4.5 4.5C3.6716 4.5 3 5.1716 3 6';
-// Grow the monitor stand from its center during the second half of the wrap.
+// Grow the monitor stand from its center during the second half of dark → system,
+// and collapse it during the first half of system → dark.
 const themeIconWrapStand = ['M12 21.375L12 21.375', 'M15 21.375L9 21.375'];
 
 export function ThemeToggleIcon({ colorScheme }: { colorScheme: ThemeIconScheme }) {
@@ -134,6 +133,7 @@ export function ThemeToggleIcon({ colorScheme }: { colorScheme: ThemeIconScheme 
 
   useEffect(() => {
     const svg = scope.current;
+    if (!svg) return;
     const paths = Array.from(svg.querySelectorAll('path'));
     const from = previousScheme.current;
     const to = colorScheme;
@@ -142,6 +142,8 @@ export function ThemeToggleIcon({ colorScheme }: { colorScheme: ThemeIconScheme 
     const showIcon = (scheme: ThemeIconScheme) => {
       paths.forEach((path, index) => {
         const { d, opacity } = themeIconPaths[scheme][index];
+        // Motion leaves inline opacity after a finished or stopped animation, which beats the attribute.
+        path.style.removeProperty('opacity');
         path.setAttribute('d', d);
         path.setAttribute('opacity', String(opacity));
       });
@@ -154,22 +156,21 @@ export function ThemeToggleIcon({ colorScheme }: { colorScheme: ThemeIconScheme 
       showIcon(to);
     } else {
       const isWrap = from === 'dark' && to === 'system';
+      const isUnwrap = from === 'system' && to === 'dark';
       paths.forEach((path, index) => {
         const start = themeIconPaths[from][index];
         const end = themeIconPaths[to][index];
-        const isStand = isWrap && index === 1;
-        const targetPath = isWrap && index === 0 ? themeIconWrapOutline : end.d;
+        const isStand = (isWrap || isUnwrap) && index === 1;
+        let d = [start.d, end.d];
+        if (isStand) d = isWrap ? themeIconWrapStand : [...themeIconWrapStand].reverse();
 
         animations.push(
           animate(
             path,
-            {
-              d: isStand ? themeIconWrapStand : [start.d, targetPath],
-              opacity: [start.opacity, end.opacity],
-            },
+            { d, opacity: [start.opacity, end.opacity] },
             {
               duration: isStand ? ICON_MORPH_DURATION / 2 : ICON_MORPH_DURATION,
-              delay: isStand ? ICON_MORPH_DURATION / 2 : 0,
+              delay: isWrap && isStand ? ICON_MORPH_DURATION / 2 : 0,
               ease: EASE_DRAWER,
             },
           ),

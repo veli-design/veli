@@ -59,41 +59,48 @@ export function SiteFooterThemeToggle({
   };
 
   return (
-    <div className={`relative inline-flex shrink-0 justify-center ${className}`}>
-      <Button
-        type="button"
-        intent="secondary"
-        appearance="ghost"
-        size="sm"
-        iconOnly
-        aria-label={`${labels.change}: ${label}`}
-        onPress={advanceTheme}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') setIsTooltipOpen(false);
-        }}
-      >
-        <ThemeToggleIcon colorScheme={colorScheme} />
-      </Button>
-      <motion.span
-        aria-hidden="true"
-        className="type-body-sm-regular bg-surface-base text-text-base-strong pointer-events-none absolute bottom-full z-10 mb-2 flex h-6 origin-bottom items-center rounded-full px-2.5 whitespace-nowrap shadow-md"
-        initial={false}
-        animate={{
-          opacity: isTooltipOpen ? 1 : 0,
-          y: isTooltipOpen || prefersReducedMotion ? 0 : 3,
-          scale: isTooltipOpen || prefersReducedMotion ? 1 : 0.96,
-        }}
-        transition={{
-          duration: prefersReducedMotion
-            ? 0
-            : isTooltipOpen
-              ? TOOLTIP_OPEN_DURATION
-              : TOOLTIP_CLOSE_DURATION,
-          ease: EASE_OUT,
-        }}
-      >
-        {label}
-      </motion.span>
+    // `className` sits on a wrapper with no display class, so `hidden` and `max-lg:hidden` both apply.
+    <div className={`shrink-0 ${className}`}>
+      <div className="relative inline-flex">
+        <Button
+          type="button"
+          intent="secondary"
+          appearance="ghost"
+          size="sm"
+          iconOnly
+          aria-label={`${labels.change}: ${label}`}
+          onPress={advanceTheme}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setIsTooltipOpen(false);
+          }}
+        >
+          <ThemeToggleIcon colorScheme={colorScheme} />
+        </Button>
+        <motion.span
+          aria-hidden="true"
+          // Anchored to the inline end so a long label grows toward the footer, not past the viewport edge.
+          // `min-h-6` keeps English at 24px and gives Dhivehi its taller line box.
+          className="type-body-sm-regular bg-surface-base text-text-base-strong pointer-events-none absolute end-0 bottom-full z-10 mb-2 flex min-h-6 origin-bottom-right items-center rounded-full px-2.5 whitespace-nowrap shadow-md rtl:origin-bottom-left"
+          initial={false}
+          // Values depend on open state only, so server and client render the same style.
+          // Reduced motion snaps through `duration: 0` instead.
+          animate={{
+            opacity: isTooltipOpen ? 1 : 0,
+            y: isTooltipOpen ? 0 : 3,
+            scale: isTooltipOpen ? 1 : 0.96,
+          }}
+          transition={{
+            duration: prefersReducedMotion
+              ? 0
+              : isTooltipOpen
+                ? TOOLTIP_OPEN_DURATION
+                : TOOLTIP_CLOSE_DURATION,
+            ease: EASE_OUT,
+          }}
+        >
+          {label}
+        </motion.span>
+      </div>
       <output className="sr-only">{announcement}</output>
     </div>
   );

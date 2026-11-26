@@ -1,3 +1,15 @@
+## 0.9.1
+
+### Fixed
+
+- Render the same theme-toggle label styles on the server and the client when reduced motion is on, so React no longer reports a hydration mismatch.
+- Anchor the theme-toggle label to the button's inline end, so a long label no longer crosses the viewport edge or adds horizontal scroll on narrow screens.
+- Let the theme-toggle label grow to its line height, so Dhivehi marks above the letters are no longer clipped.
+- Clear leftover animation opacity before showing a theme icon, so a fast sequence of changes no longer leaves a ray at the wrong opacity.
+- Draw the system, light and dark icon outlines in the same direction, so morphing between any two schemes no longer twists or turns the shape inside out.
+- Apply the toggle's `className` to a wrapper without a display class, so `hidden` and other visibility utilities take effect.
+- Scope the footer's link color, display and focus-ring styles to `startLinks` and `endLinks`, so links inside `endSlot` keep their own styles.
+
 ## 0.9.0
 
 ### Added
