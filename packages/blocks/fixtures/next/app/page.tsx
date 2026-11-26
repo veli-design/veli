@@ -23,6 +23,10 @@ export default function Page() {
   const [colorScheme, setColorScheme] = useState<SiteFooterColorScheme>('system');
   const [long, setLong] = useState(false);
   const [entityTitle, setEntityTitle] = useState<string | undefined>();
+  const changeColorScheme = (next: SiteFooterColorScheme) => {
+    setColorScheme(next);
+    setDark(next === 'dark');
+  };
   return (
     <VeliProvider language={language} colorScheme={dark ? 'dark' : 'light'}>
       <div
@@ -68,7 +72,7 @@ export default function Page() {
           <div className="h-[120vh]" aria-hidden />
         </main>
         {language === 'en' && !long ? (
-          <ApplicationFooter />
+          <ApplicationFooter colorScheme={colorScheme} onColorSchemeChange={changeColorScheme} />
         ) : (
           <SiteFooter
             startLinks={[
@@ -82,10 +86,7 @@ export default function Page() {
             endSlot={
               <SiteFooterThemeToggle
                 colorScheme={colorScheme}
-                onColorSchemeChange={(next) => {
-                  setColorScheme(next);
-                  setDark(next === 'dark');
-                }}
+                onColorSchemeChange={changeColorScheme}
                 labels={{
                   change: 'ތީމު ބަދަލުކުރަން',
                   label: 'ތީމު',

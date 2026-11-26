@@ -55,4 +55,7 @@ function ThemeToggleSlot() {
     />
   );
 }
+export const WithEndSlot: Story = {
+  args: { endSlot: <span className="type-caption-regular">Version 2.4.0</span> },
+};
 export const WithThemeToggle: Story = { args: { endSlot: <ThemeToggleSlot /> } };

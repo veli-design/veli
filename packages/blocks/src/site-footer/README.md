@@ -42,9 +42,9 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 `startLabel` and `endLabel` optionally name the link groups. Translate these labels too. `className` customizes the root footer; `startGroupClassName` and `endGroupClassName` adjust one group when the application needs a different gap or alignment. `renderLink` has the same type as Veli Link's `render` prop; forward all supplied props, including the ref, to your router link. Ordinary anchors work without an adapter.
 
-`endSlot` renders optional content after the end links. The application owns that content.
+`endSlot` renders optional content after the end links. The application owns that content and its styles: the footer's link color, display and focus-ring rules apply only to `startLinks` and `endLinks`, not to links inside `endSlot`.
 
-`SiteFooterThemeToggle` is an optional theme control for `endSlot`, for example when signed-out visitors have no account panel to change the theme. Each press cycles system → light → dark. Pass the current `colorScheme` (`'system'`, `'light'` or `'dark'`), an `onColorSchemeChange` handler that applies and stores the choice, and translated `labels` (`change`, `label`, `light`, `dark`, `auto`). The toggle writes nothing itself. `className` adjusts its wrapper, for example to hide it where another control already changes the theme.
+`SiteFooterThemeToggle` is an optional theme control for `endSlot`, for example when signed-out visitors have no account panel to change the theme. Each press cycles system → light → dark. Pass the current `colorScheme` (`'system'`, `'light'` or `'dark'`), an `onColorSchemeChange` handler that applies and stores the choice, and translated `labels` (`change`, `label`, `light`, `dark`, `auto`). The toggle writes nothing itself. `className` goes on an outer wrapper with no display class of its own, so visibility utilities work. For example, `className="max-lg:hidden"` hides the toggle below `lg` when a mobile menu already changes the theme. The label that briefly appears above the button is anchored to the button's inline end, so it grows toward the footer instead of past the viewport edge.
 
 ```tsx
 <SiteFooter
