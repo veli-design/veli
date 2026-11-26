@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, type ReactNode } from 'react';
-import { Button as AriaButton, Heading } from 'react-aria-components';
+import { Heading } from 'react-aria-components';
 import { Sheet } from '@veli-design/react/sheet';
 import { useFilterBarMobile } from './mobile';
 import { FunnelSimpleIcon, XIcon } from '@phosphor-icons/react';
@@ -30,26 +30,6 @@ const panelDividerTone: Record<PopoverIntent, string> = {
   primary: 'bg-popover-border-on-primary',
   secondary: 'bg-popover-border-on-secondary',
   tertiary: 'bg-border-base-muted',
-};
-
-// Mirrors the Veli sm icon Button (Modal/Sheet close); tertiary uses the popover menu hover/pressed tokens, which adapt to dark mode.
-const panelCloseBase = [
-  '-my-1 -me-2 ms-auto flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none',
-  '[transition-property:background-color,color,scale]',
-  '[transition-duration:var(--veli-duration-normal),var(--veli-duration-normal),var(--veli-duration-fast)]',
-  '[transition-timing-function:var(--veli-ease-out),var(--veli-ease-out),var(--veli-ease-out-quad)]',
-  'data-[pressed]:scale-[1.045] motion-reduce:transition-none motion-reduce:data-[pressed]:scale-100',
-  'data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2',
-  'forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
-].join(' ');
-
-const panelCloseTone: Record<PopoverIntent, string> = {
-  primary:
-    'text-popover-fg-on-primary data-[hovered]:bg-popover-fg-on-primary/10 data-[pressed]:bg-popover-fg-on-primary/20 data-[focus-visible]:ring-offset-popover-bg-primary',
-  secondary:
-    'text-popover-fg-on-secondary data-[hovered]:bg-popover-fg-on-secondary/10 data-[pressed]:bg-popover-fg-on-secondary/20 data-[focus-visible]:ring-offset-popover-bg-secondary',
-  tertiary:
-    'text-base-strong data-[hovered]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[focus-visible]:ring-offset-popover-bg-tertiary',
 };
 
 export function FilterBarPopover({ children }: { children: ReactNode }) {
@@ -168,9 +148,10 @@ export function FilterBarPanelHeader({
       </>
     );
   // Design spec: 32px inline inset, 24/16 block padding, Body lg title, 20px close icon.
+  // The inset is split 16 + 16 so the optional divider lines up with the body and footer.
   return (
-    <div data-filter-panel-header className="flex shrink-0 flex-col px-8">
-      <div className="flex items-center gap-2 pb-4 pt-6">
+    <div data-filter-panel-header className="flex shrink-0 flex-col px-4">
+      <div className="flex items-center gap-2 px-4 pb-4 pt-6">
         {children ??
           (title ? (
             <Heading
@@ -180,17 +161,25 @@ export function FilterBarPanelHeader({
               {title}
             </Heading>
           ) : null)}
-        {/* 36px hit area like Modal and Sheet close; negative margins keep the 32px inset and 68px header. */}
-        <AriaButton
-          aria-label={closeLabel}
-          onPress={() => {
-            setPanelOpen(false);
-            focusTrigger();
-          }}
-          className={`${panelCloseBase} ${panelCloseTone[intent]}`}
-        >
-          <XIcon aria-hidden className="size-5 shrink-0" />
-        </AriaButton>
+        {/* Veli sm icon Button (36px, like Modal and Sheet close). The block-owned wrapper's
+            negative margins keep the 32px icon inset and 68px header. */}
+        <span className="-my-1 -me-2 ms-auto flex shrink-0">
+          <Button
+            intent="secondary"
+            appearance="ghost"
+            size="sm"
+            iconOnly
+            highContrast={intent !== 'tertiary'}
+            aria-label={closeLabel}
+            onPress={() => {
+              setPanelOpen(false);
+              focusTrigger();
+            }}
+          >
+            {/* Match the title tone: the high-contrast foreground is too dark on dark-mode primary. */}
+            <XIcon aria-hidden className={`size-5 ${panelTitleTone[intent]}`} />
+          </Button>
+        </span>
       </div>
       {showDivider ? (
         <div aria-hidden className={`h-px w-full shrink-0 ${panelDividerTone[intent]}`} />

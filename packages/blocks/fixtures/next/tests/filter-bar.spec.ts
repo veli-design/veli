@@ -133,6 +133,125 @@ for (const width of [1280, 390]) {
   });
 }
 
+const referenceLabels = {
+  en: { filters: 'Filters', close: 'Close filters' },
+  dv: { filters: 'ފިލްޓަރުތައް', close: 'ފިލްޓަރުތައް ބަންދުކުރޭ' },
+};
+
+async function openReferencePanel(
+  page: Page,
+  { theme = 'light', language = 'en' }: { theme?: 'light' | 'dark'; language?: 'en' | 'dv' } = {},
+) {
+  const labels = referenceLabels[language];
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(
+    `/storybook/iframe.html?id=blocks-filter-bar--figma-reference&viewMode=story&veli-language=${language}&veli-theme=${theme}`,
+  );
+  const trigger = page.getByRole('button', { name: labels.filters, exact: true });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: labels.filters, exact: true });
+  await expect(dialog).toBeVisible();
+  await waitForMotion(page);
+  const header = dialog.locator('[data-filter-panel-header]');
+  const close = header.getByRole('button', { name: labels.close, exact: true });
+  return { trigger, dialog, header, close };
+}
+
+for (const language of ['en', 'dv'] as const) {
+  test(`desktop panel header matches the design geometry and aligns dividers with the footer in ${language}`, async ({
+    page,
+  }) => {
+    const { header, close } = await openReferencePanel(page, { language });
+    await expect(close).toBeVisible();
+    const geometry = await header.evaluate((el) => {
+      const panel = el.closest('[data-filter-panel]')!;
+      const edge = panel.getBoundingClientRect();
+      const box = el.getBoundingClientRect();
+      const title = el.querySelector('[slot="title"]')!.getBoundingClientRect();
+      const button = el.querySelector('button')!.getBoundingClientRect();
+      const glyph = el.querySelector('button svg')!.getBoundingClientRect();
+      const footer = getComputedStyle(panel.querySelector('[data-filter-panel-footer] > div')!);
+      const own = getComputedStyle(el);
+      const rtl = getComputedStyle(panel).direction === 'rtl';
+      return {
+        height: box.height,
+        // Inline-start for the title and inline-end for the glyph, so RTL mirrors.
+        titleInset: rtl ? edge.right - title.right : title.left - edge.left,
+        glyphInset: rtl ? glyph.left - edge.left : edge.right - glyph.right,
+        titleTop: title.top - box.top,
+        button: [button.width, button.height],
+        glyph: glyph.width,
+        padding: [own.paddingInlineStart, own.paddingInlineEnd],
+        footerPadding: [footer.paddingInlineStart, footer.paddingInlineEnd],
+      };
+    });
+    // Dhivehi body type is taller (21/36), so its header is 76px instead of 68px.
+    expect(geometry.height).toBe(language === 'dv' ? 76 : 68);
+    expect(geometry.titleInset).toBe(32);
+    expect(geometry.glyphInset).toBe(32);
+    expect(geometry.titleTop).toBe(24);
+    expect(geometry.button).toEqual([36, 36]);
+    expect(geometry.glyph).toBe(20);
+    // A showDivider rule sits inside the outer padding, so equal padding means equal width.
+    expect(geometry.padding).toEqual(geometry.footerPadding);
+    if (language === 'en')
+      await expect(header.getByRole('heading', { name: 'Filters', exact: true })).toHaveCSS(
+        'font-size',
+        '18px',
+      );
+  });
+}
+
+test('desktop header close button closes the panel and returns focus to the trigger', async ({
+  page,
+}) => {
+  const { trigger, dialog, close } = await openReferencePanel(page);
+  await close.click();
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
+
+for (const key of ['Enter', 'Space'] as const) {
+  test(`desktop header close button closes with ${key} and returns focus to the trigger`, async ({
+    page,
+  }) => {
+    const { trigger, dialog, close } = await openReferencePanel(page);
+    await page.keyboard.press('Tab');
+    await expect(close).toBeFocused();
+    await expect(close).toHaveAttribute('data-focus-visible', 'true');
+    await page.keyboard.press(key);
+    await expect(dialog).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+  });
+}
+
+for (const theme of ['light', 'dark'] as const) {
+  test(`desktop header close button hovers like the Veli ghost Button in ${theme}`, async ({
+    page,
+  }) => {
+    const { dialog, close } = await openReferencePanel(page, { theme });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    const disclosure = dialog.locator('[data-filter-section="reports"] button[aria-expanded]');
+    const background = (button: typeof close) =>
+      button.evaluate((el) => getComputedStyle(el).backgroundColor);
+    const hovered = async (button: typeof close) => {
+      await page.mouse.move(0, 0);
+      await waitForMotion(page);
+      const resting = await background(button);
+      await button.hover();
+      await expect(button).toHaveAttribute('data-hovered', 'true');
+      // Veli Button transitions its background even with reduced motion; read the settled value.
+      await waitForMotion(page);
+      const value = await background(button);
+      expect(value).not.toBe(resting);
+      return value;
+    };
+    // Same Veli variant as the section disclosure, so token fixes reach both together.
+    expect(await hovered(close)).toBe(await hovered(disclosure));
+  });
+}
+
 for (const reducedMotion of ['reduce', 'no-preference'] as const) {
   test(`mobile category sheet ${reducedMotion} shares selection and reports expanded state`, async ({
     page,
