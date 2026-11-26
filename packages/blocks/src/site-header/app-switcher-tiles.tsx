@@ -63,6 +63,18 @@ export type SiteHeaderSwitcherItem = {
    * of the title, description, and sections layout.
    */
   infoParagraphs?: SiteHeaderSwitcherInfoParagraph[];
+  /**
+   * Host-supplied search text keyed by language id (`en`, `dv`, or a BCP-47 tag
+   * such as `dv-MV`). When present, search uses only the active language's entry
+   * and never falls back to another language or to `name`. Omit the active
+   * language (or pass an empty string / empty list) when that language has no
+   * searchable label — in Dhivehi mode the item then matches nothing instead of
+   * silently matching its English name. Intentionally Latin labels shown in
+   * Dhivehi (for example `Gov.mv`) belong under the `dv` entry. When the map is
+   * omitted entirely, English mode still matches `name`; Dhivehi mode matches
+   * nothing.
+   */
+  searchNames?: Partial<Record<string, string | readonly string[]>>;
 };
 
 function SignInBadge() {

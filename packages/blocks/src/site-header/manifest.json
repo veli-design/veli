@@ -1,13 +1,14 @@
 {
   "id": "site-header",
   "title": "Site header",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "status": "experimental",
   "description": "Scroll-aware site header with official banner, language and theme controls, mobile menu, and an embedded app switcher.",
   "files": [
     "site-header.tsx",
     "app-switcher.tsx",
     "app-switcher-tiles.tsx",
+    "app-switcher-search.ts",
     "official-banner.tsx",
     "header-controls.tsx",
     "mobile-nav.tsx",

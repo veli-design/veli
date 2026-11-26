@@ -18,7 +18,7 @@ import {
   type PreviewBannerNotice,
 } from '../components/blocks/preview-banner/preview-banner';
 
-const labels: SiteHeaderLabels = {
+const labelsEn: SiteHeaderLabels = {
   openAppSwitcher: 'Open app switcher',
   closeAppSwitcher: 'Close app switcher',
   browse: 'Browse government apps and sites',
@@ -73,12 +73,65 @@ const labels: SiteHeaderLabels = {
   primaryNav: 'Primary',
 };
 
+const labelsDv: SiteHeaderLabels = {
+  openAppSwitcher: 'އެޕް މެނޫ ހުޅުއްވާ',
+  closeAppSwitcher: 'އެޕް މެނޫ ބަންދުކުރައްވާ',
+  browse: 'ސަރުކާރުގެ ޚިދުމަތްތަކާއި ސައިޓްތައް ބައްލަވާލައްވާ',
+  introPrefix:
+    'އިތުރު ތަފްޞީލު ހޯއްދެވުމަށް ކޮންމެ އެޕަކަށްވެސް ވަދެވަޑައިގަންނަވާ، ނުވަތަ އެޕެއް ހޯއްދެވުމަށް ސާޗް ބޭނުންކުރައްވާ.',
+  introEmphasis: 'ހޯމް ޕޭޖަށް އެނބުރި ވަޑައިގަތުމަށް ގަވް.އެމްވީ ޚިޔާރުކުރައްވާ.',
+  appsBlurb: 'ސަރުކާރުގެ ޙިއްޞާކުރެވޭ ޚިދުމަތްތައް، ހުރިހާ އެއްޗެއް gov.mv ގެ ދަށުން.',
+  sitesBlurb: 'މިނިސްޓްރީތަކާއި އޭޖެންސީތައް، ހުރިހާ އެއްޗެއް gov.mv ގައި.',
+  apps: 'އެޕްތައް',
+  sites: 'ސައިޓުތައް',
+  youAreHere: 'މިހާރު މި އެޕްގައި',
+  scrollToViewMore: 'އިތުރަށް ބެލުމަށް ސްކްރޯލް ކުރައްވާ',
+  searchAppsAndSites: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ',
+  search: 'ހޯއްދަވާ',
+  filter: 'ފިލްޓަރ',
+  showAll: 'ހުރިހާ',
+  appsOnly: 'އެޕްތައް އެކަނި',
+  sitesOnly: 'ސައިޓުތައް އެކަނި',
+  showingApps: (count) => ({ lead: 'ހުރިހާ އެޕެއް: ', countLabel: `${count} ނަތީޖާ` }),
+  showingSites: (count) => ({ lead: 'ހުރިހާ ސައިޓެއް: ', countLabel: `${count} ނަތީޖާ` }),
+  searchSummary: (query, appCount, siteCount) => {
+    const parts: string[] = [];
+    if (appCount > 0) parts.push(`${appCount} އެޕް`);
+    if (siteCount > 0) parts.push(`${siteCount} ސައިޓް`);
+    return {
+      countLabel: `${appCount + siteCount} ނަތީޖާ`,
+      rest: ` “${query}” އަށް: ${parts.join(' އަދި ')}`,
+    };
+  },
+  noAppsMatch: (query) => `“${query}” އާ ގުޅޭ އެޕެއް ނުފެނުނު`,
+  noSitesMatch: (query) => `“${query}” އާ ގުޅޭ ސައިޓެއް ނުފެނުނު`,
+  noAppsOrSitesMatch: (query) => `“${query}” އާ ގުޅޭ އެޕެއް ނުވަތަ ސައިޓެއް ނުފެނުނު`,
+  searchEmptyHint:
+    'ސްޕެލިންގް ޗެކް ކުރައްވާ، ނުވަތަ ހުރިހާ GOVMV އެޕްތަކާއި ސައިޓްތައް ފެންނަން ސަރޗް ކްލިއަރ ކުރައްވާ۔',
+  label: 'މިއީ ދިވެހި ސަރުކާރުގެ ރަސްމީ ވެބްސައިޓެއް',
+  howToIdentify: 'ރަސްމީ ސައިޓެއްކަން ދެނެގަންނާނީ',
+  officialLinksTitle: 'ރަސްމީ ވެބްސައިޓްތަކުގެ ލިންކު .gov.mv އިން ނިމޭނެ',
+  officialLinksDescription: 'ސަރުކާރުގެ އިދާރާތަކުން .gov.mv ވެބްސައިޓްތަކުން މުއާމަލާތްކުރާނެ.',
+  secureWebsitesTitle: 'ސަލާމަތް ވެބްސައިޓްތަކުގައި HTTPS ބޭނުންކުރާނެ',
+  secureWebsitesDescription: 'އިތުރު އިހުތިޔާތަކަށް ތާޅު ނުވަތަ https:// ހުރިތޯ ބައްލަވާ.',
+  languageLabel: 'ބަސް',
+  languageChange: 'ބަސް ބަދަލުކުރައްވާ',
+  themeLabel: 'ތީމް',
+  themeLight: 'އަލި',
+  themeDark: 'އަނދިރި',
+  themeAuto: 'އޮޓޯ',
+  menuOpen: 'މެނޫ ހުޅުއްވާ',
+  menuClose: 'މެނޫ ބަންދުކުރައްވާ',
+  siteMenu: 'ސައިޓް މެނޫ',
+  primaryNav: 'މައި',
+};
+
 const languages = [
   { id: 'en', label: 'English', dir: 'ltr' as const },
   { id: 'dv', label: 'ދިވެހި', dir: 'rtl' as const },
 ];
 
-const apps: SiteHeaderSwitcherItem[] = [
+const appsEn: SiteHeaderSwitcherItem[] = [
   {
     id: 'govmv',
     name: 'Gov.mv',
@@ -87,6 +140,7 @@ const apps: SiteHeaderSwitcherItem[] = [
     current: true,
     iconSrc: '/blocks/example-app-govmv.svg',
     description: 'The official entry point for public services.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
     infoParagraphs: [
       {
         leadIn: 'Gov.mv',
@@ -105,6 +159,10 @@ const apps: SiteHeaderSwitcherItem[] = [
     href: '/about',
     iconSrc: '/blocks/example-app-my-applications.svg',
     description: 'Track and continue government service applications.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
   },
   {
     id: 'locker',
@@ -113,33 +171,145 @@ const apps: SiteHeaderSwitcherItem[] = [
     href: '/privacy',
     iconSrc: '/blocks/example-app-locker.svg',
     description: 'Secure storage for government documents.',
+    searchNames: { en: 'Locker', dv: 'ލޮކަރ' },
   },
 ];
 
-const sites: SiteHeaderSwitcherItem[] = [
-  ['defence', 'Minister of Defence and National Service'],
-  ['foreign-affairs', 'Minister of Foreign Affairs'],
-  ['homeland', 'Minister of Homeland Security, Labour and Technology'],
-  ['finance', 'Minister of Finance And Public Enterprises'],
-  ['education', 'Minister of Education, Higher Education and Skills Development'],
-  ['health', 'Minister of Health, Family and Welfare'],
-  ['economy', 'Minister of Economic Development, Transport and Trade'],
-  ['fisheries', 'Minister of Fisheries, Agriculture and Ocean Resources'],
-  ['attorney-general', 'Attorney General'],
-  ['islamic-affairs', 'Minister of Islamic Affairs and Endowments'],
-  ['tourism', 'Minister of Tourism and Civil Aviation'],
-  ['youth', 'Minister of Youth Empowerment, Sports and Fitness'],
-  ['arts', 'Minister of Arts, Culture and Heritage'],
-  ['infrastructure', 'Minister of Infrastructure, Housing and Urban Development'],
-  ['climate', 'Minister of Climate Change, Environment and Energy'],
-].map(([id, name]) => ({
-  id,
-  name,
+const appsDv: SiteHeaderSwitcherItem[] = [
+  {
+    id: 'govmv',
+    name: 'Gov.mv',
+    kind: 'app',
+    href: '/shell',
+    current: true,
+    iconSrc: '/blocks/example-app-govmv.svg',
+    description:
+      'މިއީ އާންމު ޚިދުމަތްތަކަށް ވާސިލުވުމަށާއި ސަރުކާރުގެ ޝާއިއުކުރުންތައް ހޯދުމަށް ބޭނުންކުރާ މައިގަނޑު ދޮރާށެވެ.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
+  },
+  {
+    id: 'applications',
+    name: 'ހުށަހެޅުންތައް',
+    kind: 'app',
+    href: '/about',
+    iconSrc: '/blocks/example-app-my-applications.svg',
+    description:
+      'ސަރުކާރުގެ ޚިދުމަތްތަކަށް ކުރެވިފައިވާ ހުށަހެޅުންތައް ބަލާލުމާއި ކުރިއަށް ގެންދިއުމަށް.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
+  },
+  {
+    id: 'locker',
+    name: 'ލޮކަރ',
+    kind: 'app',
+    href: '/privacy',
+    iconSrc: '/blocks/example-app-locker.svg',
+    description:
+      'ސަރުކާރުގެ ލިޔެކިޔުންތަކާއި ކްރެޑެންޝިއަލްތައް ރައްކާތެރިކަމާއެކު ރައްކާކުރުމަށް.',
+    searchNames: { en: 'Locker', dv: 'ލޮކަރ' },
+  },
+];
+
+const ministrySites: Array<{ id: string; en: string; dv: string }> = [
+  {
+    id: 'defence',
+    en: 'Minister of Defence and National Service',
+    dv: 'މިނިސްޓަރ އޮފް ޑިފެންސް އެންޑް ނޭޝަނަލް ސަރވިސް',
+  },
+  {
+    id: 'foreign-affairs',
+    en: 'Minister of Foreign Affairs',
+    dv: 'މިނިސްޓަރ އޮފް ފޮރިން އެފެއާޒް',
+  },
+  {
+    id: 'homeland',
+    en: 'Minister of Homeland Security, Labour and Technology',
+    dv: 'މިނިސްޓަރ އޮފް ހޯމްލޭންޑް ސެކިއުރިޓީ، ލޭބަރ އެންޑް ޓެކްނޯލޮޖީ',
+  },
+  {
+    id: 'finance',
+    en: 'Minister of Finance And Public Enterprises',
+    dv: 'މިނިސްޓަރ އޮފް ފިނޭންސް އެންޑް ޕަބްލިކް އެންޓަރޕްރައިޒަސް',
+  },
+  {
+    id: 'education',
+    en: 'Minister of Education, Higher Education and Skills Development',
+    dv: 'މިނިސްޓަރ އޮފް އެޑިޔުކޭޝަން، ހަޔަރ އެޑިޔުކޭޝަން އެންޑް ސްކިލްސް ޑިވެލޮޕްމަންޓް',
+  },
+  {
+    id: 'health',
+    en: 'Minister of Health, Family and Welfare',
+    dv: 'މިނިސްޓަރ އޮފް ހެލްތު، ފެމިލީ އެންޑް ވެލްފެއަރ',
+  },
+  {
+    id: 'economy',
+    en: 'Minister of Economic Development, Transport and Trade',
+    dv: 'މިނިސްޓަރ އޮފް އިކޮނޮމިކް ޑިވެލޮޕްމަންޓް، ޓްރާންސްޕޯޓް އެންޑް ޓްރޭޑް',
+  },
+  {
+    id: 'fisheries',
+    en: 'Minister of Fisheries, Agriculture and Ocean Resources',
+    dv: 'މިނިސްޓަރ އޮފް ފިޝަރީޒް، އެގްރިކަލްޗަރ އެންޑް އޯޝަން ރިސޯސަސް',
+  },
+  {
+    id: 'attorney-general',
+    en: 'Attorney General',
+    dv: 'ބަންޑާރަނައިބު',
+  },
+  {
+    id: 'islamic-affairs',
+    en: 'Minister of Islamic Affairs and Endowments',
+    dv: 'މިނިސްޓަރ އޮފް އިސްލާމިކް އެފެއާޒް އެންޑް އެންޑައުމަންޓްސް',
+  },
+  {
+    id: 'tourism',
+    en: 'Minister of Tourism and Civil Aviation',
+    dv: 'މިނިސްޓަރ އޮފް ޓޫރިޒަމް އެންޑް ސިވިލް އޭވިއޭޝަން',
+  },
+  {
+    id: 'youth',
+    en: 'Minister of Youth Empowerment, Sports and Fitness',
+    dv: 'މިނިސްޓަރ އޮފް ޔޫތު އެމްޕަވަރމަންޓް، ސްޕޯޓްސް އެންޑް ފިޓްނަސް',
+  },
+  {
+    id: 'arts',
+    en: 'Minister of Arts, Culture and Heritage',
+    dv: 'މިނިސްޓަރ އޮފް އާޓްސް، ކަލްޗަރ އެންޑް ހެރިޓޭޖް',
+  },
+  {
+    id: 'infrastructure',
+    en: 'Minister of Infrastructure, Housing and Urban Development',
+    dv: 'މިނިސްޓަރ އޮފް އިންފްރާސްޓްރަކްޗަރ، ހައުސިންގ އެންޑް އަރބަން ޑިވެލޮޕްމަންޓް',
+  },
+  {
+    id: 'climate',
+    en: 'Minister of Climate Change, Environment and Energy',
+    dv: 'މިނިސްޓަރ އޮފް ކްލައިމެޓް ޗޭންޖް، އެންވަޔަރަންމަންޓް އެންޑް އެނަރޖީ',
+  },
+];
+
+const sitesEn: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
+  id: site.id,
+  name: site.en,
   kind: 'site' as const,
-  href: `https://${id}.gov.mv`,
+  href: `https://${site.id}.gov.mv`,
   external: true,
   emblemSrc: '/blocks/example-organization-emblem.svg',
-  description: `Official site for the ${name}.`,
+  description: `Official site for the ${site.en}.`,
+  searchNames: { en: site.en, dv: site.dv },
+}));
+
+const sitesDv: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
+  id: site.id,
+  name: site.dv,
+  kind: 'site' as const,
+  href: `https://${site.id}.gov.mv`,
+  external: true,
+  emblemSrc: '/blocks/example-organization-emblem.svg',
+  description: 'ރަސްމީ ވެބްސައިޓް.',
+  searchNames: { en: site.en, dv: site.dv },
 }));
 
 /**
@@ -167,6 +337,10 @@ export function ApplicationShell({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const isDv = language === 'dv';
+  const labels = isDv ? labelsDv : labelsEn;
+  const apps = isDv ? appsDv : appsEn;
+  const sites = isDv ? sitesDv : sitesEn;
   const [overlay, setOverlay] = useState<SiteHeaderOverlayState>({
     switcherOpen: false,
     switcherRendered: false,
@@ -178,11 +352,27 @@ export function ApplicationShell({
   }, []);
 
   const navItems = [
-    { href: '/shell', label: 'Home', current: pathname === '/shell' },
-    { href: '/media', label: 'Media', current: pathname === '/media' },
-    { href: '/services', label: 'Services', current: pathname === '/services' },
-    { href: '/about', label: 'About', current: pathname === '/about' },
-    { href: '/contact', label: 'Contact', current: pathname === '/contact' },
+    {
+      href: '/shell',
+      label: isDv ? 'ފުރަތަމަ ޞަފުޙާ' : 'Home',
+      current: pathname === '/shell',
+    },
+    { href: '/media', label: isDv ? 'މީޑިއާ' : 'Media', current: pathname === '/media' },
+    {
+      href: '/services',
+      label: isDv ? 'ޚިދުމަތްތައް' : 'Services',
+      current: pathname === '/services',
+    },
+    {
+      href: '/about',
+      label: isDv ? 'އަޅުގަނޑުމެންނާ ބެހޭ' : 'About',
+      current: pathname === '/about',
+    },
+    {
+      href: '/contact',
+      label: isDv ? 'ގުޅުއްވުމަށް' : 'Contact',
+      current: pathname === '/contact',
+    },
   ];
 
   return (
@@ -218,7 +408,7 @@ export function ApplicationShell({
           actions={
             actions ?? (
               <Button intent="accent" appearance="fill" size="md">
-                Sign In
+                {isDv ? 'ސައިންއިން' : 'Sign In'}
               </Button>
             )
           }
@@ -249,8 +439,8 @@ export function ApplicationShell({
         <SiteFooter
           startLabel="Service information"
           endLabel="Policies"
-          startLinks={[{ id: 'about', label: 'About', href: '/about' }]}
-          endLinks={[{ id: 'privacy', label: 'Privacy', href: '/privacy' }]}
+          startLinks={[{ id: 'about', label: isDv ? 'ތަޢާރަފު' : 'About', href: '/about' }]}
+          endLinks={[{ id: 'privacy', label: isDv ? 'ޕްރައިވަސީ' : 'Privacy', href: '/privacy' }]}
           renderLink={(props) =>
             'href' in props ? <NextLink {...props} href={props.href!} /> : <span {...props} />
           }

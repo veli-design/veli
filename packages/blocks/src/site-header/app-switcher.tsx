@@ -39,6 +39,12 @@ import {
   type SiteHeaderSwitcherItem,
 } from './app-switcher-tiles';
 import {
+  isDhivehiLanguage,
+  matchesSwitcherQuery,
+  translateThaanaInput,
+  translateThaanaKey,
+} from './app-switcher-search';
+import {
   DURATION,
   EASE_DRAWER_CSS,
   infoPanelFadeTransition,
@@ -920,7 +926,32 @@ export type AppSwitcherProps = {
   onNavigate: (href: string) => void;
   /** Default selected tile id; falls back to the first app. */
   defaultSelectedId?: string;
+  /**
+   * Active UI language from the host (`en`, `dv`, or a BCP-47 tag). Controls
+   * which `searchNames` entry is matched and whether typed Latin keys become
+   * Thaana. Defaults to English.
+   */
+  language?: string;
 };
+
+function mapTypedSearchCharacter(raw: string, forceThaana: boolean) {
+  if (!forceThaana || raw.length !== 1) return raw;
+  return translateThaanaKey(raw) ?? raw;
+}
+
+function insertSearchText(
+  current: string,
+  text: string,
+  selectionStart: number | null,
+  selectionEnd: number | null,
+) {
+  const start = selectionStart ?? current.length;
+  const end = selectionEnd ?? current.length;
+  return {
+    next: `${current.slice(0, start)}${text}${current.slice(end)}`,
+    caret: start + text.length,
+  };
+}
 
 export function AppSwitcher({
   onClose,
@@ -930,8 +961,10 @@ export function AppSwitcher({
   titleId,
   onNavigate,
   defaultSelectedId,
+  language = 'en',
 }: AppSwitcherProps) {
   const prefersReducedMotion = useReducedMotion();
+  const forceThaana = isDhivehiLanguage(language);
   const initialId = defaultSelectedId ?? apps[0]?.id ?? sites[0]?.id ?? '';
   const [selectedId, setSelectedId] = useState(initialId);
   const [trackedInitialId, setTrackedInitialId] = useState(initialId);
@@ -951,6 +984,11 @@ export function AppSwitcher({
     setTrackedInitialId(initialId);
     setSelectedId(initialId);
   }
+
+  const commitSearchText = useCallback((next: string, caret: number) => {
+    pendingCaretRef.current = caret;
+    setQuery(next);
+  }, []);
 
   useEffect(() => {
     // Capture so printable keys / Backspace reach Search before RAC listbox consumes them.
@@ -981,19 +1019,79 @@ export function AppSwitcher({
       if (isBackspace) {
         if (!input.value) return;
         const next = input.value.slice(0, -1);
-        pendingCaretRef.current = next.length;
-        setQuery(next);
+        commitSearchText(next, next.length);
         return;
       }
 
-      const next = input.value + event.key;
-      pendingCaretRef.current = next.length;
-      setQuery(next);
+      const typed = mapTypedSearchCharacter(event.key, forceThaana);
+      const { next, caret } = insertSearchText(
+        input.value,
+        typed,
+        input.selectionStart,
+        input.selectionEnd,
+      );
+      commitSearchText(next, caret);
     };
 
     document.addEventListener('keydown', onKeyDown, true);
     return () => document.removeEventListener('keydown', onKeyDown, true);
-  }, []);
+  }, [commitSearchText, forceThaana]);
+
+  // Paste is not remapped so intentionally Latin labels (Gov.mv) can be entered.
+  useEffect(() => {
+    if (!forceThaana) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.isComposing) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.key.length !== 1) return;
+
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      if (target !== mobileSearchRef.current && target !== desktopSearchRef.current) return;
+
+      const mapped = translateThaanaKey(event.key);
+      if (mapped == null) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      const { next, caret } = insertSearchText(
+        target.value,
+        mapped,
+        target.selectionStart,
+        target.selectionEnd,
+      );
+      commitSearchText(next, caret);
+    };
+
+    const onBeforeInput = (event: InputEvent) => {
+      if (event.defaultPrevented || event.isComposing) return;
+      if (event.inputType !== 'insertText' || !event.data) return;
+
+      const target = event.target;
+      if (!(target instanceof HTMLInputElement)) return;
+      if (target !== mobileSearchRef.current && target !== desktopSearchRef.current) return;
+
+      const mapped = translateThaanaInput(event.data);
+      if (mapped === event.data) return;
+
+      event.preventDefault();
+      const { next, caret } = insertSearchText(
+        target.value,
+        mapped,
+        target.selectionStart,
+        target.selectionEnd,
+      );
+      commitSearchText(next, caret);
+    };
+
+    document.addEventListener('keydown', onKeyDown, true);
+    document.addEventListener('beforeinput', onBeforeInput, true);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+      document.removeEventListener('beforeinput', onBeforeInput, true);
+    };
+  }, [commitSearchText, forceThaana]);
 
   useLayoutEffect(() => {
     const caret = pendingCaretRef.current;
@@ -1007,16 +1105,15 @@ export function AppSwitcher({
 
   const allItems = useMemo(() => [...apps, ...sites], [apps, sites]);
 
-  const q = query.trim().toLowerCase();
   const filteredApps = useMemo(
-    () => apps.filter((item) => !q || item.name.toLowerCase().includes(q)),
-    [apps, q],
+    () => apps.filter((item) => matchesSwitcherQuery(item, query, language)),
+    [apps, language, query],
   );
   const filteredSites = useMemo(
-    () => sites.filter((item) => !q || item.name.toLowerCase().includes(q)),
-    [sites, q],
+    () => sites.filter((item) => matchesSwitcherQuery(item, query, language)),
+    [language, query, sites],
   );
-  const searching = Boolean(q);
+  const searching = Boolean(query.trim());
   const { navigable, navigableAppCount } = useMemo(() => {
     const shownApps = filter === 'sites' ? [] : filteredApps;
     const shownSites = filter === 'apps' || sites.length === 0 ? [] : filteredSites;
@@ -1036,13 +1133,13 @@ export function AppSwitcher({
         : (navigable[0]?.id ?? null);
   const selected =
     activeSelectedId == null ? undefined : navigable.find((item) => item.id === activeSelectedId);
-  const scrollKey = `${filter}|${q}|${filteredApps.length}|${filteredSites.length}`;
+  const scrollKey = `${language}|${filter}|${query}|${filteredApps.length}|${filteredSites.length}`;
   const edges = useScrollEdges(scrollRef, scrollKey);
 
   useLayoutEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTop = 0;
-  }, [filter, q]);
+  }, [filter, language, query]);
 
   useEffect(() => {
     const id = pendingScrollRef.current;

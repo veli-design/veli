@@ -871,6 +871,7 @@ export function SiteHeader({
               apps={apps}
               sites={sites}
               labels={labels}
+              language={language}
               onNavigate={onNavigate}
               defaultSelectedId={defaultSelectedAppId}
             />
