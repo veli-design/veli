@@ -96,7 +96,7 @@ export function FilterBarCompositionExample() {
             <FilterBarTrigger label={content.refinePublications}>{content.refine}</FilterBarTrigger>
             <FilterBarPanel label={content.refinePublications} className="w-[32rem]">
               <FilterBarPanelHeader closeLabel={messages.closeFilters}>
-                <div className="min-w-0 flex-1 py-2">
+                <div className="min-w-0 flex-1">
                   <Heading slot="title" className="type-body-lg-semibold text-base-strong">
                     {content.refinePublications}
                   </Heading>

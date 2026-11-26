@@ -1,3 +1,15 @@
+## 0.9.0
+
+### Added
+
+- Add an optional `endSlot` prop that renders application-supplied content after the end links.
+- Add `SiteFooterThemeToggle`, an icon button that cycles the color scheme through system, light and dark, with a brief label and a screen-reader announcement. The application passes the current scheme, a change handler and translated labels, and stores the preference. Pass it through `endSlot`.
+- Require `motion` ^12.42.2 for the toggle animation.
+
+### Changed
+
+- Let the two footer groups wrap onto separate rows on narrow screens instead of overflowing. Each group's links still stay on one row.
+
 ## 0.8.2
 
 ### Fixed

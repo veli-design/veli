@@ -14,7 +14,7 @@ This experimental block is editable source for applications using Veli's public 
 Public npm installation needs no credentials. Configure the compatible Blocks registry URL.
 
 ```sh
-corepack pnpm add @veli-design/react@0.20.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0
+corepack pnpm add @veli-design/react@0.20.0 @veli-design/tokens@0.11.0 react@19.2.6 react-dom@19.2.6 react-aria-components@1.22.0 motion@12.42.2
 ```
 
 Use Tailwind 4 with your framework's integration. In your global stylesheet:
@@ -32,9 +32,9 @@ corepack pnpm dlx @veli-design/cli init
 corepack pnpm dlx @veli-design/cli add site-footer
 ```
 
-The CLI copies `site-footer.tsx` into the configured Blocks directory and retains its exact original source and receipt under `.veli/blocks/site-footer/`. Import the editable working copy directly from your application and commit both it and `.veli`. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.
+The CLI copies `site-footer.tsx`, `theme-toggle.tsx` and `theme-toggle-icon.tsx` into the configured Blocks directory and retains its exact original source and receipt under `.veli/blocks/site-footer/`. Import the editable working copy directly from your application and commit both it and `.veli`. Files outside Tailwind's normal source tree require an explicit `@source` path relative to your stylesheet.
 
-Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, and `colorScheme="light"`, `"dark"`, or `"system"`. Follow the [provider guide](/docs/provider/) for document direction, theme initialization, and font setup. The footer inherits its language and direction; it does not write document attributes or persist preferences.
+Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, and `colorScheme="light"`, `"dark"`, or `"system"`. Follow the [provider guide](/docs/provider/) for document direction, theme initialization, and font setup. The footer inherits its language and direction; it does not write document attributes or persist preferences, including the theme toggle's.
 
 ## API
 
@@ -42,9 +42,33 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 `startLabel` and `endLabel` optionally name the link groups. Translate these labels too. `className` customizes the root footer; `startGroupClassName` and `endGroupClassName` adjust one group when the application needs a different gap or alignment. `renderLink` has the same type as Veli Link's `render` prop; forward all supplied props, including the ref, to your router link. Ordinary anchors work without an adapter.
 
+`endSlot` renders optional content after the end links. The application owns that content.
+
+`SiteFooterThemeToggle` is an optional theme control for `endSlot`, for example when signed-out visitors have no account panel to change the theme. Each press cycles system → light → dark. Pass the current `colorScheme` (`'system'`, `'light'` or `'dark'`), an `onColorSchemeChange` handler that applies and stores the choice, and translated `labels` (`change`, `label`, `light`, `dark`, `auto`). The toggle writes nothing itself. `className` adjusts its wrapper, for example to hide it where another control already changes the theme.
+
+```tsx
+<SiteFooter
+  startLinks={startLinks}
+  endLinks={endLinks}
+  endSlot={
+    <SiteFooterThemeToggle
+      colorScheme={colorScheme}
+      onColorSchemeChange={setColorScheme}
+      labels={{
+        change: 'Change theme',
+        label: 'Theme',
+        light: 'Light',
+        dark: 'Dark',
+        auto: 'Auto',
+      }}
+    />
+  }
+/>
+```
+
 ## Accessibility and responsive behavior
 
-Use a single page-level footer landmark. Preserve link names, keyboard focus indicators, DOM reading order, and the Veli Link integration when adapting the block. The default compact link rows do not wrap, matching the established footer baseline; choose a wrapping group class only after documenting and approving that accessibility-driven change. Link groups use logical reading order for English/LTR and Dhivehi/RTL. Do not visually reorder links independently of their DOM order.
+Use a single page-level footer landmark. Preserve link names, keyboard focus indicators, DOM reading order, and the Veli Link integration when adapting the block. Links within each group stay on one compact row, matching the established footer baseline; the two groups wrap onto separate rows when space runs out. Choose a wrapping group class only after documenting and approving that accessibility-driven change. Link groups use logical reading order for English/LTR and Dhivehi/RTL. Do not visually reorder links independently of their DOM order.
 
 Validate your own labels, fonts, colors, routes, and surrounding page. The automated fixture covers both directions, light/dark modes, narrow screens, long labels, keyboard focus, hydration, and navigation; it is not a certification of downstream accessibility. Manual screen-reader and device testing remains part of adopting an experimental block.
 

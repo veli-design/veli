@@ -1,3 +1,9 @@
+## 0.2.3
+
+### Fixed
+
+- Fix desktop panel header misalignments with the design: 32px inline inset, 24px top and 16px bottom padding, a Body lg semibold title and a 20px regular close icon in a 36px button that matches the Modal and Sheet close size and uses the menu hover tokens. Consumers no longer need to wrap or restyle `FilterBarPanelHeader`. The shared Veli popover header and the mobile Sheet header are unchanged.
+
 ## 0.2.2
 
 ### Fixed

@@ -33,6 +33,27 @@ test('copied footer renders, hydrates, preserves keyboard focus and Next navigat
   expect(errors).toEqual([]);
 });
 
+test('RTL footer theme toggle follows the end links and cycles the scheme', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Fixture language' }).click();
+  const footer = page.getByRole('contentinfo');
+  const privacy = footer.getByRole('link', { name: 'ޕްރައިވަސީ' });
+  const toggle = footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އޮޓޯ' });
+  await expect(toggle).toBeVisible();
+  const [linkBox, toggleBox] = [await privacy.boundingBox(), await toggle.boundingBox()];
+  // RTL: the slot follows the end links, so it sits to their left.
+  expect(toggleBox!.x + toggleBox!.width).toBeLessThanOrEqual(linkBox!.x);
+  await privacy.focus();
+  await page.keyboard.press('Tab');
+  await expect(toggle).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އަލި' })).toBeFocused();
+  await expect(footer.locator('output')).toHaveText('ތީމު: އަލި');
+  await page.keyboard.press('Enter');
+  await expect(footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އަނދިރި' })).toBeVisible();
+});
+
 for (const width of [320, 1280])
   for (const language of ['en', 'dv'])
     for (const theme of ['light', 'dark']) {
