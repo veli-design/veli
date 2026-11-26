@@ -48,7 +48,12 @@ import {
   OFFICIAL_BANNER_MS,
   surfaceGeometryTransitionFor,
 } from './motion';
-import { MobileNavPanel, ShellNavLink, type SiteHeaderNavItem } from './mobile-nav';
+import {
+  MobileNavPanel,
+  ShellNavLink,
+  type SiteHeaderMobileActions,
+  type SiteHeaderNavItem,
+} from './mobile-nav';
 import { OfficialWebsiteBanner, type OfficialBannerLabels } from './official-banner';
 import {
   HEADER_HEIGHT,
@@ -57,6 +62,7 @@ import {
 } from './use-header-scroll';
 
 export type {
+  SiteHeaderMobileActions,
   SiteHeaderNavItem,
   SiteHeaderSwitcherItem,
   SiteHeaderSwitcherSection,
@@ -267,6 +273,7 @@ function HeaderActions({
   prefersReducedMotion,
   onToggleMobileMenu,
   actions,
+  barActions,
   labels,
 }: {
   isOpen: boolean;
@@ -274,6 +281,7 @@ function HeaderActions({
   prefersReducedMotion: boolean | null;
   onToggleMobileMenu: () => void;
   actions?: ReactNode;
+  barActions?: ReactNode;
   labels: Pick<SiteHeaderLabels, 'menuOpen' | 'menuClose'>;
 }) {
   const iconTransition = prefersReducedMotion
@@ -294,7 +302,8 @@ function HeaderActions({
         aria-hidden={isOpen || undefined}
         inert={isOpen || undefined}
       >
-        {actions}
+        {actions ? <div className="hidden items-center gap-2 sm:flex">{actions}</div> : null}
+        {barActions}
         <span className="min-[1121px]:hidden">
           <Button
             intent="secondary"
@@ -371,8 +380,24 @@ export type SiteHeaderProps = {
   onNavigate: (href: string) => void;
   /** Flag image URL for the official-website banner. */
   flagSrc: string;
-  /** Application-owned actions (search, sign-in). Fades while overlays are open. */
+  /**
+   * Application-owned bar actions (search, sign-in). Shown in the bar from `sm`
+   * (640px) up. Below `sm`, hidden in the bar and shown in the mobile menu
+   * unless `mobileActions` is set. Fades while overlays are open.
+   */
   actions?: ReactNode;
+  /**
+   * Actions inside the mobile menu below `sm`. A React node closes the menu
+   * when a button or link is activated. A function receives `{ closeMenu }`
+   * and decides when to close. `null` shows no menu actions. Omit to reuse
+   * `actions`.
+   */
+  mobileActions?: SiteHeaderMobileActions;
+  /**
+   * Compact controls that stay in the header bar at every width, after `actions`
+   * and before the mobile menu button.
+   */
+  barActions?: ReactNode;
   /** Optional custom renderer for nav links (for example Next.js Link). */
   renderNavLink?: (
     item: SiteHeaderNavItem,
@@ -405,6 +430,8 @@ export function SiteHeader({
   onNavigate,
   flagSrc,
   actions,
+  mobileActions,
+  barActions,
   renderNavLink,
   className = '',
   defaultSelectedAppId,
@@ -477,10 +504,7 @@ export function SiteHeader({
     OFFICIAL_BANNER_COLLAPSED_HEIGHT + (officialBannerExpanded ? officialBannerDetailsHeight : 0);
   const headerTopOffset =
     !isExpanded && !floatingLayout ? (isMobileMenuOpen ? 0 : officialBannerHeight + 4) : undefined;
-  const layoutSpacerHeight =
-    scrollMode === 'top' && !isRendered && isMobileMenuOpen
-      ? barHeight
-      : officialBannerHeight + 4 + barHeight;
+  const layoutSpacerHeight = officialBannerHeight + 4 + barHeight;
   const selectedTheme = themeOptionFromScheme(colorScheme);
 
   const geometryTransition =
@@ -830,6 +854,7 @@ export function SiteHeader({
             prefersReducedMotion={prefersReducedMotion}
             onToggleMobileMenu={toggleMobileMenu}
             actions={actions}
+            barActions={barActions}
             labels={labels}
           />
         </div>
@@ -901,6 +926,8 @@ export function SiteHeader({
         onThemeChange={onThemeChange}
         labels={labels}
         renderLink={renderNavLink}
+        actions={actions}
+        mobileActions={mobileActions}
       />
     </div>
   );
