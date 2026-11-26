@@ -20,7 +20,7 @@ corepack pnpm dlx @veli-design/cli init
 corepack pnpm dlx @veli-design/cli add notification-tray
 ```
 
-The CLI reports required dependencies and incompatible installed versions. Import `NotificationTray` from the copied `notification-tray.tsx` and keep its source files together. Decorative icons use the declared `@phosphor-icons/react` dependency; no separate SVG files are required. Ensure Tailwind scans the copied directory, adding an `@source` path if needed. Commit the editable source and the `.veli/blocks/notification-tray/` baseline together.
+The CLI reports required dependencies and incompatible installed versions. Import `NotificationTray` from the copied `notification-tray.tsx` and keep its source files and artwork together. The empty state uses `@lottiefiles/dotlottie-web`. Your bundler serves its WASM player and the included artwork with the application. Ensure Tailwind scans the copied directory, adding an `@source` path if needed. Commit the editable source and the `.veli/blocks/notification-tray/` baseline together.
 
 ## API
 
