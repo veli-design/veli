@@ -117,6 +117,7 @@ const dhivehiLabels = {
   emptyDescription: 'ޚިދުމަތްތަކުގެ އައު މަޢުލޫމާތު މިތާ ފެންނާނެ.',
   emptyUnreadTitle: 'ނުކިޔާ ނޯޓިފިކޭޝަނެއް ނެތް.',
   emptyUnreadDescription: 'ހުރިހާ ނޯޓިފިކޭޝަންތައް ކިޔާލެވިފައި.',
+  replayEmptyAnimation: 'އެނިމޭޝަން އަލުން ދައްކާ',
   retry: 'އަލުން ބައްލަވާ',
   loadMore: 'އިތުރަށް ބައްލަވާ',
   loadingMore: 'އިތުރު ނޯޓިފިކޭޝަންތައް ލޯޑުވަނީ…',

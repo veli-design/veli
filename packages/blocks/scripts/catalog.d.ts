@@ -25,4 +25,5 @@ export function sourceBundleFiles(block: ValidatedBlock, provenance?: Provenance
 export function archive(block: ValidatedBlock, provenance?: Provenance): Buffer;
 export function sourceArchive(block: ValidatedBlock, provenance?: Provenance): Buffer;
 export function blocksCatalog(provenance?: Provenance): BlocksCatalog;
+export function blockSourceMarkdown(file: BundledFile): string;
 export function blockMarkdown(block: ValidatedBlock): string;

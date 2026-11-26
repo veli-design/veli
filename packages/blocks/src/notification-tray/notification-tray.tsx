@@ -48,6 +48,7 @@ export function NotificationTray({
   const open = isOpen ?? localOpen;
   const mobile = useSyncExternalStore(subscribeToViewport, isMobileViewport, serverViewport);
   const labels = { ...notificationTrayLabels, ...contentProps.labels };
+  const isEmpty = contentProps.items.length === 0 && !contentProps.isLoading && !contentProps.error;
 
   function changeOpen(next: boolean) {
     if (isOpen === undefined) setLocalOpen(next);
@@ -110,7 +111,7 @@ export function NotificationTray({
           placement="bottom end"
           offset={12}
           showArrow={false}
-          className="z-40 w-[389px] shrink-0 motion-reduce:transition-none [&>div]:max-h-[inherit] [&>div]:rounded-4xl [&>div]:shadow-sm [&>div>div]:max-h-[inherit] motion-reduce:[&>div]:transition-none"
+          className={`z-40 w-[389px] shrink-0 motion-reduce:transition-none [&>div]:max-h-[inherit] [&>div]:rounded-4xl [&>div]:shadow-sm [&>div>div]:max-h-[inherit] motion-reduce:[&>div]:transition-none ${isEmpty ? 'h-[603px] [&>div]:h-full [&_.veli-notification-header]:h-10 [&_.veli-notification-header]:min-h-0 [&_.veli-notification-header>h2]:ps-2' : ''}`}
         >
           <PopoverDialog aria-label={labels.title} className="max-h-[inherit]">
             <NotificationTrayContent {...contentProps} />

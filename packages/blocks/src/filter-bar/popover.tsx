@@ -1,8 +1,9 @@
 'use client';
-import type { ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+import { Button as AriaButton, Heading } from 'react-aria-components';
 import { Sheet } from '@veli-design/react/sheet';
 import { useFilterBarMobile } from './mobile';
-import { FunnelSimpleIcon } from '@phosphor-icons/react';
+import { FunnelSimpleIcon, XIcon } from '@phosphor-icons/react';
 import { Button } from '@veli-design/react/button';
 import { Badge } from '@veli-design/react/badge';
 import {
@@ -10,12 +11,46 @@ import {
   PopoverContent,
   PopoverDialog,
   PopoverFooter,
-  PopoverHeader,
   PopoverTrigger,
+  type PopoverIntent,
   type PopoverProps,
 } from '@veli-design/react/popover';
 import { useFilterBar } from './root';
 import type { FilterLayoutProps } from './types';
+
+const FilterBarPanelIntentContext = createContext<PopoverIntent>('tertiary');
+
+const panelTitleTone: Record<PopoverIntent, string> = {
+  primary: 'text-popover-fg-on-primary',
+  secondary: 'text-popover-fg-on-secondary',
+  tertiary: 'text-base-strong',
+};
+
+const panelDividerTone: Record<PopoverIntent, string> = {
+  primary: 'bg-popover-border-on-primary',
+  secondary: 'bg-popover-border-on-secondary',
+  tertiary: 'bg-border-base-muted',
+};
+
+// Mirrors the Veli sm icon Button (Modal/Sheet close); tertiary uses the popover menu hover/pressed tokens, which adapt to dark mode.
+const panelCloseBase = [
+  '-my-1 -me-2 ms-auto flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-transparent outline-none',
+  '[transition-property:background-color,color,scale]',
+  '[transition-duration:var(--veli-duration-normal),var(--veli-duration-normal),var(--veli-duration-fast)]',
+  '[transition-timing-function:var(--veli-ease-out),var(--veli-ease-out),var(--veli-ease-out-quad)]',
+  'data-[pressed]:scale-[1.045] motion-reduce:transition-none motion-reduce:data-[pressed]:scale-100',
+  'data-[focus-visible]:ring-2 data-[focus-visible]:ring-border-focus data-[focus-visible]:ring-offset-2',
+  'forced-colors:data-[focus-visible]:outline-solid forced-colors:data-[focus-visible]:outline-2 forced-colors:data-[focus-visible]:outline-offset-2',
+].join(' ');
+
+const panelCloseTone: Record<PopoverIntent, string> = {
+  primary:
+    'text-popover-fg-on-primary data-[hovered]:bg-popover-fg-on-primary/10 data-[pressed]:bg-popover-fg-on-primary/20 data-[focus-visible]:ring-offset-popover-bg-primary',
+  secondary:
+    'text-popover-fg-on-secondary data-[hovered]:bg-popover-fg-on-secondary/10 data-[pressed]:bg-popover-fg-on-secondary/20 data-[focus-visible]:ring-offset-popover-bg-secondary',
+  tertiary:
+    'text-base-strong data-[hovered]:bg-menu-hover data-[pressed]:bg-menu-pressed data-[focus-visible]:ring-offset-popover-bg-tertiary',
+};
 
 export function FilterBarPopover({ children }: { children: ReactNode }) {
   const { panelOpen, setPanelOpen, isDisabled } = useFilterBar();
@@ -93,13 +128,15 @@ export function FilterBarPanel({
   return (
     <Popover placement={placement} intent={intent} showArrow={false}>
       <PopoverDialog aria-label={label}>
-        <div
-          id={id}
-          data-filter-panel
-          className={`flex min-h-0 flex-1 max-w-[calc(100vw-var(--veli-spacing-8))] flex-col overflow-hidden ${className}`}
-        >
-          {children}
-        </div>
+        <FilterBarPanelIntentContext.Provider value={intent ?? 'tertiary'}>
+          <div
+            id={id}
+            data-filter-panel
+            className={`flex min-h-0 flex-1 max-w-[calc(100vw-var(--veli-spacing-8))] flex-col overflow-hidden ${className}`}
+          >
+            {children}
+          </div>
+        </FilterBarPanelIntentContext.Provider>
       </PopoverDialog>
     </Popover>
   );
@@ -118,6 +155,7 @@ export function FilterBarPanelHeader({
   children,
 }: FilterBarPanelHeaderProps) {
   const { setPanelOpen, focusTrigger } = useFilterBar();
+  const intent = useContext(FilterBarPanelIntentContext);
   const mobile = useFilterBarMobile();
   if (mobile)
     return (
@@ -129,18 +167,35 @@ export function FilterBarPanelHeader({
         </Sheet.Header>
       </>
     );
+  // Design spec: 32px inline inset, 24/16 block padding, Body lg title, 20px close icon.
   return (
-    <PopoverHeader
-      title={title}
-      closeButtonLabel={closeLabel}
-      showDivider={showDivider}
-      onClose={() => {
-        setPanelOpen(false);
-        focusTrigger();
-      }}
-    >
-      {children}
-    </PopoverHeader>
+    <div data-filter-panel-header className="flex shrink-0 flex-col px-8">
+      <div className="flex items-center gap-2 pb-4 pt-6">
+        {children ??
+          (title ? (
+            <Heading
+              slot="title"
+              className={`min-w-0 flex-1 type-body-lg-semibold ${panelTitleTone[intent]}`}
+            >
+              {title}
+            </Heading>
+          ) : null)}
+        {/* 36px hit area like Modal and Sheet close; negative margins keep the 32px inset and 68px header. */}
+        <AriaButton
+          aria-label={closeLabel}
+          onPress={() => {
+            setPanelOpen(false);
+            focusTrigger();
+          }}
+          className={`${panelCloseBase} ${panelCloseTone[intent]}`}
+        >
+          <XIcon aria-hidden className="size-5 shrink-0" />
+        </AriaButton>
+      </div>
+      {showDivider ? (
+        <div aria-hidden className={`h-px w-full shrink-0 ${panelDividerTone[intent]}`} />
+      ) : null}
+    </div>
   );
 }
 export function FilterBarPanelBody({
