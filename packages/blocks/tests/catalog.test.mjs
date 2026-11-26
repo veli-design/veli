@@ -38,8 +38,16 @@ for (const block of getBlocks())
     const files = bundleFiles(block, provenance);
     const receipt = JSON.parse(files.find((file) => file.path.endsWith('receipt.json')).bytes);
     assert.equal(receipt.id, block.manifest.id);
+    const markdown = blockMarkdown(block);
     for (const file of block.files) {
-      assert.ok(blockMarkdown(block).includes(file.bytes.toString('utf8').trimEnd()));
+      if (file.path.endsWith('.lottie')) {
+        assert.ok(
+          markdown.includes(`### ${file.path}\n\nBinary file included in the source download.`),
+        );
+        assert.ok(!markdown.includes(file.bytes.toString('utf8').trimEnd()));
+      } else {
+        assert.ok(markdown.includes(file.bytes.toString('utf8').trimEnd()));
+      }
       const copies = files.filter((entry) => entry.path.endsWith('/' + file.path));
       assert.equal(copies.length, 2);
       for (const copy of copies)

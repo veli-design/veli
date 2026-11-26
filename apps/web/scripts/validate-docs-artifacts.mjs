@@ -1,4 +1,8 @@
-import { archive, getBlocks } from '../../../packages/blocks/scripts/catalog.mjs';
+import {
+  archive,
+  blockSourceMarkdown,
+  getBlocks,
+} from '../../../packages/blocks/scripts/catalog.mjs';
 import { assertHeadersCover, renderHeaders } from '../src/lib/doc-areas.mjs';
 import console from 'node:console';
 import { createHash } from 'node:crypto';
@@ -157,7 +161,7 @@ for (const block of getBlocks()) {
     fail(`${block.manifest.id}: archive differs from canonical source`);
   const markdown = readFileSync(resolve(directory, 'index.md'), 'utf8');
   for (const file of block.files) {
-    if (!markdown.includes(file.bytes.toString('utf8').trimEnd()))
+    if (!markdown.includes(blockSourceMarkdown(file)))
       fail(`${block.manifest.id}: Markdown source differs from download`);
   }
 }

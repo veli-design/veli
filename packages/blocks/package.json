@@ -33,6 +33,7 @@
     "test:consumer": "node scripts/consumer.mjs"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-web": "^0.80.0",
     "@phosphor-icons/react": "^2.1.10",
     "@veli-design/react": "workspace:*",
     "motion": "^12.42.2"

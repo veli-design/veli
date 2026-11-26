@@ -5,7 +5,6 @@ import { Heading } from 'react-aria-components';
 import {
   BellSimpleIcon,
   CheckCircleIcon,
-  CursorClickIcon,
   DotsThreeIcon,
   WarningCircleIcon,
   XIcon,
@@ -17,6 +16,7 @@ import { Spinner } from '@veli-design/react/spinner';
 import { Divider } from '@veli-design/react/divider';
 import { Link, type LinkProps } from '@veli-design/react/link';
 import { Menu, MenuItem, MenuPopover, MenuSeparator, MenuTrigger } from '@veli-design/react/menu';
+import { NotificationEmptyArtwork } from './notification-empty-artwork';
 
 export type NotificationFilter = 'all' | 'unread';
 
@@ -46,11 +46,11 @@ export const notificationTrayLabels = {
   unread: 'Unread',
   loading: 'Loading notifications…',
   pending: 'Updating notification…',
-  emptyTitle: 'You do not have any notifications, yet.',
-  emptyDescription:
-    'Use our services to track and receive alerts that will keep you in the loop here.',
+  emptyTitle: 'No notifications',
+  emptyDescription: 'You’re all caught up. New notifications will appear here.',
   emptyUnreadTitle: 'You have no unread notifications.',
   emptyUnreadDescription: 'You’re all caught up.',
+  replayEmptyAnimation: 'Replay notification animation',
   retry: 'Try again',
   loadMore: 'View more',
   loadingMore: 'Loading more notifications…',
@@ -265,6 +265,7 @@ export function NotificationTrayContent({
 }: NotificationTrayContentProps) {
   const labels = { ...notificationTrayLabels, ...labelOverrides };
   const titleId = useId();
+  const isEmpty = items.length === 0 && !isLoading && !error;
   const status = isMarkingAllRead
     ? labels.markingAllRead
     : loadMore?.isLoading
@@ -366,7 +367,7 @@ export function NotificationTrayContent({
       </p>
       <div
         aria-busy={isLoading || undefined}
-        className="veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4"
+        className={`veli-notification-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain pb-4 ${isEmpty ? 'flex flex-col' : ''}`}
       >
         {error ? (
           <div
@@ -415,24 +416,14 @@ export function NotificationTrayContent({
           </ul>
         ) : isLoading && !error ? (
           <NotificationTraySkeleton />
-        ) : !error ? (
-          <div
-            role="status"
-            className="flex min-h-80 flex-col items-center justify-center gap-4 p-2 text-center text-base-inactive"
-          >
-            <span aria-hidden className="flex size-8 items-center justify-center">
-              <CursorClickIcon
-                weight="fill"
-                aria-hidden
-                focusable="false"
-                className="size-6 text-icon-base-inactive"
-              />
-            </span>
-            <div className="flex min-h-27 max-w-77 flex-col items-center gap-2">
-              <p className="type-body-sm-semibold">
+        ) : isEmpty ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 pb-16 text-center">
+            <NotificationEmptyArtwork replayLabel={labels.replayEmptyAnimation} />
+            <div role="status" className="flex w-full max-w-88 flex-col items-center gap-2">
+              <p className="type-body-lg-semibold text-base-emphasis wrap-anywhere">
                 {filter === 'unread' ? labels.emptyUnreadTitle : labels.emptyTitle}
               </p>
-              <p className="type-caption-regular max-w-69">
+              <p className="type-body-sm-regular text-base-muted wrap-anywhere">
                 {filter === 'unread' ? labels.emptyUnreadDescription : labels.emptyDescription}
               </p>
             </div>

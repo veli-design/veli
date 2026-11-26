@@ -1,6 +1,7 @@
 // @ts-check
 
 import { createRequire } from 'node:module';
+import { isUtf8 } from 'node:buffer';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, realpathSync } from 'node:fs';
@@ -393,6 +394,15 @@ export function blocksCatalog(provenance = getProvenance()) {
   };
 }
 
+/** @param {BundledFile} file @returns {string} */
+export function blockSourceMarkdown({ path, bytes }) {
+  const body =
+    isUtf8(bytes) && !bytes.includes(0)
+      ? `\`\`\`text\n${bytes.toString('utf8').trimEnd()}\n\`\`\``
+      : 'Binary file included in the source download.';
+  return `### ${path}\n\n${body}`;
+}
+
 /** @param {ValidatedBlock} block @returns {string} */
 export function blockMarkdown(block) {
   const { manifest, readme, files, changelog } = block;
@@ -421,7 +431,7 @@ export function blockMarkdown(block) {
     .map(([name, version]) => `- ${name}: ${version}`)
     .join(
       '\n',
-    )}\n\n## Next.js example\n\nCreate this adapter in a Client Component. Pass serializable data from server components; keep render callbacks in this adapter. Adjust the relative import to your destination.\n\n\`\`\`tsx\n${example.trimEnd()}\n\`\`\`${exampleSection}\n\n## Source\n\n${files.map(({ path, bytes }) => `### ${path}\n\n\`\`\`text\n${bytes.toString('utf8').trimEnd()}\n\`\`\``).join('\n\n')}\n\n## Changelog\n\n${changelog
+    )}\n\n## Next.js example\n\nCreate this adapter in a Client Component. Pass serializable data from server components; keep render callbacks in this adapter. Adjust the relative import to your destination.\n\n\`\`\`tsx\n${example.trimEnd()}\n\`\`\`${exampleSection}\n\n## Source\n\n${files.map(blockSourceMarkdown).join('\n\n')}\n\n## Changelog\n\n${changelog
     .replace(/^## /gm, '### ')
     .replace(/^### (Added|Changed|Fixed|Removed)/gm, '#### $1')
     .trim()}\n`;
