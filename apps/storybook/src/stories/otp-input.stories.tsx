@@ -235,3 +235,32 @@ export const Controlled: Story = {
     await expect(input()).toHaveValue('654321');
   },
 };
+
+export const AutofillIntoFilledField: Story = {
+  name: 'Autofill into a filled field',
+  args: { label: 'Code', defaultValue: '12' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    await expect(input).toHaveValue('12');
+
+    // SMS autofill inserts the whole code at the caret. The field must take the new code.
+    input.focus();
+    input.setSelectionRange(2, 2);
+    input.dispatchEvent(
+      new InputEvent('beforeinput', {
+        inputType: 'insertText',
+        data: '123456',
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+    await waitFor(() => expect(input).toHaveValue('123456'));
+    await waitFor(() => expect(args.onComplete).toHaveBeenCalledWith('123456'));
+  },
+};
+
+export const WebOtp: Story = {
+  name: 'WebOTP (Android Chrome)',
+  args: { label: 'SMS code', webOtp: true },
+};

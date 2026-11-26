@@ -158,6 +158,19 @@ test('slots are separate boxes and the track is not one Input shell', () => {
   assert.doesNotMatch(disabled, /after:bg-text-input-stroke/);
 });
 
+test('WebOTP is opt-in, aborts on cleanup, and the native one-time-code path stays on', () => {
+  const source = readFileSync(new URL('../src/otp-input-component.tsx', import.meta.url), 'utf8');
+  assert.match(source, /webOtp = false,/);
+  assert.match(source, /new AbortController\(\)/);
+  assert.match(source, /return \(\) => controller\.abort\(\);/);
+  assert.match(source, /controller\.signal\.aborted \|\| !input/);
+  assert.match(source, /activeElement !== input/);
+  assert.match(source, /type: 'autofill', raw: code/);
+  const html = render({ webOtp: true });
+  assert.equal(attr(inputTag(html)[0], 'autoComplete'), 'one-time-code');
+  assert.doesNotMatch(html, /webotp/i);
+});
+
 test('the package does not depend on input-otp', () => {
   for (const field of ['dependencies', 'peerDependencies', 'devDependencies']) {
     assert.equal(packageJson[field]?.['input-otp'], undefined, field);
