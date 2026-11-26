@@ -5,7 +5,11 @@ import { Button } from '@veli-design/react/button';
 import { VeliProvider } from '@veli-design/react/provider';
 import { ApplicationFooter } from '../footer-adapter';
 import { ApplicationHeader } from '../header-adapter';
-import { SiteFooter } from '../components/blocks/site-footer/site-footer';
+import {
+  SiteFooter,
+  SiteFooterThemeToggle,
+  type SiteFooterColorScheme,
+} from '../components/blocks/site-footer/site-footer';
 
 const FLAG_SRC =
   'data:image/svg+xml,' +
@@ -16,6 +20,7 @@ const FLAG_SRC =
 export default function Page() {
   const [language, setLanguage] = useState<'en' | 'dv'>('en');
   const [dark, setDark] = useState(false);
+  const [colorScheme, setColorScheme] = useState<SiteFooterColorScheme>('system');
   const [long, setLong] = useState(false);
   const [entityTitle, setEntityTitle] = useState<string | undefined>();
   return (
@@ -74,6 +79,22 @@ export default function Page() {
               },
             ]}
             endLinks={[{ id: 'privacy', label: 'ޕްރައިވަސީ', href: '/privacy' }]}
+            endSlot={
+              <SiteFooterThemeToggle
+                colorScheme={colorScheme}
+                onColorSchemeChange={(next) => {
+                  setColorScheme(next);
+                  setDark(next === 'dark');
+                }}
+                labels={{
+                  change: 'ތީމު ބަދަލުކުރަން',
+                  label: 'ތީމު',
+                  light: 'އަލި',
+                  dark: 'އަނދިރި',
+                  auto: 'އޮޓޯ',
+                }}
+              />
+            }
           />
         )}
       </div>

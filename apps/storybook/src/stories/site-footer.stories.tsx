@@ -1,5 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { SiteFooter } from '@tradenetcorp/veli-blocks/site-footer';
+import { useState } from 'react';
+import {
+  SiteFooter,
+  SiteFooterThemeToggle,
+  type SiteFooterColorScheme,
+} from '@tradenetcorp/veli-blocks/site-footer';
 
 const meta = {
   title: 'Blocks/Site footer',
@@ -34,3 +39,20 @@ export const LongLabels: Story = {
   },
 };
 export const EmptyGroups: Story = { args: { startLinks: [], endLinks: [] } };
+function ThemeToggleSlot() {
+  const [colorScheme, setColorScheme] = useState<SiteFooterColorScheme>('system');
+  return (
+    <SiteFooterThemeToggle
+      colorScheme={colorScheme}
+      onColorSchemeChange={setColorScheme}
+      labels={{
+        change: 'Change theme',
+        label: 'Theme',
+        light: 'Light',
+        dark: 'Dark',
+        auto: 'Auto',
+      }}
+    />
+  );
+}
+export const WithThemeToggle: Story = { args: { endSlot: <ThemeToggleSlot /> } };
