@@ -1,3 +1,9 @@
+## 0.16.1
+
+### Fixed
+
+- Unmount the mobile menu's copy of `actions` as the menu closes when the viewport reaches 640px. Resizing during the close animation no longer shows two copies of an action, so consumer effects and IDs keep a single instance.
+
 ## 0.16.0
 
 ### Added
@@ -22,7 +28,8 @@
 ### Added
 
 - Add a "Skip to main content" link as the first tab stop, before the official-website banner. It is visible only while focused, sits at the inline start edge in LTR and RTL, and is removed from the tab order while the app switcher or mobile menu is open. Pass `labels.skipToMain` and, for a custom target, `skipToMainHref` (default `#main-content`). A standalone host gives its `main` `id="main-content"` and `tabIndex={-1}`.
-  > ## 0.14.1
+
+## 0.14.1
 
 ### Fixed
 

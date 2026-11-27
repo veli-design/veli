@@ -49,6 +49,7 @@ import {
   surfaceGeometryTransitionFor,
 } from './motion';
 import {
+  ActionsInBarProvider,
   MobileNavPanel,
   ShellNavLink,
   type SiteHeaderMobileActions,
@@ -60,6 +61,7 @@ import {
   OFFICIAL_BANNER_COLLAPSED_HEIGHT,
   useHeaderScrollMode,
 } from './use-header-scroll';
+import { ACTIONS_IN_BAR_QUERY, useMinWidthMatch } from './use-min-width-match';
 
 export type {
   SiteHeaderMobileActions,
@@ -128,22 +130,6 @@ function useCanHover() {
   return useSyncExternalStore(
     subscribeCanHover,
     () => window.matchMedia('(hover: hover) and (pointer: fine)').matches,
-    () => false,
-  );
-}
-
-function useMinWidthMatch(query: string) {
-  const subscribe = useCallback(
-    (onChange: () => void) => {
-      const mq = window.matchMedia(query);
-      mq.addEventListener('change', onChange);
-      return () => mq.removeEventListener('change', onChange);
-    },
-    [query],
-  );
-  return useSyncExternalStore(
-    subscribe,
-    () => window.matchMedia(query).matches,
     () => false,
   );
 }
@@ -560,7 +546,7 @@ export function SiteHeader({
   const layoutSpacerHeight = officialBannerHeight + 4 + barHeight;
   const selectedTheme = themeOptionFromScheme(colorScheme);
   // Matches Tailwind's `sm` breakpoint. The bar and the mobile menu never both render actions.
-  const actionsInBar = useMinWidthMatch('(min-width: 640px)');
+  const actionsInBar = useMinWidthMatch(ACTIONS_IN_BAR_QUERY);
 
   const geometryTransition =
     (isOpen || isRendered) && !prefersReducedMotion
@@ -987,24 +973,25 @@ export function SiteHeader({
         aria-hidden
       />
 
-      <MobileNavPanel
-        navItems={mobileNavItems}
-        open={isMobileMenuOpen}
-        headerHeight={barHeight}
-        selectedTheme={selectedTheme}
-        languages={languages}
-        language={language}
-        onLanguageChange={onLanguageChange}
-        prefersReducedMotion={prefersReducedMotion}
-        onClose={closeMobileMenu}
-        onExitComplete={() => setIsMobileMenuVisible(false)}
-        onThemeChange={onThemeChange}
-        labels={labels}
-        renderLink={renderNavLink}
-        actions={actions}
-        mobileActions={mobileActions}
-        actionsInBar={actionsInBar}
-      />
+      <ActionsInBarProvider value={actionsInBar}>
+        <MobileNavPanel
+          navItems={mobileNavItems}
+          open={isMobileMenuOpen}
+          headerHeight={barHeight}
+          selectedTheme={selectedTheme}
+          languages={languages}
+          language={language}
+          onLanguageChange={onLanguageChange}
+          prefersReducedMotion={prefersReducedMotion}
+          onClose={closeMobileMenu}
+          onExitComplete={() => setIsMobileMenuVisible(false)}
+          onThemeChange={onThemeChange}
+          labels={labels}
+          renderLink={renderNavLink}
+          actions={actions}
+          mobileActions={mobileActions}
+        />
+      </ActionsInBarProvider>
     </div>
   );
 }

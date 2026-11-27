@@ -149,6 +149,42 @@ test('keyboard activation of a mobile action returns focus to the menu button', 
   await expect(page.getByRole('button', { name: 'Open menu' })).not.toBeFocused();
 });
 
+test('resizing to the bar breakpoint during menu exit never mounts a second action', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toBeVisible();
+
+  // Track the highest number of "Sign In" buttons in the DOM from here on.
+  await page.evaluate(() => {
+    const countSignIn = () =>
+      Array.from(document.querySelectorAll('button')).filter(
+        (button) => button.textContent?.trim() === 'Sign In',
+      ).length;
+    const state = { max: countSignIn() };
+    (window as unknown as { __signInMax: typeof state }).__signInMax = state;
+    new MutationObserver(() => {
+      state.max = Math.max(state.max, countSignIn());
+    }).observe(document.body, { subtree: true, childList: true, characterData: true });
+  });
+
+  // Close, then widen before the 220ms exit animation finishes.
+  await page.getByRole('button', { name: 'Close menu' }).click();
+  await page.setViewportSize({ width: 640, height: 800 });
+
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  await expect(
+    page.locator('[data-header-surface]').getByRole('button', { name: 'Sign In' }),
+  ).toHaveCount(1);
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as unknown as { __signInMax: { max: number } }).__signInMax.max),
+    )
+    .toBe(1);
+});
+
 test('each mobile header action mounts once across breakpoints', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 });
   await page.goto('/');

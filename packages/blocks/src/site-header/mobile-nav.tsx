@@ -1,6 +1,13 @@
 'use client';
 
-import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  type ComponentProps,
+  type ReactNode,
+} from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ButtonContext, LinkContext } from 'react-aria-components';
 import { Divider } from '@veli-design/react/divider';
@@ -17,7 +24,6 @@ import {
   mobileMenuOpenTransition,
   navItemEntranceTransition,
 } from './motion';
-
 export type SiteHeaderNavItem = {
   href: string;
   label: string;
@@ -82,6 +88,99 @@ function shouldCloseMenuOnAction(target: EventTarget | null) {
   return true;
 }
 
+/**
+ * True from `sm` up, where the bar renders the header actions. `SiteHeader`
+ * provides it, so the bar and the menu read one breakpoint value.
+ */
+const ActionsInBarContext = createContext(false);
+
+/**
+ * Passes the bar/menu split down to the menu. Context, not a prop: `AnimatePresence`
+ * keeps the exiting menu's last props, so a prop would stay stale during the exit.
+ * Context still reaches the exiting subtree, so its copy unmounts in the same
+ * commit the bar's copy mounts.
+ */
+export const ActionsInBarProvider = ActionsInBarContext.Provider;
+
+/** Renders the menu's actions below `sm`, and nothing from `sm` up. */
+function MobileMenuActions({
+  actions,
+  mobileActions,
+  navCount,
+  onClose,
+  prefersReducedMotion,
+}: {
+  actions?: ReactNode;
+  mobileActions?: SiteHeaderMobileActions;
+  navCount: number;
+  onClose: () => void;
+  prefersReducedMotion: boolean | null;
+}) {
+  const actionsInBar = useContext(ActionsInBarContext);
+  const resolvedActions = actionsInBar
+    ? null
+    : mobileActions !== undefined
+      ? typeof mobileActions === 'function'
+        ? mobileActions({ closeMenu: onClose })
+        : mobileActions
+      : actions;
+  const autoCloseActions = typeof mobileActions !== 'function';
+  const hasActions = Boolean(resolvedActions);
+  const actionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const root = actionsRef.current;
+    if (!autoCloseActions || !hasActions || !root) return;
+    const onClick = (event: MouseEvent) => {
+      if (shouldCloseMenuOnAction(event.target)) onClose();
+    };
+    root.addEventListener('click', onClick);
+    return () => root.removeEventListener('click', onClick);
+  }, [autoCloseActions, hasActions, onClose]);
+
+  if (!resolvedActions) return null;
+
+  return (
+    <motion.div
+      ref={actionsRef}
+      data-mobile-menu-actions=""
+      className="flex shrink-0 flex-wrap items-center gap-2 px-5 pb-2"
+      initial={prefersReducedMotion ? false : { opacity: 0, transform: 'translateY(-8px)' }}
+      animate={{ opacity: 1, transform: 'translateY(0px)' }}
+      transition={
+        prefersReducedMotion
+          ? { duration: 0 }
+          : {
+              ...navItemEntranceTransition,
+              delay: DURATION.navStagger * navCount,
+            }
+      }
+    >
+      {autoCloseActions ? (
+        <ButtonContext.Provider
+          value={{
+            onPress: (event) => {
+              if (shouldCloseMenuOnAction(event.target)) onClose();
+            },
+          }}
+        >
+          <LinkContext.Provider
+            value={{
+              onPress: (event) => {
+                if (shouldCloseMenuOnAction(event.target)) onClose();
+              },
+            }}
+          >
+            {resolvedActions}
+          </LinkContext.Provider>
+        </ButtonContext.Provider>
+      ) : (
+        resolvedActions
+      )}
+    </motion.div>
+  );
+}
+
 export function MobileNavPanel({
   navItems,
   open,
@@ -98,7 +197,6 @@ export function MobileNavPanel({
   renderLink,
   actions,
   mobileActions,
-  actionsInBar,
 }: {
   navItems: SiteHeaderNavItem[];
   open: boolean;
@@ -116,8 +214,6 @@ export function MobileNavPanel({
   actions?: ReactNode;
   /** Menu actions below `sm`. Overrides `actions` when set, including `null`. */
   mobileActions?: SiteHeaderMobileActions;
-  /** True at `sm` and up, where the bar renders the actions. The menu then renders none, so each action mounts once. */
-  actionsInBar: boolean;
   renderLink?: (
     item: SiteHeaderNavItem,
     className: string,
@@ -125,27 +221,6 @@ export function MobileNavPanel({
     options?: { onClick?: () => void },
   ) => ReactNode;
 }) {
-  const resolvedMobileActions = actionsInBar
-    ? null
-    : mobileActions !== undefined
-      ? typeof mobileActions === 'function'
-        ? mobileActions({ closeMenu: onClose })
-        : mobileActions
-      : actions;
-  const autoCloseActions = typeof mobileActions !== 'function';
-  const hasMobileActions = Boolean(resolvedMobileActions);
-  const actionsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const root = actionsRef.current;
-    if (!open || !autoCloseActions || !hasMobileActions || !root) return;
-    const onClick = (event: MouseEvent) => {
-      if (shouldCloseMenuOnAction(event.target)) onClose();
-    };
-    root.addEventListener('click', onClick);
-    return () => root.removeEventListener('click', onClick);
-  }, [open, autoCloseActions, hasMobileActions, onClose]);
-
   return (
     <AnimatePresence onExitComplete={onExitComplete}>
       {open ? (
@@ -219,45 +294,13 @@ export function MobileNavPanel({
             </nav>
           </div>
 
-          {resolvedMobileActions ? (
-            <motion.div
-              ref={actionsRef}
-              data-mobile-menu-actions=""
-              className="flex shrink-0 flex-wrap items-center gap-2 px-5 pb-2"
-              initial={prefersReducedMotion ? false : { opacity: 0, transform: 'translateY(-8px)' }}
-              animate={{ opacity: 1, transform: 'translateY(0px)' }}
-              transition={
-                prefersReducedMotion
-                  ? { duration: 0 }
-                  : {
-                      ...navItemEntranceTransition,
-                      delay: DURATION.navStagger * navItems.length,
-                    }
-              }
-            >
-              {autoCloseActions ? (
-                <ButtonContext.Provider
-                  value={{
-                    onPress: (event) => {
-                      if (shouldCloseMenuOnAction(event.target)) onClose();
-                    },
-                  }}
-                >
-                  <LinkContext.Provider
-                    value={{
-                      onPress: (event) => {
-                        if (shouldCloseMenuOnAction(event.target)) onClose();
-                      },
-                    }}
-                  >
-                    {resolvedMobileActions}
-                  </LinkContext.Provider>
-                </ButtonContext.Provider>
-              ) : (
-                resolvedMobileActions
-              )}
-            </motion.div>
-          ) : null}
+          <MobileMenuActions
+            actions={actions}
+            mobileActions={mobileActions}
+            navCount={navItems.length}
+            onClose={onClose}
+            prefersReducedMotion={prefersReducedMotion}
+          />
 
           <Divider appearance="muted" className="w-full shrink-0" />
 
