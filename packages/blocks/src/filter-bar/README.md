@@ -479,6 +479,19 @@ for grid, widths, gaps and placement. No className/style/internal style override
 are passed to Veli controls. The styling guard covers every TSX file in this block;
 the same lint rules also apply to examples and stories.
 
+The desktop panel header close button is a Veli ghost icon Button. On the default
+(tertiary) panel it uses the same variant as the section disclosure; primary and
+secondary panels use its high-contrast variant, with the icon in the title tone.
+Known shared Veli token gaps:
+
+- Hover is not visible on tertiary and secondary panels in dark mode, and is very
+  faint on secondary panels in light mode.
+- In dark mode, the focus outline on primary panels is below 3:1 contrast.
+
+The hover gaps come from Veli tokens, so a `@veli-design/tokens` update fixes them
+without changing the copied block source. The primary focus outline needs a shared
+Veli follow-up.
+
 Run `veli status`, review the block changelog and dependency baseline, then use
 `veli update filter-bar` to merge updates into your copy. Resolve any conflicts
 and run `veli update --continue filter-bar`, or use `--abort` to restore the
@@ -520,7 +533,7 @@ browser emulation does not replace physical-device or screen-reader testing.
 
 The Figma reference is a layout comparison, not a promise of pixel-identical
 older component internals. Agreed differences remain visible: leading Tag checks,
-standard Menu selected states, Veli Popover radius/header typography, native
+standard Menu selected states, Veli Popover radius, native
 DatePicker segments, and the new select-all/standalone section checkboxes. The
 reference story does not fake those controls to conceal differences.
 
