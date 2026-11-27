@@ -176,6 +176,14 @@ test('insertReplacementText completes a full code and keeps partial text a repla
   assert.match(source, /kind === 'replace'\s*\?\s*'autofill'\s*:\s*'replace'/);
 });
 
+test('paired native events reduce against the latest applied document, and input-only replacements are autofill', () => {
+  const source = readFileSync(new URL('../src/otp-input-component.tsx', import.meta.url), 'utf8');
+  assert.match(source, /const prev = docRef\.current;/);
+  assert.match(source, /docRef\.current = result\.document;/);
+  assert.match(source, /addEventListener\('input', listener\)/);
+  assert.match(source, /inputType === 'insertReplacementText'/);
+});
+
 test('the package does not depend on input-otp', () => {
   for (const field of ['dependencies', 'peerDependencies', 'devDependencies']) {
     assert.equal(packageJson[field]?.['input-otp'], undefined, field);

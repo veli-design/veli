@@ -411,19 +411,41 @@ export function OTPInput({
     [ref],
   );
 
+  // Native events can arrive before React re-renders (beforeinput then input in one task).
+  // Reduce against the latest applied document, not the last render, so a paired event is a no-op.
+  const docRef = React.useRef(doc);
+  React.useLayoutEffect(() => {
+    docRef.current = doc;
+  });
+
   function dispatch(event: OTPDocumentEvent) {
-    const result = reduceOTPDocument(doc, event, layout, alphabet);
-    if (result.document === doc) return false;
+    const prev = docRef.current;
+    const result = reduceOTPDocument(prev, event, layout, alphabet);
+    if (result.document === prev) return false;
+    docRef.current = result.document;
     setStored(result.document);
-    if (result.document.text !== doc.text) onChange?.(result.document.text);
+    if (result.document.text !== prev.text) onChange?.(result.document.text);
     if (result.completed) onComplete?.(result.document.text);
     return true;
   }
 
   function restoreSelection() {
     const input = inputRef.current;
-    if (input) writeSelection(input, doc);
+    if (input) writeSelection(input, docRef.current);
   }
+
+  // The input event's type and data tell an input-only replacement apart from typing.
+  const nativeEditRef = React.useRef<{ inputType: string; data: string | null } | null>(null);
+  React.useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    const listener = (event: Event) => {
+      const { inputType, data } = event as InputEvent;
+      nativeEditRef.current = { inputType, data };
+    };
+    input.addEventListener('input', listener);
+    return () => input.removeEventListener('input', listener);
+  }, []);
 
   const beforeInputRef = React.useRef<(event: InputEvent) => void>(() => {});
   React.useLayoutEffect(() => {
@@ -505,9 +527,18 @@ export function OTPInput({
       {...props}
       value={doc.text}
       onChange={(raw) => {
+        const native = nativeEditRef.current;
+        nativeEditRef.current = null;
+        // An input-only replacement (no beforeinput) carrying a whole code is autofill too.
+        const code = native?.inputType === 'insertReplacementText' ? (native.data ?? raw) : null;
+        const isAutofill =
+          code !== null && planOTPClipboard(code, layout, alphabet).kind === 'replace';
         // A rejected edit leaves React to restore the controlled value, which
         // moves the native caret; put it back once that restore has run.
-        if (!dispatch({ type: 'value', raw })) queueMicrotask(restoreSelection);
+        const applied = isAutofill
+          ? dispatch({ type: 'autofill', raw: code })
+          : dispatch({ type: 'value', raw });
+        if (!applied) queueMicrotask(restoreSelection);
       }}
       onFocusChange={(focused) => {
         setIsFocused(focused);

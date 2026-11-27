@@ -305,6 +305,79 @@ export const PasteOverFullCodeUnchanged: Story = {
   },
 };
 
+// Writes through the native setter so React's value tracker sees the change, as a browser edit would.
+const setNativeValue = (input: HTMLInputElement, value: string) => {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+  setter?.call(input, value);
+};
+
+const dispatchNativeInput = (input: HTMLInputElement, inputType: string, data: string | null) =>
+  input.dispatchEvent(new InputEvent('input', { inputType, data, bubbles: true }));
+
+export const PairedReplacementCompletesOnce: Story = {
+  name: 'Paired replacement events complete once',
+  args: { label: 'Code', defaultValue: '123456' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    const onChange = args.onChange as ReturnType<typeof fn>;
+    const onComplete = args.onComplete as ReturnType<typeof fn>;
+    onChange.mockClear();
+    onComplete.mockClear();
+    input.focus();
+    // Same task: an uncancelable beforeinput, then the native input it pairs with.
+    input.dispatchEvent(
+      new InputEvent('beforeinput', {
+        inputType: 'insertReplacementText',
+        data: '654321',
+        bubbles: true,
+        cancelable: false,
+      }),
+    );
+    setNativeValue(input, '654321');
+    dispatchNativeInput(input, 'insertReplacementText', '654321');
+    await waitFor(() => expect(input).toHaveValue('654321'));
+    await waitFor(() => expect(onComplete).toHaveBeenCalledTimes(1));
+    expect(onComplete).toHaveBeenCalledWith('654321');
+    expect(onChange).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const InputOnlyReplacementCompletes: Story = {
+  name: 'Input-only replacement completes a full code',
+  args: { label: 'Code', defaultValue: '123456' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    const onComplete = args.onComplete as ReturnType<typeof fn>;
+    onComplete.mockClear();
+    input.focus();
+    // No beforeinput: only the native input, replacing 123456 with 123499.
+    setNativeValue(input, '123499');
+    dispatchNativeInput(input, 'insertReplacementText', '123499');
+    await waitFor(() => expect(input).toHaveValue('123499'));
+    await waitFor(() => expect(onComplete).toHaveBeenCalledWith('123499'));
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const InputOnlyReplacementWithoutDataCompletes: Story = {
+  name: 'Input-only replacement without data completes',
+  args: { label: 'Code', defaultValue: '123456' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    const onComplete = args.onComplete as ReturnType<typeof fn>;
+    onComplete.mockClear();
+    input.focus();
+    setNativeValue(input, '123499');
+    dispatchNativeInput(input, 'insertReplacementText', null);
+    await waitFor(() => expect(input).toHaveValue('123499'));
+    await waitFor(() => expect(onComplete).toHaveBeenCalledWith('123499'));
+    expect(onComplete).toHaveBeenCalledTimes(1);
+  },
+};
+
 export const WebOtp: Story = {
   name: 'WebOTP (Android Chrome)',
   args: { label: 'SMS code', webOtp: true },
