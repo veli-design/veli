@@ -1,3 +1,10 @@
+## 0.2.4
+
+### Fixed
+
+- Align the desktop panel header's optional divider with the footer divider and body content. The title and close icon keep their 32px inset.
+- Use the Veli ghost icon Button for the desktop panel header close button, matching the section disclosure buttons and Veli hover, ripple and focus states. Primary and secondary panels use its high-contrast variant, with the icon in the title tone so it stays readable in dark mode.
+
 ## 0.2.3
 
 ### Fixed

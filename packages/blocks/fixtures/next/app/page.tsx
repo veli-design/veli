@@ -87,7 +87,7 @@ export default function Page() {
                 )
           }
         />
-        <main className="p-4">
+        <main id="main-content" tabIndex={-1} className="p-4 focus:outline-none">
           <h1>Blocks consumer fixture</h1>
           <button onClick={() => setLanguage(language === 'en' ? 'dv' : 'en')}>
             Fixture language

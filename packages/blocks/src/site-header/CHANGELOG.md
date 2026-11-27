@@ -1,4 +1,4 @@
-## 0.15.0
+## 0.16.0
 
 ### Added
 
@@ -17,7 +17,12 @@
 - Return focus to the menu button when a mobile-menu action closes the menu, so keyboard users keep their place. Focus stays where an action moves it, such as a dialog.
 - Keep `layoutSpacerHeight` at the full header height when the mobile menu opens at the top of the page. Page content stays in place.
 
-## 0.14.1
+## 0.15.0
+
+### Added
+
+- Add a "Skip to main content" link as the first tab stop, before the official-website banner. It is visible only while focused, sits at the inline start edge in LTR and RTL, and is removed from the tab order while the app switcher or mobile menu is open. Pass `labels.skipToMain` and, for a custom target, `skipToMainHref` (default `#main-content`). A standalone host gives its `main` `id="main-content"` and `tabIndex={-1}`.
+  > ## 0.14.1
 
 ### Fixed
 
