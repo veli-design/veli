@@ -61,6 +61,7 @@ const labels: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 const apps: SiteHeaderSwitcherItem[] = [
@@ -131,10 +132,12 @@ export function SiteShellDemo() {
       >
         <SiteShell
           overlay={overlay}
+          mainId="site-shell-demo-main"
           header={
             <SiteHeader
               logo={<GovmvLogo />}
               pathname="/"
+              skipToMainHref="#site-shell-demo-main"
               desktopNavItems={[
                 { href: '#ownership-and-prerequisites', label: 'Home', current: true },
                 { href: '#api', label: 'API' },

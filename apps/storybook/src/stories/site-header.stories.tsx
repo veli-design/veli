@@ -61,6 +61,7 @@ const labelsEn: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 /** Dhivehi shell copy aligned with gov.mv `shell/dv.ts`. */
@@ -115,6 +116,7 @@ const labelsDv: SiteHeaderLabels = {
   menuClose: 'މެނޫ ބަންދުކުރައްވާ',
   siteMenu: 'ސައިޓް މެނޫ',
   primaryNav: 'މައި',
+  skipToMain: 'މައި ކޮންޓެންޓަށް ދިއުމަށް',
 };
 
 const EMBLEM_SRC = '/blocks/example-organization-emblem.svg';
@@ -649,7 +651,11 @@ function DemoFooter({ isDv }: { isDv: boolean }) {
 function DemoPage({ children, isDv }: { children: ReactNode; isDv: boolean }) {
   return (
     <>
-      <main className="bg-surface-base mx-1 mb-2 rounded-3xl lg:mx-2">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="bg-surface-base mx-1 mb-2 scroll-mt-28 rounded-3xl focus:outline-none lg:mx-2"
+      >
         <div className="mx-auto flex max-w-[1120px] flex-col gap-12 px-4 py-8 md:px-8 md:py-12">
           {children}
         </div>
@@ -972,7 +978,7 @@ function HeaderStory({
       ) : withPageContent ? (
         <ServicesHomePage isDv={isDv} />
       ) : (
-        <main className="px-4 py-8">
+        <main id="main-content" tabIndex={-1} className="px-4 py-8 focus:outline-none">
           <p className="type-body-md-regular text-text-base">{scrollHint}</p>
           <div className="h-[80vh]" />
         </main>

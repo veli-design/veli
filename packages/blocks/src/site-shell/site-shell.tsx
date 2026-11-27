@@ -30,6 +30,8 @@ export type SiteShellProps = {
   overlay?: SiteShellOverlay;
   /** Extra classes on the padded main column wrapper (for example page-specific padding). */
   contentClassName?: string;
+  /** Id of the `main` landmark. Matches site-header's default skip link target. */
+  mainId?: string;
   className?: string;
 };
 
@@ -78,6 +80,7 @@ export function SiteShell({
   notices,
   overlay = {},
   contentClassName = '',
+  mainId = 'main-content',
   className = '',
 }: SiteShellProps) {
   const prefersReducedMotion = useReducedMotion();
@@ -95,7 +98,13 @@ export function SiteShell({
         className={`flex min-h-0 flex-1 flex-col px-1 lg:px-2 ${contentClassName}`}
         prefersReducedMotion={prefersReducedMotion}
       >
-        <main className="bg-surface-base flex min-h-0 flex-1 flex-col rounded-3xl">{children}</main>
+        <main
+          id={mainId}
+          tabIndex={-1}
+          className="bg-surface-base flex min-h-0 flex-1 scroll-mt-28 flex-col rounded-3xl focus:outline-none"
+        >
+          {children}
+        </main>
       </ChromeFade>
 
       {footer ? (

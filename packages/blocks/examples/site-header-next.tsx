@@ -64,6 +64,7 @@ const labels: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 const languages = [
