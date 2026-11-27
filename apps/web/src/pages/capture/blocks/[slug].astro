@@ -1,0 +1,61 @@
+---
+// Internal capture harness for the blocks docs screenshots. Only generates pages when
+// VELI_BLOCK_CAPTURE=1 (see scripts/capture-block-screenshots.mjs), so normal builds ship no
+// capture routes. Each demo renders hydrated so the screenshot reflects the interactive state.
+import Layout from '../../../layouts/layout.astro';
+import { AccountPanelDemo } from '../../../components/AccountPanelDemo';
+import { ErrorPageDemo } from '../../../components/ErrorPageDemo';
+import { FilterBarDemo } from '../../../components/FilterBarDemo';
+import { NotificationTrayDemo } from '../../../components/NotificationTrayDemo';
+import { PageNavigationFooterDemo } from '../../../components/PageNavigationFooterDemo';
+import { PreviewBannerDemo } from '../../../components/PreviewBannerDemo';
+import { ServiceDetailDemo } from '../../../components/ServiceDetailDemo';
+import { SideNavDemo } from '../../../components/SideNavDemo';
+import { SiteFooterDemo } from '../../../components/SiteFooterDemo';
+import { SiteHeaderDemo } from '../../../components/SiteHeaderDemo';
+import { SiteShellDemo } from '../../../components/SiteShellDemo';
+
+export function getStaticPaths() {
+  if (process.env.VELI_BLOCK_CAPTURE !== '1') return [];
+  const slugs = [
+    'account-panel',
+    'error-page',
+    'filter-bar',
+    'notification-tray',
+    'page-navigation-footer',
+    'preview-banner',
+    'service-detail',
+    'side-nav',
+    'site-footer',
+    'site-header',
+    'site-shell',
+  ];
+  return slugs.map((slug) => ({ params: { slug } }));
+}
+
+const slug = Astro.params.slug;
+---
+
+<Layout title={`Capture: ${slug}`} description="Internal block screenshot capture.">
+  <main class="block-capture" data-block-demo={slug}>
+    {slug === 'account-panel' && <AccountPanelDemo client:load />}
+    {slug === 'error-page' && <ErrorPageDemo client:load />}
+    {slug === 'filter-bar' && <FilterBarDemo client:load />}
+    {slug === 'notification-tray' && <NotificationTrayDemo client:load />}
+    {slug === 'page-navigation-footer' && <PageNavigationFooterDemo client:load />}
+    {slug === 'preview-banner' && <PreviewBannerDemo client:load />}
+    {slug === 'service-detail' && <ServiceDetailDemo client:load />}
+    {slug === 'side-nav' && <SideNavDemo client:load />}
+    {slug === 'site-footer' && <SiteFooterDemo client:load />}
+    {slug === 'site-header' && <SiteHeaderDemo client:load />}
+    {slug === 'site-shell' && <SiteShellDemo client:load />}
+  </main>
+</Layout>
+
+<style>
+  /* Matches the docs article column (680px) so screenshots show blocks at their docs width. */
+  .block-capture {
+    width: 42.5rem;
+    max-width: 100vw;
+  }
+</style>

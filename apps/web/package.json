@@ -8,6 +8,7 @@
     "images:optimize": "node scripts/optimize-doc-images.mjs",
     "test": "node --test src/lib/*.test.mjs",
     "build": "node ../../scripts/stage-phosphor-notice.mjs web && node --test src/lib/*.test.mjs && astro sync && astro-check && astro build && node scripts/validate-docs-artifacts.mjs",
+    "capture:blocks": "node scripts/capture-block-screenshots.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "animations:check": "node scripts/validate-component-animations.mjs",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@astrojs/mdx": "^8.1.1",
+    "@playwright/test": "1.58.2",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
