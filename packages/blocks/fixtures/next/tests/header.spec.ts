@@ -62,15 +62,16 @@ test('banner language switch toggles to the target language', async ({ page }) =
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
 
-  const languageSwitch = page.getByRole('button', { name: 'Change language' });
-  await expect(languageSwitch).toHaveText('ދިވެހި');
-  await languageSwitch.click();
+  const enSwitch = page.getByRole('button', { name: 'Change language' });
+  await expect(enSwitch).toHaveText('ދިވެހި');
+  await enSwitch.click();
   await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'rtl');
-  await expect(languageSwitch).toHaveText('English');
 
-  await languageSwitch.click();
+  const dvSwitch = page.getByRole('button', { name: 'ބަސް ބަދަލުކުރައްވާ' });
+  await expect(dvSwitch).toHaveText('English');
+  await dvSwitch.click();
   await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'ltr');
-  await expect(languageSwitch).toHaveText('ދިވެހި');
+  await expect(page.getByRole('button', { name: 'Change language' })).toHaveText('ދިވެހި');
 });
 
 test('RTL layout does not overflow and passes axe', async ({ page }) => {
@@ -390,6 +391,134 @@ test('reduced motion still opens the app switcher', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: 'Browse government apps and sites' }),
   ).toBeVisible();
+});
+
+async function pasteSearchQuery(
+  page: import('@playwright/test').Page,
+  search: import('@playwright/test').Locator,
+  text: string,
+) {
+  await search.focus();
+  await search.evaluate((el: HTMLInputElement) => {
+    el.select();
+  });
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.evaluate(async (value) => {
+    await navigator.clipboard.writeText(value);
+  }, text);
+  await page.keyboard.press('ControlOrMeta+v');
+}
+
+test('Dhivehi mode forces Thaana search and never falls back to English names', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Fixture language' }).click();
+  await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'rtl');
+
+  await page.getByRole('button', { name: 'އެޕް މެނޫ ހުޅުއްވާ' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'ސަރުކާރުގެ ޚިދުމަތްތަކާއި ސައިޓްތައް ބައްލަވާލައްވާ' }),
+  ).toBeVisible();
+
+  const search = page.getByRole('searchbox', { name: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ' }).first();
+
+  await page.keyboard.type('lokar');
+  await expect(search).toHaveValue('ލޮކަރ');
+  await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toBeVisible();
+  await expect(page.getByRole('option', { name: 'ހުށަހެޅުންތައް' })).toHaveCount(0);
+
+  // Replacing a selected character with the identical mapped character keeps the value,
+  // moves the caret after it, and leaves the next keystroke in native undo history. Select
+  // the trailing standalone ރ: Thaana vowel marks join the preceding letter into one
+  // grapheme, so selecting the first letter would natively replace "ލޮ" as a unit.
+  await search.evaluate((el: HTMLInputElement) => el.setSelectionRange(4, 5));
+  await page.keyboard.type('r');
+  await expect(search).toHaveValue('ލޮކަރ');
+  await page.keyboard.type('r');
+  await expect(search).toHaveValue('ލޮކަރރ');
+  await page.keyboard.press('ControlOrMeta+z');
+  await expect(search).toHaveValue('ލޮކަރ');
+  // Dhivehi counts put digits before the noun: "1 ނަތީޖާ", not "ނަތީޖާ 1".
+  await expect(page.getByText(/^1 ނަތީޖާ/).first()).toBeVisible();
+  await expect(page.getByText(/1 އެޕް/).first()).toBeVisible();
+
+  await search.fill('ލޮ');
+  await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toBeVisible();
+
+  await pasteSearchQuery(page, search, 'Locker');
+  await expect(search).toHaveValue('Locker');
+  await expect(page.getByRole('option')).toHaveCount(0);
+  await expect(
+    page.getByText('“Locker” އާ ގުޅޭ އެޕެއް ނުވަތަ ސައިޓެއް ނުފެނުނު', { exact: true }),
+  ).toBeVisible();
+
+  await pasteSearchQuery(page, search, 'Wallet');
+  await expect(search).toHaveValue('Wallet');
+  await expect(page.getByRole('option')).toHaveCount(0);
+
+  await pasteSearchQuery(page, search, 'Gov.mv');
+  await expect(search).toHaveValue('Gov.mv');
+  await expect(page.getByRole('option', { name: /Gov\.mv/ })).toBeVisible();
+
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test('language switch while open changes matching and Thaana translation immediately', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  const searchEn = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
+  await searchEn.fill('Locker');
+  await expect(page.getByRole('option', { name: 'Locker' })).toBeVisible();
+
+  // Native click is intercepted by the modal overlay, so dispatch it from the page.
+  await page.getByRole('button', { name: 'Fixture language' }).evaluate((el: HTMLButtonElement) => {
+    el.click();
+  });
+  await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'rtl');
+  await expect(
+    page.getByRole('heading', { name: 'ސަރުކާރުގެ ޚިދުމަތްތަކާއި ސައިޓްތައް ބައްލަވާލައްވާ' }),
+  ).toBeVisible();
+
+  await expect(page.getByRole('option', { name: 'Locker' })).toHaveCount(0);
+  await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toHaveCount(0);
+
+  const searchDv = page.getByRole('searchbox', { name: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ' }).first();
+  await searchDv.fill('');
+  await searchDv.focus();
+  await page.keyboard.type('lok');
+  await expect(searchDv).toHaveValue('ލޮކ');
+  await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Fixture language' }).evaluate((el: HTMLButtonElement) => {
+    el.click();
+  });
+  await expect(page.locator('.min-h-screen')).toHaveAttribute('dir', 'ltr');
+  const searchBack = page.getByRole('searchbox', { name: 'Search apps and sites' }).first();
+  await searchBack.fill('');
+  await searchBack.focus();
+  await page.keyboard.type('Lock');
+  await expect(searchBack).toHaveValue('Lock');
+  await expect(page.getByRole('option', { name: 'Locker' })).toBeVisible();
+});
+
+test('Dhivehi type-to-search from the dialog surface remaps to Thaana', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Fixture language' }).click();
+  await page.getByRole('button', { name: 'އެޕް މެނޫ ހުޅުއްވާ' }).click();
+
+  const search = page.getByRole('searchbox', { name: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ' }).first();
+  await page.keyboard.type('lokar');
+  await expect(search).toBeFocused();
+  await expect(search).toHaveValue('ލޮކަރ');
+  await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toBeVisible();
 });
 
 test('skip link is the first tab stop and focuses the standalone main landmark', async ({

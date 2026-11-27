@@ -1,3 +1,19 @@
+## 0.16.0
+
+### Added
+
+- Match app switcher search to the active UI language through host-supplied `searchNames` on each tile. Dhivehi mode searches only the Dhivehi entry and does not fall back to the English `name` when that entry is missing. Intentionally Latin labels shown in Dhivehi (for example `Gov.mv`) remain searchable when listed under the `dv` entry.
+- Force Thaana phonetic input while the switcher is in Dhivehi mode, including type-to-search from the dialog surface. Paste still accepts Latin text so intentionally Latin labels can be entered without remapping. Thaana input goes through the browser's editing pipeline, so the caret and native undo history keep working, including when a replacement leaves the value unchanged.
+
+### Changed
+
+- Forward `language` from `SiteHeader` into the app switcher so changing language while the panel is open immediately updates matching rules and keyboard translation.
+- Dhivehi result counts put digits before the noun (`13 ނަތީޖާ`, `1 އެޕް އަދި 14 ސައިޓް`). Host `searchSummary` labels must follow this order.
+
+### Migration
+
+- Hosts that show tiles in Dhivehi must add `searchNames.dv` to every app and site that should be discoverable in Dhivehi. A tile without a `dv` entry no longer matches its English name in Dhivehi mode.
+
 ## 0.15.0
 
 ### Added

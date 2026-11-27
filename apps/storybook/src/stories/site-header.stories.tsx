@@ -88,10 +88,10 @@ const labelsDv: SiteHeaderLabels = {
   showingSites: (count) => ({ lead: 'ހުރިހާ ސައިޓެއް: ', countLabel: `${count} ނަތީޖާ` }),
   searchSummary: (query, appCount, siteCount) => {
     const parts: string[] = [];
-    if (appCount > 0) parts.push(`އެޕް ${appCount}`);
-    if (siteCount > 0) parts.push(`ސައިޓް ${siteCount}`);
+    if (appCount > 0) parts.push(`${appCount} އެޕް`);
+    if (siteCount > 0) parts.push(`${siteCount} ސައިޓް`);
     return {
-      countLabel: `ނަތީޖާ ${appCount + siteCount}`,
+      countLabel: `${appCount + siteCount} ނަތީޖާ`,
       rest: ` “${query}” އަށް: ${parts.join(' އަދި ')}`,
     };
   },
@@ -130,6 +130,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     current: true,
     iconSrc: '/blocks/example-app-govmv.svg',
     description: 'The official entry point for public services.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
     infoParagraphs: [
       {
         leadIn: 'Gov.mv',
@@ -148,6 +149,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/services',
     iconSrc: '/blocks/example-app-services.svg',
     description: 'Browse and start government services.',
+    searchNames: { en: 'Services', dv: 'ޚިދުމަތްތައް' },
   },
   {
     id: 'applications',
@@ -156,6 +158,10 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/applications',
     iconSrc: '/blocks/example-app-my-applications.svg',
     description: 'Track and continue government service applications.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
   },
   {
     id: 'locker',
@@ -164,14 +170,17 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/locker',
     iconSrc: '/blocks/example-app-locker.svg',
     description: 'Secure storage for government documents.',
+    searchNames: { en: 'Locker', dv: 'ލޮކަރ' },
   },
   {
+    // English searchNames without dv: Dhivehi search does not fall back to the tile name.
     id: 'wallet',
     name: 'Wallet',
     kind: 'app',
     href: '/wallet',
     iconSrc: '/blocks/example-app-wallet.svg',
     description: 'Payments and government wallet balances.',
+    searchNames: { en: 'Wallet' },
   },
   {
     id: 'inbox',
@@ -180,6 +189,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/inbox',
     iconSrc: '/blocks/example-app-inbox.svg',
     description: 'Messages from government services.',
+    searchNames: { en: 'Inbox', dv: 'އިންބޮކްސް' },
   },
   {
     id: 'gov-account',
@@ -188,6 +198,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/account',
     iconSrc: '/blocks/example-app-gov-account.svg',
     description: 'Manage your government account.',
+    searchNames: { en: 'gov Account', dv: 'gov Account' },
   },
   {
     id: 'corpid',
@@ -196,6 +207,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/corpid',
     iconSrc: '/blocks/example-app-corpid.svg',
     description: 'Corporate identity and authorisations.',
+    searchNames: { en: 'CorpID', dv: 'CorpID' },
   },
   {
     id: 'gov-support',
@@ -204,6 +216,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/support',
     iconSrc: '/blocks/example-app-gov-support.svg',
     description: 'Get help with government services.',
+    searchNames: { en: 'gov Support', dv: 'gov Support' },
   },
   {
     id: 'government-entities',
@@ -212,6 +225,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/entities',
     iconSrc: '/blocks/example-app-government-entities.svg',
     description: 'Find ministries and other entities.',
+    searchNames: { en: 'Government Entities', dv: 'Government Entities' },
   },
 ];
 
@@ -225,6 +239,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     iconSrc: '/blocks/example-app-govmv.svg',
     description:
       'މިއީ އާންމު ޚިދުމަތްތަކަށް ވާސިލުވުމަށާއި ސަރުކާރުގެ ޝާއިއުކުރުންތައް ހޯދުމަށް ބޭނުންކުރާ މައިގަނޑު ދޮރާށެވެ.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
     infoParagraphs: [
       {
         leadIn: 'Gov.mv',
@@ -243,6 +258,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/services',
     iconSrc: '/blocks/example-app-services.svg',
     description: 'ސަރުކާރުގެ ޚިދުމަތްތައް ބަލާލުމާއި ފަށާލުމަށް.',
+    searchNames: { en: 'Services', dv: 'ޚިދުމަތްތައް' },
   },
   {
     id: 'applications',
@@ -252,6 +268,10 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     iconSrc: '/blocks/example-app-my-applications.svg',
     description:
       'ސަރުކާރުގެ ޚިދުމަތްތަކަށް ކުރެވިފައިވާ ހުށަހެޅުންތައް ބަލާލުމާއި ކުރިއަށް ގެންދިއުމަށް.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
   },
   {
     id: 'locker',
@@ -261,6 +281,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     iconSrc: '/blocks/example-app-locker.svg',
     description:
       'ސަރުކާރުގެ ލިޔެކިޔުންތަކާއި ކްރެޑެންޝިއަލްތައް ރައްކާތެރިކަމާއެކު ރައްކާކުރުމަށް.',
+    searchNames: { en: 'Locker', dv: 'ލޮކަރ' },
   },
   {
     id: 'wallet',
@@ -269,6 +290,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/wallet',
     iconSrc: '/blocks/example-app-wallet.svg',
     description: 'ފައިސާ ދައްކާލުމާއި ވޮލެޓް.',
+    searchNames: { en: 'Wallet' },
   },
   {
     id: 'inbox',
@@ -277,6 +299,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/inbox',
     iconSrc: '/blocks/example-app-inbox.svg',
     description: 'ސަރުކާރުގެ ޚިދުމަތްތަކުން ލިބޭ މެސެޖުތައް.',
+    searchNames: { en: 'Inbox', dv: 'އިންބޮކްސް' },
   },
   {
     id: 'gov-account',
@@ -285,6 +308,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/account',
     iconSrc: '/blocks/example-app-gov-account.svg',
     description: 'އަކައުންޓް ބެލޕްބަލުން.',
+    searchNames: { en: 'gov Account', dv: 'gov Account' },
   },
   {
     id: 'corpid',
@@ -293,6 +317,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/corpid',
     iconSrc: '/blocks/example-app-corpid.svg',
     description: 'ކޯޕަރޭޓް އައިޑީ.',
+    searchNames: { en: 'CorpID', dv: 'CorpID' },
   },
   {
     id: 'gov-support',
@@ -301,6 +326,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/support',
     iconSrc: '/blocks/example-app-gov-support.svg',
     description: 'އެހީތެރިކަން.',
+    searchNames: { en: 'gov Support', dv: 'gov Support' },
   },
   {
     id: 'government-entities',
@@ -309,6 +335,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     href: '/entities',
     iconSrc: '/blocks/example-app-government-entities.svg',
     description: 'ވުޒާރާތަކާއި އެހެނިހެން އެންޓިޓީތައް.',
+    searchNames: { en: 'Government Entities', dv: 'Government Entities' },
   },
 ];
 
@@ -398,6 +425,7 @@ const sitesEn: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
   href: `/${site.id}`,
   emblemSrc: EMBLEM_SRC,
   description: `Official site for the ${site.en}.`,
+  searchNames: { en: site.en, dv: site.dv },
 }));
 
 const sitesDv: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
@@ -407,6 +435,7 @@ const sitesDv: SiteHeaderSwitcherItem[] = ministrySites.map((site) => ({
   href: `/${site.id}`,
   emblemSrc: EMBLEM_SRC,
   description: 'ރަސްމީ ވެބްސައިޓް.',
+  searchNames: { en: site.en, dv: site.dv },
 }));
 
 function GovmvLogo() {
