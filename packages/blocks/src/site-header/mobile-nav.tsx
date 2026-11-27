@@ -98,6 +98,7 @@ export function MobileNavPanel({
   renderLink,
   actions,
   mobileActions,
+  actionsInBar,
 }: {
   navItems: SiteHeaderNavItem[];
   open: boolean;
@@ -115,6 +116,8 @@ export function MobileNavPanel({
   actions?: ReactNode;
   /** Menu actions below `sm`. Overrides `actions` when set, including `null`. */
   mobileActions?: SiteHeaderMobileActions;
+  /** True at `sm` and up, where the bar renders the actions. The menu then renders none, so each action mounts once. */
+  actionsInBar: boolean;
   renderLink?: (
     item: SiteHeaderNavItem,
     className: string,
@@ -122,8 +125,9 @@ export function MobileNavPanel({
     options?: { onClick?: () => void },
   ) => ReactNode;
 }) {
-  const resolvedMobileActions =
-    mobileActions !== undefined
+  const resolvedMobileActions = actionsInBar
+    ? null
+    : mobileActions !== undefined
       ? typeof mobileActions === 'function'
         ? mobileActions({ closeMenu: onClose })
         : mobileActions
@@ -219,7 +223,7 @@ export function MobileNavPanel({
             <motion.div
               ref={actionsRef}
               data-mobile-menu-actions=""
-              className="flex shrink-0 flex-wrap items-center gap-2 px-5 pb-2 sm:hidden"
+              className="flex shrink-0 flex-wrap items-center gap-2 px-5 pb-2"
               initial={prefersReducedMotion ? false : { opacity: 0, transform: 'translateY(-8px)' }}
               animate={{ opacity: 1, transform: 'translateY(0px)' }}
               transition={

@@ -104,6 +104,22 @@ function useCanHover() {
   );
 }
 
+function useMinWidthMatch(query: string) {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      const mq = window.matchMedia(query);
+      mq.addEventListener('change', onChange);
+      return () => mq.removeEventListener('change', onChange);
+    },
+    [query],
+  );
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
+
 function DesktopNav({
   navItems,
   hidden,
@@ -273,6 +289,7 @@ function HeaderActions({
   prefersReducedMotion,
   onToggleMobileMenu,
   actions,
+  actionsInBar,
   barActions,
   labels,
 }: {
@@ -281,6 +298,7 @@ function HeaderActions({
   prefersReducedMotion: boolean | null;
   onToggleMobileMenu: () => void;
   actions?: ReactNode;
+  actionsInBar: boolean;
   barActions?: ReactNode;
   labels: Pick<SiteHeaderLabels, 'menuOpen' | 'menuClose'>;
 }) {
@@ -302,7 +320,7 @@ function HeaderActions({
         aria-hidden={isOpen || undefined}
         inert={isOpen || undefined}
       >
-        {actions ? <div className="hidden items-center gap-2 sm:flex">{actions}</div> : null}
+        {actionsInBar && actions ? <div className="flex items-center gap-2">{actions}</div> : null}
         {barActions}
         <span className="min-[1121px]:hidden">
           <Button
@@ -381,9 +399,10 @@ export type SiteHeaderProps = {
   /** Flag image URL for the official-website banner. */
   flagSrc: string;
   /**
-   * Application-owned bar actions (search, sign-in). Shown in the bar from `sm`
-   * (640px) up. Below `sm`, hidden in the bar and shown in the mobile menu
-   * unless `mobileActions` is set. Fades while overlays are open.
+   * Application-owned bar actions (search, sign-in). Mounted in the bar from `sm`
+   * (640px) up. Below `sm`, not mounted in the bar; mounted in the mobile menu
+   * instead unless `mobileActions` is set. Each action mounts once. Fades while
+   * overlays are open.
    */
   actions?: ReactNode;
   /**
@@ -506,6 +525,8 @@ export function SiteHeader({
     !isExpanded && !floatingLayout ? (isMobileMenuOpen ? 0 : officialBannerHeight + 4) : undefined;
   const layoutSpacerHeight = officialBannerHeight + 4 + barHeight;
   const selectedTheme = themeOptionFromScheme(colorScheme);
+  // Matches Tailwind's `sm` breakpoint. The bar and the mobile menu never both render actions.
+  const actionsInBar = useMinWidthMatch('(min-width: 640px)');
 
   const geometryTransition =
     (isOpen || isRendered) && !prefersReducedMotion
@@ -636,6 +657,24 @@ export function SiteHeader({
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
+
+  // When the mobile menu closes while focus is inside it, return focus to the menu button.
+  // If an action moved focus elsewhere (for example into a dialog), leave focus there.
+  const wasMobileMenuOpenRef = useRef(false);
+  useEffect(() => {
+    const wasOpen = wasMobileMenuOpenRef.current;
+    wasMobileMenuOpenRef.current = isMobileMenuOpen;
+    if (!wasOpen || isMobileMenuOpen) return;
+    const active = document.activeElement;
+    const focusLost = !active || active === document.body;
+    const focusInMenu = Boolean(
+      active && document.getElementById('mobile-nav-menu')?.contains(active),
+    );
+    if (!focusLost && !focusInMenu) return;
+    surfaceRef.current
+      ?.querySelector<HTMLElement>('[aria-controls="mobile-nav-menu"]')
+      ?.focus({ preventScroll: true });
+  }, [isMobileMenuOpen]);
 
   const closeOverlays = useCallback(() => {
     closeMenu();
@@ -854,6 +893,7 @@ export function SiteHeader({
             prefersReducedMotion={prefersReducedMotion}
             onToggleMobileMenu={toggleMobileMenu}
             actions={actions}
+            actionsInBar={actionsInBar}
             barActions={barActions}
             labels={labels}
           />
@@ -928,6 +968,7 @@ export function SiteHeader({
         renderLink={renderNavLink}
         actions={actions}
         mobileActions={mobileActions}
+        actionsInBar={actionsInBar}
       />
     </div>
   );

@@ -121,6 +121,7 @@ test('fallback actions close the mobile menu and restore page scrolling', async 
   await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe(overflowAtRest);
   expect(overflowAtRest).not.toBe('hidden');
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
 
   await page.getByRole('button', { name: 'Open menu' }).click();
   const reopened = page.getByRole('dialog', { name: 'Site menu' });
@@ -129,6 +130,40 @@ test('fallback actions close the mobile menu and restore page scrolling', async 
   await page.keyboard.press('Enter');
   await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe(overflowAtRest);
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
+});
+
+test('keyboard activation of a mobile action returns focus to the menu button', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  const menu = page.getByRole('dialog', { name: 'Site menu' });
+  await menu.getByRole('button', { name: 'Sign In' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Open menu' })).not.toBeFocused();
+});
+
+test('each mobile header action mounts once across breakpoints', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Fallback actions' }).click();
+
+  const signIn = page.getByRole('button', { name: 'Sign In', includeHidden: true });
+  await expect(signIn).toHaveCount(0);
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(signIn).toHaveCount(1);
+
+  await page.setViewportSize({ width: 768, height: 800 });
+  await expect(signIn).toHaveCount(1);
+  await expect(
+    page.locator('[data-header-surface]').getByRole('button', { name: 'Sign In' }),
+  ).toHaveCount(1);
 });
 
 test('opening the mobile menu at the top of the page does not move main', async ({ page }) => {

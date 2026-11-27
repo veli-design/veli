@@ -8,12 +8,13 @@
 ### Changed
 
 - Show `actions` in the header bar from the `sm` breakpoint (640px) up.
-- Below 640px, hide `actions` in the header bar and show them in the mobile menu, unless `mobileActions` is set.
-- Hide mobile-menu actions from 640px up, so an open menu does not repeat the bar actions between 640px and 1120px.
+- Below 640px, do not render `actions` in the header bar. Render them in the mobile menu while it is open, unless `mobileActions` is set.
+- Do not render mobile-menu actions from 640px up, so an open menu does not repeat the bar actions between 640px and 1120px. Each action mounts once.
 
 ### Fixed
 
 - Close the mobile menu when a static `actions` or `mobileActions` button or link is activated. The menu stays open for disabled controls, pending controls, and popup triggers. A `mobileActions` function closes the menu only when it calls `closeMenu`.
+- Return focus to the menu button when a mobile-menu action closes the menu, so keyboard users keep their place. Focus stays where an action moves it, such as a dialog.
 - Keep `layoutSpacerHeight` at the full header height when the mobile menu opens at the top of the page. Page content stays in place.
 
 ## 0.14.1
