@@ -8,6 +8,12 @@
 ### Changed
 
 - Forward `language` from `SiteHeader` into the app switcher so changing language while the panel is open immediately updates matching rules and keyboard translation.
+- Dhivehi result counts put digits before the noun (`13 ނަތީޖާ`, `1 އެޕް އަދި 14 ސައިޓް`). Host `searchSummary` labels must follow this order.
+- Thaana input is inserted through the browser's editing pipeline, so native undo and caret placement keep working, including when a replacement leaves the value unchanged.
+
+### Migration
+
+- Hosts that show tiles in Dhivehi must add `searchNames.dv` to every app and site that should be discoverable in Dhivehi. A tile without a `dv` entry no longer matches its English name in Dhivehi mode.
 
 ## 0.14.1
 

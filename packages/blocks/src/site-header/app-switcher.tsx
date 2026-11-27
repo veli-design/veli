@@ -953,6 +953,36 @@ function insertSearchText(
   };
 }
 
+/**
+ * Insert typed text at the search field's selection through the browser's editing
+ * pipeline so native undo history and caret placement stay intact, including when
+ * the replacement leaves the value unchanged. `commit` handles the controlled
+ * fallback for environments without `execCommand`.
+ */
+function insertTextIntoSearch(
+  input: HTMLInputElement,
+  text: string,
+  commit: (next: string, caret: number) => void,
+) {
+  if (
+    typeof document.execCommand === 'function' &&
+    document.execCommand('insertText', false, text)
+  ) {
+    return;
+  }
+  const { next, caret } = insertSearchText(
+    input.value,
+    text,
+    input.selectionStart,
+    input.selectionEnd,
+  );
+  if (next === input.value) {
+    input.setSelectionRange(caret, caret);
+    return;
+  }
+  commit(next, caret);
+}
+
 export function AppSwitcher({
   onClose,
   apps,
@@ -1024,13 +1054,7 @@ export function AppSwitcher({
       }
 
       const typed = mapTypedSearchCharacter(event.key, forceThaana);
-      const { next, caret } = insertSearchText(
-        input.value,
-        typed,
-        input.selectionStart,
-        input.selectionEnd,
-      );
-      commitSearchText(next, caret);
+      insertTextIntoSearch(input, typed, commitSearchText);
     };
 
     document.addEventListener('keydown', onKeyDown, true);
@@ -1055,13 +1079,7 @@ export function AppSwitcher({
 
       event.preventDefault();
       event.stopPropagation();
-      const { next, caret } = insertSearchText(
-        target.value,
-        mapped,
-        target.selectionStart,
-        target.selectionEnd,
-      );
-      commitSearchText(next, caret);
+      insertTextIntoSearch(target, mapped, commitSearchText);
     };
 
     const onBeforeInput = (event: InputEvent) => {
@@ -1076,13 +1094,7 @@ export function AppSwitcher({
       if (mapped === event.data) return;
 
       event.preventDefault();
-      const { next, caret } = insertSearchText(
-        target.value,
-        mapped,
-        target.selectionStart,
-        target.selectionEnd,
-      );
-      commitSearchText(next, caret);
+      insertTextIntoSearch(target, mapped, commitSearchText);
     };
 
     document.addEventListener('keydown', onKeyDown, true);

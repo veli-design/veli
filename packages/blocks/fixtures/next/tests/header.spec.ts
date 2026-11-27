@@ -428,6 +428,18 @@ test('Dhivehi mode forces Thaana search and never falls back to English names', 
   await expect(search).toHaveValue('ލޮކަރ');
   await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toBeVisible();
   await expect(page.getByRole('option', { name: 'ހުށަހެޅުންތައް' })).toHaveCount(0);
+
+  // Replacing a selected character with the identical mapped character keeps the value,
+  // moves the caret after it, and leaves the next keystroke in native undo history. Select
+  // the trailing standalone ރ: Thaana vowel marks join the preceding letter into one
+  // grapheme, so selecting the first letter would natively replace "ލޮ" as a unit.
+  await search.evaluate((el: HTMLInputElement) => el.setSelectionRange(4, 5));
+  await page.keyboard.type('r');
+  await expect(search).toHaveValue('ލޮކަރ');
+  await page.keyboard.type('r');
+  await expect(search).toHaveValue('ލޮކަރރ');
+  await page.keyboard.press('ControlOrMeta+z');
+  await expect(search).toHaveValue('ލޮކަރ');
   // Dhivehi counts put digits before the noun: "1 ނަތީޖާ", not "ނަތީޖާ 1".
   await expect(page.getByText(/^1 ނަތީޖާ/).first()).toBeVisible();
   await expect(page.getByText(/1 އެޕް/).first()).toBeVisible();
