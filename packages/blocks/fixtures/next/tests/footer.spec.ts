@@ -51,7 +51,27 @@ test('RTL footer theme toggle follows the end links and cycles the scheme', asyn
   await expect(footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އަލި' })).toBeFocused();
   await expect(footer.locator('output')).toHaveText('ތީމު: އަލި');
   await page.keyboard.press('Enter');
-  await expect(footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އަނދިރި' })).toBeVisible();
+  await expect(footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އަނދިރި' })).toBeFocused();
+  // dark → system runs the wrap morph.
+  await page.keyboard.press('Enter');
+  await expect(footer.getByRole('button', { name: 'ތީމު ބަދަލުކުރަން: އޮޓޯ' })).toBeFocused();
+  await expect(footer.locator('output')).toHaveText('ތީމު: އޮޓޯ');
+});
+
+test('closed theme label keeps its server style after hydration under reduced motion', async ({
+  page,
+}) => {
+  // Production builds do not report attribute mismatches, so compare the styles directly.
+  const closedTransform = 'translateY(3px) scale(0.96)';
+  const html = await (await page.request.get('/')).text();
+  expect(html).toContain(closedTransform);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const footer = page.getByRole('contentinfo');
+  const pill = footer.locator('span[aria-hidden="true"]', { hasText: 'Automatic' });
+  await expect(footer.getByRole('button', { name: 'Change theme: Automatic' })).toBeVisible();
+  await waitForMotion(page);
+  expect(await pill.evaluate((element) => element.style.transform)).toBe(closedTransform);
 });
 
 for (const width of [320, 1280])
@@ -72,6 +92,28 @@ for (const width of [320, 1280])
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
         ).toBe(true);
         await page.screenshot({ path: testInfo.outputPath('footer.png'), fullPage: true });
+        // Open the label pill for every scheme (system → light → dark → system) and check reflow
+        // while it is fully shown. The dark step also renders the pill in dark mode.
+        const footer = page.getByRole('contentinfo');
+        const toggle = footer.getByRole('button', { name: /:/ });
+        const labels =
+          language === 'dv' ? ['އަލި', 'އަނދިރި', 'އޮޓޯ'] : ['Light', 'Dark', 'Automatic'];
+        for (const label of labels) {
+          await toggle.click();
+          const pill = footer
+            .locator('span[aria-hidden="true"]')
+            .filter({ hasText: new RegExp(`^${label}$`) });
+          await expect(pill).toHaveCSS('opacity', '1');
+          expect(
+            await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+          ).toBe(true);
+          if (label === labels[1])
+            await page.screenshot({
+              path: testInfo.outputPath('theme-pill-dark.png'),
+              fullPage: true,
+            });
+        }
+        if (theme === 'dark') await page.getByRole('button', { name: 'Fixture theme' }).click();
         await page.getByRole('button', { name: 'Long labels' }).click();
         expect(
           await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
