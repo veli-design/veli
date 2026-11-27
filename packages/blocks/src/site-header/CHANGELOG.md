@@ -1,3 +1,23 @@
+## 0.17.0
+
+### Added
+
+- Add `mobileActions` for actions inside the mobile menu below 640px. A function receives `{ closeMenu }`. Pass `null` to show no actions in the menu.
+- Add `barActions` for compact controls that stay in the header bar at every width, such as signed-in notification and account triggers.
+
+### Changed
+
+- Show `actions` in the header bar from the `sm` breakpoint (640px) up.
+- Below 640px, do not render `actions` in the header bar. Render them in the mobile menu while it is open, unless `mobileActions` is set.
+- Do not render mobile-menu actions from 640px up, so an open menu does not repeat the bar actions between 640px and 1120px. Each action mounts once.
+
+### Fixed
+
+- Close the mobile menu when a static `actions` or `mobileActions` button or link is activated. The menu stays open for disabled controls, pending controls, and popup triggers. A `mobileActions` function closes the menu only when it calls `closeMenu`.
+- Return focus to the menu button when a mobile-menu action closes the menu, so keyboard users keep their place. Focus stays where an action moves it, such as a dialog.
+- Keep `layoutSpacerHeight` at the full header height when the mobile menu opens at the top of the page. Page content stays in place.
+- Unmount the mobile menu's copy of `actions` as the menu closes when the viewport reaches 640px. Resizing during the close animation no longer shows two copies of an action, so consumer effects and IDs keep a single instance.
+
 ## 0.16.0
 
 ### Added

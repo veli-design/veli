@@ -48,15 +48,23 @@ import {
   OFFICIAL_BANNER_MS,
   surfaceGeometryTransitionFor,
 } from './motion';
-import { MobileNavPanel, ShellNavLink, type SiteHeaderNavItem } from './mobile-nav';
+import {
+  ActionsInBarProvider,
+  MobileNavPanel,
+  ShellNavLink,
+  type SiteHeaderMobileActions,
+  type SiteHeaderNavItem,
+} from './mobile-nav';
 import { OfficialWebsiteBanner, type OfficialBannerLabels } from './official-banner';
 import {
   HEADER_HEIGHT,
   OFFICIAL_BANNER_COLLAPSED_HEIGHT,
   useHeaderScrollMode,
 } from './use-header-scroll';
+import { ACTIONS_IN_BAR_QUERY, useMinWidthMatch } from './use-min-width-match';
 
 export type {
+  SiteHeaderMobileActions,
   SiteHeaderNavItem,
   SiteHeaderSwitcherItem,
   SiteHeaderSwitcherSection,
@@ -295,6 +303,8 @@ function HeaderActions({
   prefersReducedMotion,
   onToggleMobileMenu,
   actions,
+  actionsInBar,
+  barActions,
   labels,
 }: {
   isOpen: boolean;
@@ -302,6 +312,8 @@ function HeaderActions({
   prefersReducedMotion: boolean | null;
   onToggleMobileMenu: () => void;
   actions?: ReactNode;
+  actionsInBar: boolean;
+  barActions?: ReactNode;
   labels: Pick<SiteHeaderLabels, 'menuOpen' | 'menuClose'>;
 }) {
   const iconTransition = prefersReducedMotion
@@ -322,7 +334,8 @@ function HeaderActions({
         aria-hidden={isOpen || undefined}
         inert={isOpen || undefined}
       >
-        {actions}
+        {actionsInBar && actions ? <div className="flex items-center gap-2">{actions}</div> : null}
+        {barActions}
         <span className="min-[1121px]:hidden">
           <Button
             intent="secondary"
@@ -404,8 +417,25 @@ export type SiteHeaderProps = {
   skipToMainHref?: string;
   /** Flag image URL for the official-website banner. */
   flagSrc: string;
-  /** Application-owned actions (search, sign-in). Fades while overlays are open. */
+  /**
+   * Application-owned bar actions (search, sign-in). Mounted in the bar from `sm`
+   * (640px) up. Below `sm`, not mounted in the bar; mounted in the mobile menu
+   * instead unless `mobileActions` is set. Each action mounts once. Fades while
+   * overlays are open.
+   */
   actions?: ReactNode;
+  /**
+   * Actions inside the mobile menu below `sm`. A React node closes the menu
+   * when a button or link is activated. A function receives `{ closeMenu }`
+   * and decides when to close. `null` shows no menu actions. Omit to reuse
+   * `actions`.
+   */
+  mobileActions?: SiteHeaderMobileActions;
+  /**
+   * Compact controls that stay in the header bar at every width, after `actions`
+   * and before the mobile menu button.
+   */
+  barActions?: ReactNode;
   /** Optional custom renderer for nav links (for example Next.js Link). */
   renderNavLink?: (
     item: SiteHeaderNavItem,
@@ -439,6 +469,8 @@ export function SiteHeader({
   skipToMainHref = DEFAULT_SKIP_TO_MAIN_HREF,
   flagSrc,
   actions,
+  mobileActions,
+  barActions,
   renderNavLink,
   className = '',
   defaultSelectedAppId,
@@ -511,11 +543,10 @@ export function SiteHeader({
     OFFICIAL_BANNER_COLLAPSED_HEIGHT + (officialBannerExpanded ? officialBannerDetailsHeight : 0);
   const headerTopOffset =
     !isExpanded && !floatingLayout ? (isMobileMenuOpen ? 0 : officialBannerHeight + 4) : undefined;
-  const layoutSpacerHeight =
-    scrollMode === 'top' && !isRendered && isMobileMenuOpen
-      ? barHeight
-      : officialBannerHeight + 4 + barHeight;
+  const layoutSpacerHeight = officialBannerHeight + 4 + barHeight;
   const selectedTheme = themeOptionFromScheme(colorScheme);
+  // Matches Tailwind's `sm` breakpoint. The bar and the mobile menu never both render actions.
+  const actionsInBar = useMinWidthMatch(ACTIONS_IN_BAR_QUERY);
 
   const geometryTransition =
     (isOpen || isRendered) && !prefersReducedMotion
@@ -646,6 +677,24 @@ export function SiteHeader({
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
+
+  // When the mobile menu closes while focus is inside it, return focus to the menu button.
+  // If an action moved focus elsewhere (for example into a dialog), leave focus there.
+  const wasMobileMenuOpenRef = useRef(false);
+  useEffect(() => {
+    const wasOpen = wasMobileMenuOpenRef.current;
+    wasMobileMenuOpenRef.current = isMobileMenuOpen;
+    if (!wasOpen || isMobileMenuOpen) return;
+    const active = document.activeElement;
+    const focusLost = !active || active === document.body;
+    const focusInMenu = Boolean(
+      active && document.getElementById('mobile-nav-menu')?.contains(active),
+    );
+    if (!focusLost && !focusInMenu) return;
+    surfaceRef.current
+      ?.querySelector<HTMLElement>('[aria-controls="mobile-nav-menu"]')
+      ?.focus({ preventScroll: true });
+  }, [isMobileMenuOpen]);
 
   const closeOverlays = useCallback(() => {
     closeMenu();
@@ -865,6 +914,8 @@ export function SiteHeader({
             prefersReducedMotion={prefersReducedMotion}
             onToggleMobileMenu={toggleMobileMenu}
             actions={actions}
+            actionsInBar={actionsInBar}
+            barActions={barActions}
             labels={labels}
           />
         </div>
@@ -923,21 +974,25 @@ export function SiteHeader({
         aria-hidden
       />
 
-      <MobileNavPanel
-        navItems={mobileNavItems}
-        open={isMobileMenuOpen}
-        headerHeight={barHeight}
-        selectedTheme={selectedTheme}
-        languages={languages}
-        language={language}
-        onLanguageChange={onLanguageChange}
-        prefersReducedMotion={prefersReducedMotion}
-        onClose={closeMobileMenu}
-        onExitComplete={() => setIsMobileMenuVisible(false)}
-        onThemeChange={onThemeChange}
-        labels={labels}
-        renderLink={renderNavLink}
-      />
+      <ActionsInBarProvider value={actionsInBar}>
+        <MobileNavPanel
+          navItems={mobileNavItems}
+          open={isMobileMenuOpen}
+          headerHeight={barHeight}
+          selectedTheme={selectedTheme}
+          languages={languages}
+          language={language}
+          onLanguageChange={onLanguageChange}
+          prefersReducedMotion={prefersReducedMotion}
+          onClose={closeMobileMenu}
+          onExitComplete={() => setIsMobileMenuVisible(false)}
+          onThemeChange={onThemeChange}
+          labels={labels}
+          renderLink={renderNavLink}
+          actions={actions}
+          mobileActions={mobileActions}
+        />
+      </ActionsInBarProvider>
     </div>
   );
 }

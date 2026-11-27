@@ -32,6 +32,70 @@ test('app switcher opens, filters, closes with Escape, and returns focus', async
   expect(errors).toEqual([]);
 });
 
+test('mobile menu moves search and sign in out of the header bar', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+
+  const header = page.locator('[data-header-surface]');
+  await expect(header.getByRole('button', { name: 'Search' })).toHaveCount(0);
+  await expect(header.getByRole('button', { name: 'Sign In' })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  const menu = page.getByRole('dialog', { name: 'Site menu' });
+  await expect(menu).toBeVisible();
+  const search = menu.getByRole('button', { name: 'Search' });
+  const signIn = menu.getByRole('button', { name: 'Sign In' });
+  await expect(search).toBeVisible();
+  await expect(signIn).toBeVisible();
+
+  await search.click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(menu).toBeVisible();
+  await menu.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+});
+
+test('long ministry title stays within three lines on a phone', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Long ministry' }).click();
+
+  const title = page.getByText('Ministry of Education, Higher Education and Skills Development', {
+    exact: true,
+  });
+  await expect(title).toBeVisible();
+  const withinThreeLines = await title.evaluate((el) => {
+    const lineHeight = Number.parseFloat(getComputedStyle(el).lineHeight);
+    const height = el.getBoundingClientRect().height;
+    return Number.isFinite(lineHeight) && height <= lineHeight * 3 + 1;
+  });
+  expect(withinThreeLines).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+    true,
+  );
+});
+
+test('tablet header keeps search and sign in in the bar without a menu duplicate', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 768, height: 800 });
+  await page.goto('/');
+
+  const header = page.locator('[data-header-surface]');
+  await expect(header.getByRole('button', { name: 'Search' })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Sign In' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  const menu = page.getByRole('dialog', { name: 'Site menu' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('button', { name: 'Search' })).toHaveCount(0);
+  await expect(menu.getByRole('button', { name: 'Sign In' })).toHaveCount(0);
+  await expect(header.getByRole('button', { name: 'Search' })).toBeVisible();
+  await expect(header.getByRole('button', { name: 'Sign In' })).toBeVisible();
+});
+
 test('mobile menu opens and closes', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 });
   await page.goto('/');
@@ -39,6 +103,119 @@ test('mobile menu opens and closes', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Site menu' })).toBeVisible();
   await page.getByRole('button', { name: 'Close menu' }).click();
   await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+});
+
+test('fallback actions close the mobile menu and restore page scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Fallback actions' }).click();
+
+  const overflowAtRest = await page.evaluate(() => document.body.style.overflow);
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  const menu = page.getByRole('dialog', { name: 'Site menu' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole('button', { name: 'Search' })).toBeVisible();
+  await expect(menu.getByRole('button', { name: 'Sign In' })).toBeVisible();
+
+  await menu.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe(overflowAtRest);
+  expect(overflowAtRest).not.toBe('hidden');
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
+
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  const reopened = page.getByRole('dialog', { name: 'Site menu' });
+  await expect(reopened).toBeVisible();
+  await reopened.getByRole('button', { name: 'Search' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => document.body.style.overflow)).toBe(overflowAtRest);
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
+});
+
+test('keyboard activation of a mobile action returns focus to the menu button', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  const menu = page.getByRole('dialog', { name: 'Site menu' });
+  await menu.getByRole('button', { name: 'Sign In' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Open menu' })).toBeFocused();
+
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Open menu' })).not.toBeFocused();
+});
+
+test('resizing to the bar breakpoint during menu exit never mounts a second action', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toBeVisible();
+
+  // Track the highest number of "Sign In" buttons in the DOM from here on.
+  await page.evaluate(() => {
+    const countSignIn = () =>
+      Array.from(document.querySelectorAll('button')).filter(
+        (button) => button.textContent?.trim() === 'Sign In',
+      ).length;
+    const state = { max: countSignIn() };
+    (window as unknown as { __signInMax: typeof state }).__signInMax = state;
+    new MutationObserver(() => {
+      state.max = Math.max(state.max, countSignIn());
+    }).observe(document.body, { subtree: true, childList: true, characterData: true });
+  });
+
+  // Close, then widen before the 220ms exit animation finishes.
+  await page.getByRole('button', { name: 'Close menu' }).click();
+  await page.setViewportSize({ width: 640, height: 800 });
+
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  await expect(
+    page.locator('[data-header-surface]').getByRole('button', { name: 'Sign In' }),
+  ).toHaveCount(1);
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as unknown as { __signInMax: { max: number } }).__signInMax.max),
+    )
+    .toBe(1);
+});
+
+test('each mobile header action mounts once across breakpoints', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Fallback actions' }).click();
+
+  const signIn = page.getByRole('button', { name: 'Sign In', includeHidden: true });
+  await expect(signIn).toHaveCount(0);
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(signIn).toHaveCount(1);
+
+  await page.setViewportSize({ width: 768, height: 800 });
+  await expect(signIn).toHaveCount(1);
+  await expect(
+    page.locator('[data-header-surface]').getByRole('button', { name: 'Sign In' }),
+  ).toHaveCount(1);
+});
+
+test('opening the mobile menu at the top of the page does not move main', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const main = page.locator('main');
+  const topAtRest = await main.evaluate((element) => element.getBoundingClientRect().top);
+
+  await page.getByRole('button', { name: 'Open menu' }).click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toBeVisible();
+  expect(await main.evaluate((element) => element.getBoundingClientRect().top)).toBe(topAtRest);
+
+  await page.getByRole('button', { name: 'Close menu' }).click();
+  await expect(page.getByRole('dialog', { name: 'Site menu' })).toHaveCount(0);
+  expect(await main.evaluate((element) => element.getBoundingClientRect().top)).toBe(topAtRest);
 });
 
 test('floating header hides on scroll down and returns on scroll up', async ({ page }) => {
