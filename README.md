@@ -155,6 +155,7 @@ This monorepo uses [Changesets](https://github.com/changesets/changesets) for ve
 
 - [Contributing Guide](CONTRIBUTING.md) - Development setup, changesets, commit convention, and pull request format
 - [Code of Conduct](CODE_OF_CONDUCT.md) - Community standards and reporting
+- [Security Policy](SECURITY.md) - Supported versions and private vulnerability reporting
 - [CI and Release Operations](docs/CI_RELEASE_RUNBOOK.md) - Publication, site delivery, and recovery
 - [Consumer CI](docs/CONSUMER_CI.md) - Installed-package validation and check selection
 - [Changelog Authoring Guide](docs/CHANGELOG_AUTHORING.md) - Public release-note categories and Changeset workflow
