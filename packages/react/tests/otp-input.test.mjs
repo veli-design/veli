@@ -171,6 +171,11 @@ test('WebOTP is opt-in, aborts on cleanup, and the native one-time-code path sta
   assert.doesNotMatch(html, /webotp/i);
 });
 
+test('insertReplacementText completes a full code and keeps partial text a replace', () => {
+  const source = readFileSync(new URL('../src/otp-input-component.tsx', import.meta.url), 'utf8');
+  assert.match(source, /kind === 'replace'\s*\?\s*'autofill'\s*:\s*'replace'/);
+});
+
 test('the package does not depend on input-otp', () => {
   for (const field of ['dependencies', 'peerDependencies', 'devDependencies']) {
     assert.equal(packageJson[field]?.['input-otp'], undefined, field);

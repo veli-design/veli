@@ -443,8 +443,13 @@ export function OTPInput({
         return;
       }
       // Some mobile autofill paths use this without a following change event.
+      // A full code is autofill, so it completes even over a full field; partial text stays a replace.
       if (event.inputType === 'insertReplacementText') {
-        if (dispatch({ type: 'replace', raw: event.data })) event.preventDefault();
+        const kind =
+          planOTPClipboard(event.data, layout, alphabet).kind === 'replace'
+            ? 'autofill'
+            : 'replace';
+        if (dispatch({ type: kind, raw: event.data })) event.preventDefault();
       }
     };
   });

@@ -260,6 +260,51 @@ export const AutofillIntoFilledField: Story = {
   },
 };
 
+// Dispatches the beforeinput a browser fires for SMS autofill. The handler prevents the native edit.
+const dispatchAutofill = (input: HTMLInputElement, inputType: string, data: string) =>
+  input.dispatchEvent(
+    new InputEvent('beforeinput', { inputType, data, bubbles: true, cancelable: true }),
+  );
+
+export const AutofillReplacesFullCode: Story = {
+  name: 'Autofill replaces a full code (insertText)',
+  args: { label: 'Code', defaultValue: '123456' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    input.focus();
+    dispatchAutofill(input, 'insertText', '654321');
+    await waitFor(() => expect(input).toHaveValue('654321'));
+    await waitFor(() => expect(args.onComplete).toHaveBeenCalledWith('654321'));
+  },
+};
+
+export const ReplacementReplacesFullCode: Story = {
+  name: 'Autofill replaces a full code (insertReplacementText)',
+  args: { label: 'Code', defaultValue: '123456' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    input.focus();
+    dispatchAutofill(input, 'insertReplacementText', '654321');
+    await waitFor(() => expect(input).toHaveValue('654321'));
+    await waitFor(() => expect(args.onComplete).toHaveBeenCalledWith('654321'));
+  },
+};
+
+export const PasteOverFullCodeUnchanged: Story = {
+  name: 'Paste over a full code does not auto-complete',
+  args: { label: 'Code', defaultValue: '123456' },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole<HTMLInputElement>('textbox', { name: 'Code' });
+    await userEvent.click(input);
+    await userEvent.paste('654321');
+    await expect(input).toHaveValue('654321');
+    await expect(args.onComplete).not.toHaveBeenCalled();
+  },
+};
+
 export const WebOtp: Story = {
   name: 'WebOTP (Android Chrome)',
   args: { label: 'SMS code', webOtp: true },
