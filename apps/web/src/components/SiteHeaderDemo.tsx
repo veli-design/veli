@@ -62,6 +62,7 @@ const labelsEn: SiteHeaderLabels = {
 };
 
 const labelsDv: SiteHeaderLabels = {
+  skipToMain: 'މައި ކޮންޓެންޓަށް ދިއުމަށް',
   openAppSwitcher: 'އެޕް މެނޫ ހުޅުއްވާ',
   closeAppSwitcher: 'އެޕް މެނޫ ބަންދުކުރައްވާ',
   browse: 'ސަރުކާރުގެ ޚިދުމަތްތަކާއި ސައިޓްތައް ބައްލަވާލައްވާ',
