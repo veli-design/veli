@@ -409,6 +409,37 @@ test('app switcher Filter arrow opens the menu and type-to-search reaches Search
   await expect(search).toHaveValue('m');
 });
 
+test('app switcher tiles show a focus ring after Tab but not for arrows or hover', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Open app switcher' }).click();
+
+  const filter = page.getByRole('button', { name: 'Filter' });
+  const focusedTile = page.locator('[role="option"]:focus');
+
+  await filter.focus();
+  await page.keyboard.press('Tab');
+  await expect(focusedTile).toBeVisible();
+  await expect(focusedTile).not.toHaveCSS('box-shadow', 'none');
+
+  await page.keyboard.press('ArrowRight');
+  await expect(focusedTile).toBeVisible();
+  await expect(focusedTile).toHaveCSS('box-shadow', 'none');
+
+  await filter.focus();
+  await page.keyboard.press('Tab');
+  await expect(focusedTile).not.toHaveCSS('box-shadow', 'none');
+
+  // Moving the cursor over non-tile space must not hide the ring from keyboard focus.
+  await page.getByRole('heading', { name: 'Browse government apps and sites' }).hover();
+  await expect(focusedTile).not.toHaveCSS('box-shadow', 'none');
+
+  await focusedTile.hover();
+  await expect(focusedTile).toHaveCSS('box-shadow', 'none');
+});
+
 test('app switcher keeps You are here on the current grid tile', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');

@@ -292,8 +292,13 @@ export function SwitcherItemContent({
   );
 }
 
+// Ring only when focus arrived by Tab (AppSwitcher sets data-focus-source on the panel).
+// Arrow keys and hover keep the ring-less highlight.
+const tabFocusRingClassName =
+  'group-data-[focus-source=tab]/switcher:data-[focus-visible]:ring-2 group-data-[focus-source=tab]/switcher:data-[focus-visible]:ring-border-focus group-data-[focus-source=tab]/switcher:data-[focus-visible]:ring-inset';
+
 export function switcherItemClassName(highlighted: boolean) {
-  return `flex w-full xl:w-[165px] cursor-pointer flex-col items-center gap-1.5 rounded-[28px] p-3 text-center outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${
+  return `flex w-full xl:w-[165px] cursor-pointer flex-col items-center gap-1.5 rounded-[28px] p-3 text-center outline-none no-underline transition-colors duration-150 ease-[var(--veli-header-ease-drawer,cubic-bezier(0.32,0.72,0,1))] ${tabFocusRingClassName} ${
     highlighted ? 'bg-neutral-alpha-200' : 'bg-transparent'
   }`;
 }
