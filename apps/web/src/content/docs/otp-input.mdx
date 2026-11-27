@@ -88,7 +88,7 @@ The root creates every slot in order. `renderSlot` restyles a cell and cannot ad
 
 ## Auto-submit
 
-`onChange` receives the sanitized string. `onComplete` fires once for each user edit that fills the code, including a pasted code. It does not fire when the parent changes `value`, so resetting to `''` after a failed attempt is safe.
+`onChange` receives the sanitized string. `onComplete` fires once for each user edit that fills the code, including a pasted code. A new code from SMS or WebOTP also fires it, even when it replaces a full code from an earlier attempt, so a resend can auto-submit. It does not fire when the parent changes `value`, so resetting to `''` after a failed attempt is safe.
 
 ```tsx
 const [code, setCode] = useState('');
@@ -155,6 +155,7 @@ OTPInput is a Veli field on React Aria [`TextField`](https://react-spectrum.adob
 | `showRequiredIndicator` | `boolean`                                            | `true`            | Shows the required asterisk when `isRequired`.                                    |
 | `autoComplete`          | `string`                                             | `'one-time-code'` | OS/SMS autofill token. The input also sets `data-1p-ignore` and `data-op-ignore`. |
 | `enterKeyHint`          | `string`                                             | `'done'`          | Virtual-keyboard enter-key label.                                                 |
+| `webOtp`                | `boolean`                                            | `false`           | Android Chrome only. Asks for the SMS code while focused. See SMS autofill.       |
 | `className`             | `string`                                             | -                 | Width class on the complete field.                                                |
 | `ref`                   | `Ref<HTMLInputElement>`                              | -                 | Forwarded to the native input.                                                    |
 
@@ -173,6 +174,16 @@ OTPInput is a Veli field on React Aria [`TextField`](https://react-spectrum.adob
 | :---------- | :---------- | :------ | :------------------------- |
 | `children`  | `ReactNode` | `-`     | Glyph between groups.      |
 | `className` | `string`    | -       | Classes for the separator. |
+
+## SMS autofill
+
+Phones offer the code from the SMS when the field has `autoComplete="one-time-code"`, which is the default. iOS Safari and Android keyboards insert the whole code at the caret, including into a field that already has digits, and the field takes the new code.
+
+On Android Chrome, set `webOtp` to ask the browser for the SMS code while the field is focused. Chrome then fills the field without the user picking it from the keyboard. Chrome only reads the code when the SMS ends with your origin and the code, such as `@example.com #123456`. The SMS template is set on your server. Leave `webOtp` off if your messages do not use that format.
+
+```tsx
+<OTPInput name="code" label="Verification code" webOtp onComplete={verify} />
+```
 
 ## Accessibility
 

@@ -31,7 +31,8 @@
     "Backspace and Delete remove a character and later characters shift left",
     "Arrow keys, Home, End, and slot clicks move the caret",
     "Pasting a full code replaces the value; a shorter paste inserts at the caret",
-    "SMS one-time-code autofill",
+    "SMS one-time-code autofill, including a full code inserted into a partly filled or full field",
+    "Opt-in WebOTP on Android Chrome with webOtp, which asks for the SMS code while focused",
     "Controlled or uncontrolled value changes"
   ],
   "approvedPatterns": [
@@ -39,7 +40,8 @@
     "Use renderSlot and separator only to restyle the track the root maps. renderSlot should return OTPInputSlot for the slot it receives.",
     "Use onComplete for auto-submit. It fires from the user edit that fills the code, never from a controlled value change.",
     "Inside Form, leave errorMessage unset so validationErrors keyed by name show through the field error.",
-    "Put a Resend button in action."
+    "Put a Resend button in action.",
+    "Set webOtp only when the SMS ends with @yourdomain #code. Leave it off otherwise."
   ],
   "limitations": [
     "The value is a dense string. There are no empty slots between filled ones.",

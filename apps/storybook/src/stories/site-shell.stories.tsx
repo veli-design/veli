@@ -91,10 +91,10 @@ const labelsDv: SiteHeaderLabels = {
   showingSites: (count) => ({ lead: 'ހުރިހާ ސައިޓެއް: ', countLabel: `${count} ނަތީޖާ` }),
   searchSummary: (query, appCount, siteCount) => {
     const parts: string[] = [];
-    if (appCount > 0) parts.push(`އެޕް ${appCount}`);
-    if (siteCount > 0) parts.push(`ސައިޓް ${siteCount}`);
+    if (appCount > 0) parts.push(`${appCount} އެޕް`);
+    if (siteCount > 0) parts.push(`${siteCount} ސައިޓް`);
     return {
-      countLabel: `ނަތީޖާ ${appCount + siteCount}`,
+      countLabel: `${appCount + siteCount} ނަތީޖާ`,
       rest: ` “${query}” އަށް: ${parts.join(' އަދި ')}`,
     };
   },
@@ -131,6 +131,7 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     current: true,
     iconSrc: '/blocks/example-app-govmv.svg',
     description: 'The official entry point for public services.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
     infoParagraphs: [
       {
         leadIn: 'Gov.mv',
@@ -149,6 +150,10 @@ const appsEn: SiteHeaderSwitcherItem[] = [
     href: '/applications',
     iconSrc: '/blocks/example-app-my-applications.svg',
     description: 'Track and continue government service applications.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
   },
 ];
 
@@ -162,6 +167,7 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     iconSrc: '/blocks/example-app-govmv.svg',
     description:
       'މިއީ އާންމު ޚިދުމަތްތަކަށް ވާސިލުވުމަށާއި ސަރުކާރުގެ ޝާއިއުކުރުންތައް ހޯދުމަށް ބޭނުންކުރާ މައިގަނޑު ދޮރާށެވެ.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
   },
   {
     id: 'applications',
@@ -171,6 +177,10 @@ const appsDv: SiteHeaderSwitcherItem[] = [
     iconSrc: '/blocks/example-app-my-applications.svg',
     description:
       'ސަރުކާރުގެ ޚިދުމަތްތަކަށް ކުރެވިފައިވާ ހުށަހެޅުންތައް ބަލާލުމާއި ކުރިއަށް ގެންދިއުމަށް.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
   },
 ];
 

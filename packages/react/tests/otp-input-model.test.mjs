@@ -78,6 +78,39 @@ test('short paste inserts at the caret and SMS autofill parks the caret at the e
   assert.deepEqual(reduce(doc('98'), value('123 456')).document, doc('123456', 6));
 });
 
+test('SMS autofill of a full code replaces the value even when digits are already present', () => {
+  // Partial field: the browser inserts the full code at the caret.
+  assert.deepEqual(reduce(doc('12', 2), value('12123456')).document, doc('123456', 6));
+  assert.equal(reduce(doc('12', 2), value('12123456')).completed, true);
+  // Full field after a wrong attempt: the new code must not be dropped.
+  assert.deepEqual(reduce(doc('123456', 6), value('123456654321')).document, doc('654321', 6));
+  // A new code arriving over a full field is an autofill edit, so it completes.
+  assert.equal(reduce(doc('123456', 6), value('123456654321')).completed, true);
+});
+
+test('autofill completes a new code over a full field, and ignores the same code', () => {
+  assert.deepEqual(
+    reduce(doc('123456'), { type: 'autofill', raw: '654321' }).document,
+    doc('654321'),
+  );
+  assert.equal(reduce(doc('123456'), { type: 'autofill', raw: '654321' }).completed, true);
+  const same = doc('123456');
+  assert.equal(reduce(same, { type: 'autofill', raw: '123456' }).document, same);
+  assert.equal(reduce(same, { type: 'autofill', raw: '123456' }).completed, false);
+  assert.equal(reduce(doc('12'), { type: 'autofill', raw: '12' }).completed, false);
+  assert.deepEqual(reduce(doc('12'), { type: 'autofill', raw: '12' }).document, doc('12'));
+});
+
+test('typing over a filled slot in a full code does not complete it again', () => {
+  assert.equal(reduce(doc('123456', 2), value('129456')).completed, false);
+  assert.equal(reduce(doc('123456', 2), { type: 'replace', raw: '123456' }).completed, false);
+});
+
+test('a single character still follows the typing path when the code is full', () => {
+  const full = doc('123456');
+  assert.equal(reduce(full, value('1234567')).document, full);
+});
+
 test('same-character overtype advances the caret without changing the text', () => {
   const prev = doc('123', 1);
   assert.deepEqual(reduce(prev, { type: 'insert', data: '2' }), {

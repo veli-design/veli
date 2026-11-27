@@ -11,7 +11,7 @@ import {
 import { SiteFooter } from '@tradenetcorp/veli-blocks/site-footer';
 import { SiteShell } from '@tradenetcorp/veli-blocks/site-shell';
 
-const labels: SiteHeaderLabels = {
+const labelsEn: SiteHeaderLabels = {
   openAppSwitcher: 'Open app switcher',
   closeAppSwitcher: 'Close app switcher',
   browse: 'Browse government apps and sites',
@@ -64,7 +64,61 @@ const labels: SiteHeaderLabels = {
   skipToMain: 'Skip to main content',
 };
 
-const apps: SiteHeaderSwitcherItem[] = [
+const labelsDv: SiteHeaderLabels = {
+  skipToMain: 'މައި ކޮންޓެންޓަށް ދިއުމަށް',
+  openAppSwitcher: 'އެޕް މެނޫ ހުޅުއްވާ',
+  closeAppSwitcher: 'އެޕް މެނޫ ބަންދުކުރައްވާ',
+  browse: 'ސަރުކާރުގެ ޚިދުމަތްތަކާއި ސައިޓްތައް ބައްލަވާލައްވާ',
+  introPrefix:
+    'އިތުރު ތަފްޞީލު ހޯއްދެވުމަށް ކޮންމެ އެޕަކަށްވެސް ވަދެވަޑައިގަންނަވާ، ނުވަތަ އެޕެއް ހޯއްދެވުމަށް ސާޗް ބޭނުންކުރައްވާ.',
+  introEmphasis: 'ހޯމް ޕޭޖަށް އެނބުރި ވަޑައިގަތުމަށް ގަވް.އެމްވީ ޚިޔާރުކުރައްވާ.',
+  appsBlurb: 'ސަރުކާރުގެ ޙިއްޞާކުރެވޭ ޚިދުމަތްތައް، ހުރިހާ އެއްޗެއް gov.mv ގެ ދަށުން.',
+  sitesBlurb: 'މިނިސްޓްރީތަކާއި އޭޖެންސީތައް، ހުރިހާ އެއްޗެއް gov.mv ގައި.',
+  apps: 'އެޕްތައް',
+  sites: 'ސައިޓުތައް',
+  youAreHere: 'މިހާރު މި އެޕްގައި',
+  scrollToViewMore: 'އިތުރަށް ބެލުމަށް ސްކްރޯލް ކުރައްވާ',
+  searchAppsAndSites: 'އެޕް އަދި ސައިޓްތައް ހޯއްދަވާ',
+  search: 'ހޯއްދަވާ',
+  filter: 'ފިލްޓަރ',
+  showAll: 'ހުރިހާ',
+  appsOnly: 'އެޕްތައް އެކަނި',
+  sitesOnly: 'ސައިޓުތައް އެކަނި',
+  showingApps: (count) => ({ lead: 'ހުރިހާ އެޕެއް: ', countLabel: `${count} ނަތީޖާ` }),
+  showingSites: (count) => ({ lead: 'ހުރިހާ ސައިޓެއް: ', countLabel: `${count} ނަތީޖާ` }),
+  searchSummary: (query, appCount, siteCount) => {
+    const parts: string[] = [];
+    if (appCount > 0) parts.push(`${appCount} އެޕް`);
+    if (siteCount > 0) parts.push(`${siteCount} ސައިޓް`);
+    return {
+      countLabel: `${appCount + siteCount} ނަތީޖާ`,
+      rest: ` “${query}” އަށް: ${parts.join(' އަދި ')}`,
+    };
+  },
+  noAppsMatch: (query) => `“${query}” އާ ގުޅޭ އެޕެއް ނުފެނުނު`,
+  noSitesMatch: (query) => `“${query}” އާ ގުޅޭ ސައިޓެއް ނުފެނުނު`,
+  noAppsOrSitesMatch: (query) => `“${query}” އާ ގުޅޭ އެޕެއް ނުވަތަ ސައިޓެއް ނުފެނުނު`,
+  searchEmptyHint:
+    'ސްޕެލިންގް ޗެކް ކުރައްވާ، ނުވަތަ ހުރިހާ GOVMV އެޕްތަކާއި ސައިޓްތައް ފެންނަން ސަރޗް ކްލިއަރ ކުރައްވާ۔',
+  label: 'މިއީ ދިވެހި ސަރުކާރުގެ ރަސްމީ ވެބްސައިޓެއް',
+  howToIdentify: 'ރަސްމީ ސައިޓެއްކަން ދެނެގަންނާނީ',
+  officialLinksTitle: 'ރަސްމީ ވެބްސައިޓްތަކުގެ ލިންކު .gov.mv އިން ނިމޭނެ',
+  officialLinksDescription: 'ސަރުކާރުގެ އިދާރާތަކުން .gov.mv ވެބްސައިޓްތަކުން މުއާމަލާތްކުރާނެ.',
+  secureWebsitesTitle: 'ސަލާމަތް ވެބްސައިޓްތަކުގައި HTTPS ބޭނުންކުރާނެ',
+  secureWebsitesDescription: 'އިތުރު އިހުތިޔާތަކަށް ތާޅު ނުވަތަ https:// ހުރިތޯ ބައްލަވާ.',
+  languageLabel: 'ބަސް',
+  languageChange: 'ބަސް ބަދަލުކުރައްވާ',
+  themeLabel: 'ތީމް',
+  themeLight: 'އަލި',
+  themeDark: 'އަނދިރި',
+  themeAuto: 'އޮޓޯ',
+  menuOpen: 'މެނޫ ހުޅުއްވާ',
+  menuClose: 'މެނޫ ބަންދުކުރައްވާ',
+  siteMenu: 'ސައިޓް މެނޫ',
+  primaryNav: 'މައި',
+};
+
+const appsEn: SiteHeaderSwitcherItem[] = [
   {
     id: 'govmv',
     name: 'Gov.mv',
@@ -73,6 +127,7 @@ const apps: SiteHeaderSwitcherItem[] = [
     current: true,
     iconSrc: '/blocks/example-app-govmv.svg',
     description: 'The official entry point for public services.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
     infoParagraphs: [
       {
         leadIn: 'Gov.mv',
@@ -91,6 +146,56 @@ const apps: SiteHeaderSwitcherItem[] = [
     href: '#api',
     iconSrc: '/blocks/example-app-my-applications.svg',
     description: 'Track and continue government service applications.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
+  },
+  {
+    // English searchNames without dv: Dhivehi search does not fall back to the tile name.
+    id: 'wallet',
+    name: 'Wallet',
+    kind: 'app',
+    href: '#changelog',
+    iconSrc: '/blocks/example-app-wallet.svg',
+    description: 'Payments and government wallet balances.',
+    searchNames: { en: 'Wallet' },
+  },
+];
+
+const appsDv: SiteHeaderSwitcherItem[] = [
+  {
+    id: 'govmv',
+    name: 'Gov.mv',
+    kind: 'app',
+    href: '#ownership-and-prerequisites',
+    current: true,
+    iconSrc: '/blocks/example-app-govmv.svg',
+    description:
+      'މިއީ އާންމު ޚިދުމަތްތަކަށް ވާސިލުވުމަށާއި ސަރުކާރުގެ ޝާއިއުކުރުންތައް ހޯދުމަށް ބޭނުންކުރާ މައިގަނޑު ދޮރާށެވެ.',
+    searchNames: { en: 'Gov.mv', dv: 'Gov.mv' },
+  },
+  {
+    id: 'applications',
+    name: 'ހުށަހެޅުންތައް',
+    kind: 'app',
+    href: '#api',
+    iconSrc: '/blocks/example-app-my-applications.svg',
+    description:
+      'ސަރުކާރުގެ ޚިދުމަތްތަކަށް ކުރެވިފައިވާ ހުށަހެޅުންތައް ބަލާލުމާއި ކުރިއަށް ގެންދިއުމަށް.',
+    searchNames: {
+      en: ['My Applications', 'Applications'],
+      dv: 'ހުށަހެޅުންތައް',
+    },
+  },
+  {
+    id: 'wallet',
+    name: 'Wallet',
+    kind: 'app',
+    href: '#changelog',
+    iconSrc: '/blocks/example-app-wallet.svg',
+    description: 'ފައިސާ ދައްކާލުމާއި ވޮލެޓް.',
+    searchNames: { en: 'Wallet' },
   },
 ];
 
@@ -118,6 +223,9 @@ function GovmvLogo() {
 export function SiteShellDemo() {
   const [scheme, setScheme] = useState<SiteHeaderColorScheme>('light');
   const [language, setLanguage] = useState('en');
+  const isDv = language === 'dv';
+  const labels = isDv ? labelsDv : labelsEn;
+  const apps = isDv ? appsDv : appsEn;
   const [overlay, setOverlay] = useState<SiteHeaderOverlayState>({
     switcherOpen: false,
     switcherRendered: false,
@@ -139,11 +247,19 @@ export function SiteShellDemo() {
               pathname="/"
               skipToMainHref="#site-shell-demo-main"
               desktopNavItems={[
-                { href: '#ownership-and-prerequisites', label: 'Home', current: true },
+                {
+                  href: '#ownership-and-prerequisites',
+                  label: isDv ? 'ފުރަތަމަ ޞަފުޙާ' : 'Home',
+                  current: true,
+                },
                 { href: '#api', label: 'API' },
               ]}
               mobileNavItems={[
-                { href: '#ownership-and-prerequisites', label: 'Home', current: true },
+                {
+                  href: '#ownership-and-prerequisites',
+                  label: isDv ? 'ފުރަތަމަ ޞަފުޙާ' : 'Home',
+                  current: true,
+                },
                 { href: '#api', label: 'API' },
               ]}
               apps={apps}
@@ -162,15 +278,17 @@ export function SiteShellDemo() {
               flagSrc="/blocks/maldives-flag.svg"
               actions={
                 <Button intent="accent" appearance="fill" size="md">
-                  Sign In
+                  {isDv ? 'ސައިންއިން' : 'Sign In'}
                 </Button>
               }
             />
           }
           footer={
             <SiteFooter
-              startLinks={[{ id: 'about', label: 'About', href: '#api' }]}
-              endLinks={[{ id: 'privacy', label: 'Privacy', href: '#changelog' }]}
+              startLinks={[{ id: 'about', label: isDv ? 'ތަޢާރަފު' : 'About', href: '#api' }]}
+              endLinks={[
+                { id: 'privacy', label: isDv ? 'ޕްރައިވަސީ' : 'Privacy', href: '#changelog' },
+              ]}
             />
           }
         >

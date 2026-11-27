@@ -101,7 +101,8 @@ for (const viewport of [
       await focusDocumentStart(page);
 
       await page.keyboard.press('Tab');
-      const skipLink = page.getByRole('link', { name: 'Skip to main content' });
+      const skipName = dir === 'rtl' ? 'މައި ކޮންޓެންޓަށް ދިއުމަށް' : 'Skip to main content';
+      const skipLink = page.getByRole('link', { name: skipName });
       await expect(skipLink).toBeFocused();
       await expect(skipLink).toBeVisible();
 
