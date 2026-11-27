@@ -306,6 +306,11 @@ export type OTPInputProps = OTPAriaProps &
     autoComplete?: React.InputHTMLAttributes<HTMLInputElement>['autoComplete'];
     /** Default `done`. */
     enterKeyHint?: React.InputHTMLAttributes<HTMLInputElement>['enterKeyHint'];
+    /**
+     * Android Chrome only. While the field is focused, asks the OS for an SMS code
+     * with WebOTP. The SMS must end with `@yourdomain #123456`. Default `false`.
+     */
+    webOtp?: boolean;
     className?: string;
     /**
      * Called once per slot, in order. A custom body should render `OTPInputSlot`
@@ -372,6 +377,7 @@ export function OTPInput({
   showRequiredIndicator = true,
   autoComplete = 'one-time-code',
   enterKeyHint = 'done',
+  webOtp = false,
   className,
   renderSlot,
   separator,
@@ -405,31 +411,67 @@ export function OTPInput({
     [ref],
   );
 
+  // Native events can arrive before React re-renders (beforeinput then input in one task).
+  // Reduce against the latest applied document, not the last render, so a paired event is a no-op.
+  const docRef = React.useRef(doc);
+  React.useLayoutEffect(() => {
+    docRef.current = doc;
+  });
+
   function dispatch(event: OTPDocumentEvent) {
-    const result = reduceOTPDocument(doc, event, layout, alphabet);
-    if (result.document === doc) return false;
+    const prev = docRef.current;
+    const result = reduceOTPDocument(prev, event, layout, alphabet);
+    if (result.document === prev) return false;
+    docRef.current = result.document;
     setStored(result.document);
-    if (result.document.text !== doc.text) onChange?.(result.document.text);
+    if (result.document.text !== prev.text) onChange?.(result.document.text);
     if (result.completed) onComplete?.(result.document.text);
     return true;
   }
 
   function restoreSelection() {
     const input = inputRef.current;
-    if (input) writeSelection(input, doc);
+    if (input) writeSelection(input, docRef.current);
   }
+
+  // The input event's type and data tell an input-only replacement apart from typing.
+  const nativeEditRef = React.useRef<{ inputType: string; data: string | null } | null>(null);
+  React.useEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    const listener = (event: Event) => {
+      const { inputType, data } = event as InputEvent;
+      nativeEditRef.current = { inputType, data };
+    };
+    input.addEventListener('input', listener);
+    return () => input.removeEventListener('input', listener);
+  }, []);
 
   const beforeInputRef = React.useRef<(event: InputEvent) => void>(() => {});
   React.useLayoutEffect(() => {
     beforeInputRef.current = (event) => {
       if (!isEditable || event.data == null) return;
       if (event.inputType === 'insertText') {
+        // A multi-character autofill that fills the code replaces the value whole.
+        if (
+          event.data.length > 1 &&
+          planOTPClipboard(event.data, layout, alphabet).kind === 'replace'
+        ) {
+          dispatch({ type: 'autofill', raw: event.data });
+          event.preventDefault();
+          return;
+        }
         if (dispatch({ type: 'insert', data: event.data })) event.preventDefault();
         return;
       }
       // Some mobile autofill paths use this without a following change event.
+      // A full code is autofill, so it completes even over a full field; partial text stays a replace.
       if (event.inputType === 'insertReplacementText') {
-        if (dispatch({ type: 'replace', raw: event.data })) event.preventDefault();
+        const kind =
+          planOTPClipboard(event.data, layout, alphabet).kind === 'replace'
+            ? 'autofill'
+            : 'replace';
+        if (dispatch({ type: kind, raw: event.data })) event.preventDefault();
       }
     };
   });
@@ -446,6 +488,36 @@ export function OTPInput({
     if (isFocused && inputRef.current) writeSelection(inputRef.current, doc);
   }, [doc, isFocused]);
 
+  // WebOTP resolves after focus, so it reads dispatch through a ref to avoid a stale document.
+  const dispatchRef = React.useRef(dispatch);
+  React.useLayoutEffect(() => {
+    dispatchRef.current = dispatch;
+  });
+
+  const webOtpActive = webOtp && isFocused && isEditable;
+  React.useEffect(() => {
+    if (!webOtpActive || typeof window === 'undefined' || !('OTPCredential' in window)) return;
+    const controller = new AbortController();
+    navigator.credentials
+      .get({
+        otp: { transport: ['sms'] },
+        signal: controller.signal,
+      } as unknown as CredentialRequestOptions)
+      .then((credential) => {
+        const code = (credential as { code?: unknown } | null)?.code;
+        // The code can settle just after the user leaves the field. Apply it only while still focused.
+        const input = inputRef.current;
+        if (controller.signal.aborted || !input || input.ownerDocument.activeElement !== input) {
+          return;
+        }
+        if (typeof code === 'string') dispatchRef.current({ type: 'autofill', raw: code });
+      })
+      .catch(() => {
+        // Aborted on blur, or no SMS arrived. The native one-time-code path still works.
+      });
+    return () => controller.abort();
+  }, [webOtpActive]);
+
   const track = projectOTPTrack(doc, layout, isFocused);
   const resolvedInfoTooltipAriaLabel =
     infoTooltipAriaLabel ?? infoTooltipDefaultAriaLabels[languageConfig.language];
@@ -455,9 +527,18 @@ export function OTPInput({
       {...props}
       value={doc.text}
       onChange={(raw) => {
+        const native = nativeEditRef.current;
+        nativeEditRef.current = null;
+        // An input-only replacement (no beforeinput) carrying a whole code is autofill too.
+        const code = native?.inputType === 'insertReplacementText' ? (native.data ?? raw) : null;
+        const isAutofill =
+          code !== null && planOTPClipboard(code, layout, alphabet).kind === 'replace';
         // A rejected edit leaves React to restore the controlled value, which
         // moves the native caret; put it back once that restore has run.
-        if (!dispatch({ type: 'value', raw })) queueMicrotask(restoreSelection);
+        const applied = isAutofill
+          ? dispatch({ type: 'autofill', raw: code })
+          : dispatch({ type: 'value', raw });
+        if (!applied) queueMicrotask(restoreSelection);
       }}
       onFocusChange={(focused) => {
         setIsFocused(focused);

@@ -96,6 +96,8 @@ export type OTPDocumentEvent =
   /** Same-character overtype leaves the browser value unchanged, so React reports no change. */
   | { readonly type: 'insert'; readonly data: string }
   | { readonly type: 'replace'; readonly raw: string }
+  /** A whole code from SMS or WebOTP. Replaces any value, and completes even when the field was full. */
+  | { readonly type: 'autofill'; readonly raw: string }
   | { readonly type: 'external'; readonly raw: string }
   | { readonly type: 'motion'; readonly motion: OTPMotion }
   | { readonly type: 'point'; readonly slotIndex: number };
@@ -126,6 +128,15 @@ function edited(
   };
 }
 
+// Autofill is a whole-code replacement, so a new full code completes even over a full field.
+function autofilled(prev: OTPDocument, text: OTPText, layout: OTPLayout): OTPReduceResult {
+  if (text === prev.text) return unchanged(prev);
+  return {
+    document: { text, caret: text.length },
+    completed: text.length === layout.slotCount,
+  };
+}
+
 export function reduceOTPDocument(
   prev: OTPDocument,
   event: OTPDocumentEvent,
@@ -152,6 +163,11 @@ export function reduceOTPDocument(
       const inserted = raw.slice(prefix, raw.length - suffix);
       const insertedText = sanitize(inserted);
       if (inserted.length > 0 && insertedText.length === 0) return unchanged(prev);
+      // SMS autofill inserts a whole code at the caret. Keep the code, not the
+      // stale digits around it, so a partial or full field takes the new value.
+      if (inserted.length > 1 && insertedText.length === layout.slotCount) {
+        return autofilled(prev, insertedText, layout);
+      }
       return edited(prev, sanitize(raw), prefix + insertedText.length, layout);
     }
     case 'insert': {
@@ -160,6 +176,11 @@ export function reduceOTPDocument(
         return unchanged(withCaret(prev, prev.caret + 1));
       }
       return unchanged(prev);
+    }
+    case 'autofill': {
+      const text = sanitize(event.raw);
+      if (text.length !== layout.slotCount) return unchanged(prev);
+      return autofilled(prev, text, layout);
     }
     case 'replace': {
       const text = sanitize(event.raw);
