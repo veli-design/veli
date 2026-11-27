@@ -1,3 +1,9 @@
+## 0.6.0
+
+### Added
+
+- Give the `main` landmark `id="main-content"` and `tabIndex={-1}` so the site-header skip link can move focus into it. Pass `mainId` to use another id and match it with the header's `skipToMainHref`.
+
 ## 0.5.1
 
 ### Fixed

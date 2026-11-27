@@ -61,6 +61,7 @@ const labelsEn: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 const labelsDv: SiteHeaderLabels = {
@@ -238,10 +239,12 @@ export function SiteShellDemo() {
       >
         <SiteShell
           overlay={overlay}
+          mainId="site-shell-demo-main"
           header={
             <SiteHeader
               logo={<GovmvLogo />}
               pathname="/"
+              skipToMainHref="#site-shell-demo-main"
               desktopNavItems={[
                 {
                   href: '#ownership-and-prerequisites',

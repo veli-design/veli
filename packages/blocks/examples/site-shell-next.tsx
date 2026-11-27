@@ -71,6 +71,7 @@ const labelsEn: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 const labelsDv: SiteHeaderLabels = {

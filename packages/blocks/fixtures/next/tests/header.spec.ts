@@ -520,3 +520,15 @@ test('Dhivehi type-to-search from the dialog surface remaps to Thaana', async ({
   await expect(search).toHaveValue('ލޮކަރ');
   await expect(page.getByRole('option', { name: 'ލޮކަރ' })).toBeVisible();
 });
+
+test('skip link is the first tab stop and focuses the standalone main landmark', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await page.keyboard.press('Tab');
+  const skipLink = page.getByRole('link', { name: 'Skip to main content' });
+  await expect(skipLink).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('main#main-content')).toBeFocused();
+});

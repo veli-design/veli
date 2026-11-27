@@ -65,6 +65,7 @@ const labelsEn: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 const labelsDv: SiteHeaderLabels = {
@@ -118,6 +119,7 @@ const labelsDv: SiteHeaderLabels = {
   menuClose: 'މެނޫ ބަންދުކުރައްވާ',
   siteMenu: 'ސައިޓް މެނޫ',
   primaryNav: 'މައި',
+  skipToMain: 'މައި ކޮންޓެންޓަށް ދިއުމަށް',
 };
 
 const appsEn: SiteHeaderSwitcherItem[] = [

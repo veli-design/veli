@@ -44,15 +44,16 @@ Wrap the application in `VeliProvider` with `language="en"` or `language="dv"`, 
 
 `SiteShell` is a client component.
 
-| Prop               | Contract                                                                                                                                                                      |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `header`           | Required React node, typically the site-header block.                                                                                                                         |
-| `children`         | Page content rendered inside the raised, rounded `main` landmark.                                                                                                             |
-| `footer`           | Optional React node, typically the site-footer block. Fades with the main column while overlays are open.                                                                     |
-| `notices`          | Optional React node slot for the preview-banner block (or equivalent). Mount it here so its scroll spacer participates in the page flex column only when notices are present. |
-| `overlay`          | Optional `{ switcherOpen?, switcherRendered?, mobileMenuVisible? }` from site-header’s `onOverlayChange`. Main and footer fade while `switcherOpen \|\| mobileMenuVisible`.   |
-| `contentClassName` | Optional classes on the padded main wrapper (for example page-specific horizontal padding).                                                                                   |
-| `className`        | Optional classes on the root column.                                                                                                                                          |
+| Prop               | Contract                                                                                                                                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `header`           | Required React node, typically the site-header block.                                                                                                                                                         |
+| `children`         | Page content rendered inside the raised, rounded `main` landmark.                                                                                                                                             |
+| `footer`           | Optional React node, typically the site-footer block. Fades with the main column while overlays are open.                                                                                                     |
+| `notices`          | Optional React node slot for the preview-banner block (or equivalent). Mount it here so its scroll spacer participates in the page flex column only when notices are present.                                 |
+| `overlay`          | Optional `{ switcherOpen?, switcherRendered?, mobileMenuVisible? }` from site-header’s `onOverlayChange`. Main and footer fade while `switcherOpen \|\| mobileMenuVisible`.                                   |
+| `mainId`           | Optional id of the `main` landmark (default `main-content`). The `main` is focusable (`tabIndex={-1}`) so the site-header skip link, whose `skipToMainHref` defaults to `#main-content`, moves focus into it. |
+| `contentClassName` | Optional classes on the padded main wrapper (for example page-specific horizontal padding).                                                                                                                   |
+| `className`        | Optional classes on the root column.                                                                                                                                                                          |
 
 Wire site-header’s `onOverlayChange` into `overlay`. Pass `hidden={overlay.switcherRendered \|\| overlay.mobileMenuVisible}` to the preview banner in the `notices` slot. Keep a header ref for `closeOverlays()` and `focusLogo()` when mounting a search palette or other modal that must dismiss shell overlays and restore focus.
 
@@ -64,7 +65,7 @@ For gov.mv, keep `useFrontendSession`, `SearchPalette`, `getDraftModeNotices`, a
 
 ## Accessibility and responsive behavior
 
-Preserve the single `main` landmark and chrome fade that sets `aria-hidden`, `inert`, and disables pointer events while overlays are open so faded content leaves the tab order. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
+Keep the `main` landmark focusable (`tabIndex={-1}`) with the id the site-header skip link targets. Preserve the single `main` landmark and chrome fade that sets `aria-hidden`, `inert`, and disables pointer events while overlays are open so faded content leaves the tab order. Respect `prefers-reduced-motion`. Manual screen-reader and device testing remains part of adopting an experimental block.
 
 ## Updating your copy
 

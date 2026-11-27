@@ -1,9 +1,9 @@
-## 0.15.0
+## 0.16.0
 
 ### Added
 
 - Match app switcher search to the active UI language through host-supplied `searchNames` on each tile. Dhivehi mode searches only the Dhivehi entry and does not fall back to the English `name` when that entry is missing. Intentionally Latin labels shown in Dhivehi (for example `Gov.mv`) remain searchable when listed under the `dv` entry.
-- Force Thaana phonetic input while the switcher is in Dhivehi mode, including type-to-search from the dialog surface. Paste still accepts Latin text so intentionally Latin labels can be entered without remapping.
+- Force Thaana phonetic input while the switcher is in Dhivehi mode, including type-to-search from the dialog surface. Paste still accepts Latin text so intentionally Latin labels can be entered without remapping. Thaana input goes through the browser's editing pipeline, so the caret and native undo history keep working, including when a replacement leaves the value unchanged.
 
 ### Changed
 
@@ -14,11 +14,11 @@
 
 - Hosts that show tiles in Dhivehi must add `searchNames.dv` to every app and site that should be discoverable in Dhivehi. A tile without a `dv` entry no longer matches its English name in Dhivehi mode.
 
-## 0.15.1
+## 0.15.0
 
-### Fixed
+### Added
 
-- Insert Thaana search input through the browser's editing pipeline, so the caret moves and native undo history keeps working for mapped input, including when a replacement leaves the value unchanged.
+- Add a "Skip to main content" link as the first tab stop, before the official-website banner. It is visible only while focused, sits at the inline start edge in LTR and RTL, and is removed from the tab order while the app switcher or mobile menu is open. Pass `labels.skipToMain` and, for a custom target, `skipToMainHref` (default `#main-content`). A standalone host gives its `main` `id="main-content"` and `tabIndex={-1}`.
 
 ## 0.14.1
 
