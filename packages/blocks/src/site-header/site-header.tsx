@@ -75,7 +75,35 @@ export type SiteHeaderLabels = SiteHeaderAppSwitcherLabels &
     menuClose: string;
     siteMenu: string;
     primaryNav: string;
+    skipToMain: string;
   };
+
+const DEFAULT_SKIP_TO_MAIN_HREF = '#main-content';
+
+function SkipToMainLink({ href, label, hidden }: { href: string; label: string; hidden: boolean }) {
+  return (
+    <a
+      href={href}
+      onClick={() => {
+        // Re-activating the same hash does not move focus on its own.
+        if (!href.startsWith('#')) return;
+        let id = href.slice(1);
+        try {
+          id = decodeURIComponent(id);
+        } catch {
+          // Malformed percent-encoding: use the raw fragment as the id.
+        }
+        document.getElementById(id)?.focus();
+      }}
+      className="bg-button-secondary text-base-inverted hover:bg-button-secondary-hover active:bg-button-secondary-pressed focus-visible:ring-border-focus focus-visible:ring-offset-bg-surface-base type-body-sm-medium absolute start-0 top-0 h-px w-px overflow-hidden whitespace-nowrap no-underline [clip-path:inset(50%)] focus:fixed focus:start-3 focus:top-3 focus:z-70 focus:inline-flex focus:h-auto focus:w-auto focus:items-center focus:overflow-visible focus:rounded-full focus:px-4 focus:py-2.5 focus:shadow-lg focus:[clip-path:none] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none forced-colors:focus-visible:outline-2 forced-colors:focus-visible:outline-offset-2 forced-colors:focus-visible:outline-solid [&:lang(dv)]:focus:py-1.5"
+      aria-hidden={hidden || undefined}
+      inert={hidden || undefined}
+      tabIndex={hidden ? -1 : undefined}
+    >
+      {label}
+    </a>
+  );
+}
 
 /** Figma open panel: 24px top pad above the nav row */
 const OPEN_PAD_TOP = 24;
@@ -369,6 +397,11 @@ export type SiteHeaderProps = {
   onColorSchemeChange: (scheme: SiteHeaderColorScheme) => void;
   /** Called when the user activates an in-app switcher tile. */
   onNavigate: (href: string) => void;
+  /**
+   * Target of the "skip to main content" link. Default `#main-content`, which
+   * matches site-shell's `main`. Standalone hosts set `id` and `tabIndex={-1}` on their own `main`.
+   */
+  skipToMainHref?: string;
   /** Flag image URL for the official-website banner. */
   flagSrc: string;
   /** Application-owned actions (search, sign-in). Fades while overlays are open. */
@@ -403,6 +436,7 @@ export function SiteHeader({
   colorScheme,
   onColorSchemeChange,
   onNavigate,
+  skipToMainHref = DEFAULT_SKIP_TO_MAIN_HREF,
   flagSrc,
   actions,
   renderNavLink,
@@ -714,6 +748,7 @@ export function SiteHeader({
 
   return (
     <div className={`relative ${className}`}>
+      <SkipToMainLink href={skipToMainHref} label={labels.skipToMain} hidden={overlaysOpen} />
       <div ref={bannerExitRef} className="fixed inset-x-0 top-0 z-50">
         <OfficialWebsiteBanner
           expanded={officialBannerExpanded}

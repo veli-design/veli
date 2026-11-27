@@ -58,6 +58,7 @@ const labels: SiteHeaderLabels = {
   menuClose: 'Close menu',
   siteMenu: 'Site menu',
   primaryNav: 'Primary',
+  skipToMain: 'Skip to main content',
 };
 
 const apps: SiteHeaderSwitcherItem[] = [
@@ -158,6 +159,7 @@ export function SiteHeaderDemo() {
         <SiteHeader
           logo={<GovmvLogo />}
           pathname="/"
+          skipToMainHref="#site-header-demo-main"
           desktopNavItems={[
             { href: '#ownership-and-prerequisites', label: 'Home', current: true },
             { href: '#api', label: 'API' },
@@ -187,7 +189,7 @@ export function SiteHeaderDemo() {
             </Button>
           }
         />
-        <div className="px-4 py-6">
+        <div id="site-header-demo-main" tabIndex={-1} className="px-4 py-6 focus:outline-none">
           <p className="type-body-sm-regular text-text-base-muted">
             Preview of the site header. Open the logo menu to browse the app switcher.
           </p>
