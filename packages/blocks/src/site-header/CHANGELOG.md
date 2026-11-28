@@ -1,3 +1,9 @@
+## 0.17.1
+
+### Fixed
+
+- Show a focus ring on app switcher tiles when focus arrives by Tab, for example from the Filter button. Arrow-key navigation and hover keep the ring-less highlight.
+
 ## 0.17.0
 
 ### Added

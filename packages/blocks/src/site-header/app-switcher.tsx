@@ -94,6 +94,9 @@ export type SiteHeaderAppSwitcherLabels = {
 
 export type AppSwitcherFilter = 'all' | 'apps' | 'sites';
 
+/** How focus last reached a tile. Only `tab` shows the tile focus ring. */
+type FocusSource = 'tab' | 'arrow' | 'pointer';
+
 /** Hide Veli MenuItem's leading selection check so the mark sits at the end. */
 const menuItemCheckEndClassName = '[&>div>span:first-child]:hidden';
 
@@ -329,6 +332,7 @@ function SwitcherTileGroup({
   selectedId,
   youAreHereLabel,
   onPreview,
+  onPointerFocus,
   onAction,
   prefersReducedMotion,
 }: {
@@ -342,6 +346,7 @@ function SwitcherTileGroup({
   selectedId: string;
   youAreHereLabel: string;
   onPreview: (id: string) => void;
+  onPointerFocus: () => void;
   onAction: (key: Key) => void;
   prefersReducedMotion: boolean | null;
 }) {
@@ -376,6 +381,7 @@ function SwitcherTileGroup({
               selectedId={selectedId}
               youAreHereLabel={youAreHereLabel}
               onPreview={onPreview}
+              onPointerFocus={onPointerFocus}
             />
           ))}
         </ListBoxSection>
@@ -389,11 +395,13 @@ function SwitcherListBoxItem({
   selectedId,
   youAreHereLabel,
   onPreview,
+  onPointerFocus,
 }: {
   item: SiteHeaderSwitcherItem;
   selectedId: string;
   youAreHereLabel: string;
   onPreview: (id: string) => void;
+  onPointerFocus: () => void;
 }) {
   const highlighted = selectedId === item.id;
 
@@ -408,7 +416,11 @@ function SwitcherListBoxItem({
         switcherItemClassName(isFocused || isHovered || highlighted)
       }
       onFocus={() => onPreview(item.id)}
-      onHoverStart={() => onPreview(item.id)}
+      onHoverStart={() => {
+        onPreview(item.id);
+        // The pointer moved onto this tile, so it takes focus without the Tab ring.
+        onPointerFocus();
+      }}
     >
       <SwitcherItemContent item={item} youAreHereLabel={youAreHereLabel} />
     </ListBoxItem>
@@ -474,6 +486,7 @@ function SearchResults({
   selectedId,
   labels,
   onPreview,
+  onPointerFocus,
   onActivate,
   prefersReducedMotion,
 }: {
@@ -487,6 +500,7 @@ function SearchResults({
   selectedId: string;
   labels: SiteHeaderAppSwitcherLabels;
   onPreview: (id: string) => void;
+  onPointerFocus: () => void;
   onActivate: (item: SiteHeaderSwitcherItem) => void;
   prefersReducedMotion: boolean | null;
 }) {
@@ -597,6 +611,7 @@ function SearchResults({
                   selectedId={selectedId}
                   youAreHereLabel={labels.youAreHere}
                   onPreview={onPreview}
+                  onPointerFocus={onPointerFocus}
                   onAction={onAction}
                   prefersReducedMotion={prefersReducedMotion}
                 />
@@ -617,6 +632,7 @@ function SearchResults({
                   selectedId={selectedId}
                   youAreHereLabel={labels.youAreHere}
                   onPreview={onPreview}
+                  onPointerFocus={onPointerFocus}
                   onAction={onAction}
                   prefersReducedMotion={prefersReducedMotion}
                 />
@@ -1105,6 +1121,27 @@ export function AppSwitcher({
     };
   }, [commitSearchText, forceThaana]);
 
+  // Tiles are also focused by arrows and hover, so React Aria's focus-visible cannot tell
+  // them from a Tab. Record how focus last moved; only Tab shows the tile ring.
+  const markFocusSource = useCallback((source: FocusSource) => {
+    const panel = panelRef.current;
+    if (panel) panel.dataset.focusSource = source;
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const panel = panelRef.current;
+      if (!panel || panel.closest('[inert]')) return;
+      const target = event.target;
+      if (!(target instanceof Node) || !isSwitcherKeyboardScope(panel, target)) return;
+      if (event.key === 'Tab') markFocusSource('tab');
+      else if (event.key.startsWith('Arrow')) markFocusSource('arrow');
+    };
+
+    document.addEventListener('keydown', onKeyDown, true);
+    return () => document.removeEventListener('keydown', onKeyDown, true);
+  }, [markFocusSource]);
+
   useLayoutEffect(() => {
     const caret = pendingCaretRef.current;
     if (caret == null) return;
@@ -1273,7 +1310,7 @@ export function AppSwitcher({
   return (
     <div
       ref={panelRef}
-      className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-6 pt-4 pb-6 xl:flex-row xl:gap-6 xl:px-12 xl:pt-8 xl:pb-12"
+      className="group/switcher flex min-h-0 flex-1 flex-col gap-4 overflow-hidden px-6 pt-4 pb-6 xl:flex-row xl:gap-6 xl:px-12 xl:pt-8 xl:pb-12"
     >
       <div className="flex min-h-0 w-full max-w-[952px] flex-1 flex-col gap-4 xl:shrink-0">
         <div className="flex shrink-0 flex-col gap-4">
@@ -1334,6 +1371,7 @@ export function AppSwitcher({
                 labels={labels}
                 prefersReducedMotion={prefersReducedMotion}
                 onPreview={setSelectedId}
+                onPointerFocus={() => markFocusSource('pointer')}
                 onActivate={activateItem}
               />
             </motion.div>
