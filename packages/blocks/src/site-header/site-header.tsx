@@ -14,7 +14,7 @@ import {
   type TransitionEvent,
 } from 'react';
 import { Button as AriaButton } from 'react-aria-components';
-import { CaretDownIcon, ListIcon, XIcon } from '@phosphor-icons/react';
+import { CaretDownIcon, ListIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react';
 import { Button } from '@veli-design/react/button';
 import { motion, useReducedMotion } from 'motion/react';
 
@@ -46,6 +46,7 @@ import {
   mobileMenuCloseTransition,
   mobileMenuOpenTransition,
   OFFICIAL_BANNER_MS,
+  surfaceChromeTransitionFor,
   surfaceGeometryTransitionFor,
 } from './motion';
 import {
@@ -56,6 +57,12 @@ import {
   type SiteHeaderNavItem,
 } from './mobile-nav';
 import { OfficialWebsiteBanner, type OfficialBannerLabels } from './official-banner';
+import {
+  HeaderSearchControl,
+  type SiteHeaderSearchConfig,
+  type SiteHeaderSearchRenderProps,
+  type SiteHeaderSearchSuggestion,
+} from './search-dialog';
 import {
   HEADER_HEIGHT,
   OFFICIAL_BANNER_COLLAPSED_HEIGHT,
@@ -72,6 +79,9 @@ export type {
   SiteHeaderColorScheme,
   SiteHeaderLanguageOption,
   SiteHeaderThemeOption,
+  SiteHeaderSearchConfig,
+  SiteHeaderSearchRenderProps,
+  SiteHeaderSearchSuggestion,
 };
 
 export type SiteHeaderLabels = SiteHeaderAppSwitcherLabels &
@@ -299,18 +309,26 @@ function HeaderLogoButton({
 
 function HeaderActions({
   isOpen,
+  isSearchOpen,
+  isSearchRendered,
+  isHeaderHidden,
   isMobileMenuOpen,
   prefersReducedMotion,
   onToggleMobileMenu,
+  searchControl,
   actions,
   actionsInBar,
   barActions,
   labels,
 }: {
   isOpen: boolean;
+  isSearchOpen: boolean;
+  isSearchRendered: boolean;
+  isHeaderHidden: boolean;
   isMobileMenuOpen: boolean;
   prefersReducedMotion: boolean | null;
   onToggleMobileMenu: () => void;
+  searchControl?: ReactNode;
   actions?: ReactNode;
   actionsInBar: boolean;
   barActions?: ReactNode;
@@ -321,18 +339,41 @@ function HeaderActions({
     : isMobileMenuOpen
       ? mobileMenuOpenTransition
       : mobileMenuCloseTransition;
+  const hideChrome = isOpen || (isHeaderHidden && isSearchRendered);
+  const inertChrome = isOpen || isSearchOpen || isSearchRendered || isHeaderHidden;
 
   return (
     <div className="ms-auto flex shrink-0 items-center gap-2">
+      {searchControl ? (
+        <div
+          className={
+            !actionsInBar && !isSearchRendered
+              ? 'hidden'
+              : !actionsInBar
+                ? 'absolute size-0'
+                : isOpen && !isSearchRendered
+                  ? 'pointer-events-none opacity-0 transition-opacity duration-[140ms] ease-[cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none'
+                  : 'opacity-100 transition-opacity duration-[240ms] ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none'
+          }
+          aria-hidden={(isOpen && !isSearchRendered) || undefined}
+          inert={(isOpen && !isSearchRendered) || undefined}
+        >
+          {searchControl}
+        </div>
+      ) : null}
       <motion.div
         className="flex items-center gap-2"
-        animate={{ opacity: isOpen ? 0 : 1 }}
+        animate={{ opacity: hideChrome ? 0 : 1 }}
         transition={
-          prefersReducedMotion ? { duration: 0 } : isOpen ? chromeFadeOutTransition : fadeTransition
+          prefersReducedMotion
+            ? { duration: 0 }
+            : hideChrome
+              ? chromeFadeOutTransition
+              : fadeTransition
         }
-        style={{ pointerEvents: isOpen ? 'none' : 'auto' }}
-        aria-hidden={isOpen || undefined}
-        inert={isOpen || undefined}
+        style={{ pointerEvents: inertChrome ? 'none' : 'auto' }}
+        aria-hidden={inertChrome || undefined}
+        inert={inertChrome || undefined}
       >
         {actionsInBar && actions ? <div className="flex items-center gap-2">{actions}</div> : null}
         {barActions}
@@ -382,6 +423,10 @@ export type SiteHeaderOverlayState = {
   switcherRendered: boolean;
   /** Mobile menu is visible, including exit animation (chrome fade and notice hide). */
   mobileMenuVisible: boolean;
+  /** Header search dialog is open. */
+  searchOpen?: boolean;
+  /** Header search dialog is still mounted during its exit morph. */
+  searchRendered?: boolean;
 };
 
 /** Imperative controls for host adapters that coordinate search and other overlays. */
@@ -417,6 +462,8 @@ export type SiteHeaderProps = {
   skipToMainHref?: string;
   /** Flag image URL for the official-website banner. */
   flagSrc: string;
+  /** Optional header search trigger and morphing search dialog. */
+  search?: SiteHeaderSearchConfig;
   /**
    * Application-owned bar actions (search, sign-in). Mounted in the bar from `sm`
    * (640px) up. Below `sm`, not mounted in the bar; mounted in the mobile menu
@@ -468,6 +515,7 @@ export function SiteHeader({
   onNavigate,
   skipToMainHref = DEFAULT_SKIP_TO_MAIN_HREF,
   flagSrc,
+  search,
   actions,
   mobileActions,
   barActions,
@@ -478,9 +526,11 @@ export function SiteHeader({
   ref,
 }: SiteHeaderProps) {
   const titleId = useId();
+  const searchDialogId = useId();
   const surfaceRef = useRef<HTMLElement>(null);
   const bannerExitRef = useRef<HTMLDivElement>(null);
   const navRowRef = useRef<HTMLDivElement>(null);
+  const restoreSearchFocusRef = useRef(false);
   const [barHeight, setBarHeight] = useState(HEADER_HEIGHT);
   const unrenderTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const expandTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -498,10 +548,38 @@ export function SiteHeader({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);
+  const [uncontrolledSearchOpen, setUncontrolledSearchOpen] = useState(false);
+  const isSearchControlled = search?.open !== undefined;
+  const controlledSearchOpen = Boolean(search?.open);
+  // A controlled host owns `open` for closing as well as opening: closing only asks the host through
+  // `onOpenChange(false)`, and the dialog stays open until the host passes `open: false`.
+  const isSearchOpen =
+    Boolean(search) && (isSearchControlled ? controlledSearchOpen : uncontrolledSearchOpen);
+  const searchOpenRef = useRef(isSearchOpen);
+  useLayoutEffect(() => {
+    searchOpenRef.current = isSearchOpen;
+  }, [isSearchOpen]);
+  const [isSearchRendered, setIsSearchRendered] = useState(isSearchOpen);
+  // Keyboard-shortcut (instant) mode for the current open, and separately for the current close, so a
+  // close the host declines never flips the still-open dialog into instant mode.
+  const [isSearchInstant, setIsSearchInstant] = useState(false);
+  const [isSearchCloseInstant, setIsSearchCloseInstant] = useState(false);
+  const [uncontrolledSearchQuery, setUncontrolledSearchQuery] = useState('');
+  const isSearchQueryControlled = search?.query !== undefined;
+  const searchQuery = isSearchQueryControlled ? (search?.query ?? '') : uncontrolledSearchQuery;
   const [officialBannerExpanded, setOfficialBannerExpanded] = useState(false);
   const [officialBannerDetailsHeight, setOfficialBannerDetailsHeight] = useState(0);
   const [isOfficialBannerResizing, setIsOfficialBannerResizing] = useState(false);
   const [menuPathname, setMenuPathname] = useState(pathname);
+  const [navSearchDismissSeq, setNavSearchDismissSeq] = useState(0);
+  const lastNavSearchDismissSeqRef = useRef(0);
+
+  if (isSearchOpen && !isSearchRendered && pathname === menuPathname) {
+    setIsSearchRendered(true);
+  }
+  if (!search && isSearchRendered) {
+    setIsSearchRendered(false);
+  }
 
   useLayoutEffect(() => {
     const row = navRowRef.current;
@@ -516,12 +594,27 @@ export function SiteHeader({
     return () => observer.disconnect();
   }, []);
 
-  // Close the mobile menu when the application navigates.
+  // Close the mobile menu and search dialog when the application navigates.
   if (pathname !== menuPathname) {
     setMenuPathname(pathname);
     if (isMobileMenuOpen || isMobileMenuVisible) {
       setIsMobileMenuOpen(false);
       setIsMobileMenuVisible(false);
+    }
+    if (isSearchOpen || isSearchRendered) {
+      setNavSearchDismissSeq((seq) => seq + 1);
+      setIsSearchInstant(false);
+      if (isSearchControlled) {
+        // Ask the host (effect below). If it closes, the exit is immediate on the new page.
+        setIsSearchCloseInstant(true);
+      } else {
+        setIsSearchRendered(false);
+        setIsSearchCloseInstant(false);
+        setUncontrolledSearchOpen(false);
+      }
+    }
+    if (!isSearchQueryControlled && uncontrolledSearchQuery !== '') {
+      setUncontrolledSearchQuery('');
     }
   }
 
@@ -552,6 +645,10 @@ export function SiteHeader({
     (isOpen || isRendered) && !prefersReducedMotion
       ? surfaceGeometryTransitionFor(isOpen)
       : undefined;
+  const chromeTransition =
+    (isOpen || isRendered) && !prefersReducedMotion
+      ? surfaceChromeTransitionFor(isOpen)
+      : undefined;
   const surfaceDockingTransition =
     isDockingAtTop && !prefersReducedMotion
       ? [
@@ -559,6 +656,11 @@ export function SiteHeader({
           `width ${HEADER_DOCK_MS}ms ${EASE_DRAWER_CSS}`,
           `max-width ${HEADER_DOCK_MS}ms ${EASE_DRAWER_CSS}`,
           `border-radius ${HEADER_DOCK_MS}ms ${EASE_DRAWER_CSS}`,
+        ].join(', ')
+      : undefined;
+  const surfaceDockingChromeTransition =
+    isDockingAtTop && !prefersReducedMotion
+      ? [
           `background-color ${HEADER_DOCK_MS}ms ${EASE_DRAWER_CSS}`,
           `box-shadow ${HEADER_DOCK_MS}ms ${EASE_DRAWER_CSS}`,
           `backdrop-filter ${HEADER_DOCK_MS}ms ${EASE_DRAWER_CSS}`,
@@ -609,9 +711,99 @@ export function SiteHeader({
     };
   }, [clearPendingBannerTimers, clearUnrenderTimeout]);
 
+  const focusSearchTrigger = useCallback(() => {
+    // Never pull focus out of a dialog that is still open (a controlled host may decline a close).
+    if (searchOpenRef.current) return;
+    const active = document.activeElement;
+    // Scope to the search control root, not the morph overlay: the overlay's marker attribute is
+    // removed once the close finishes, so a focused suggestion would no longer look "inside" it.
+    if (
+      !active ||
+      active === document.body ||
+      active.closest('[data-header-search-trigger]') !== null
+    ) {
+      const trigger = surfaceRef.current?.querySelector<HTMLElement>(
+        '[data-header-search-trigger-button]',
+      );
+      const target = trigger?.getClientRects().length
+        ? trigger
+        : surfaceRef.current?.querySelector<HTMLElement>('[aria-controls="mobile-nav-menu"]');
+      target?.focus({ preventScroll: true });
+    }
+  }, []);
+
+  const handleSearchQueryChange = useCallback(
+    (next: string) => {
+      if (!isSearchQueryControlled) {
+        setUncontrolledSearchQuery(next);
+      }
+      search?.onQueryChange?.(next);
+    },
+    [isSearchQueryControlled, search],
+  );
+
+  const closeSearch = useCallback(
+    (options?: { restoreFocus?: boolean; instant?: boolean }) => {
+      if (!isSearchOpen && !isSearchRendered) return;
+      const instantClose = Boolean(options?.instant);
+      restoreSearchFocusRef.current = options?.restoreFocus !== false;
+      setIsSearchCloseInstant(instantClose);
+      // Uncontrolled search closes itself. Controlled search only asks the host: the dialog's exit
+      // path (morph completion, or the immediate instant-close path) runs once `open` is false.
+      if (!isSearchControlled) {
+        setUncontrolledSearchOpen(false);
+      }
+      search?.onOpenChange?.(false);
+      if (instantClose || isSearchControlled) {
+        requestAnimationFrame(() => {
+          if (searchOpenRef.current) {
+            // The host kept `open` true, so the dialog stays open and the close request is dropped.
+            setIsSearchCloseInstant(false);
+            return;
+          }
+          if (instantClose && restoreSearchFocusRef.current) {
+            restoreSearchFocusRef.current = false;
+            focusSearchTrigger();
+          }
+        });
+      }
+    },
+    [focusSearchTrigger, isSearchControlled, isSearchOpen, isSearchRendered, search],
+  );
+
+  const handleSearchClose = useCallback(() => closeSearch(), [closeSearch]);
+  // Stable identity matters: the search control's exit effect depends on it, and an unstable
+  // reference would restart the morph and its fallback timer on every host re-render.
+  const handleSearchExitComplete = useCallback(() => {
+    setIsSearchRendered(false);
+    setIsSearchInstant(false);
+    setIsSearchCloseInstant(false);
+    if (restoreSearchFocusRef.current) {
+      restoreSearchFocusRef.current = false;
+      requestAnimationFrame(() => focusSearchTrigger());
+    }
+  }, [focusSearchTrigger]);
+
+  // Notify search hosts and restore focus when client-side navigation dismisses
+  // search without firing cross-component callbacks during render.
+  useEffect(() => {
+    if (navSearchDismissSeq === lastNavSearchDismissSeqRef.current) return;
+    lastNavSearchDismissSeqRef.current = navSearchDismissSeq;
+    search?.onOpenChange?.(false);
+    requestAnimationFrame(() => {
+      if (searchOpenRef.current) {
+        // A controlled host kept search open across the navigation: drop the instant-close request.
+        setIsSearchCloseInstant(false);
+        return;
+      }
+      focusSearchTrigger();
+    });
+  }, [focusSearchTrigger, navSearchDismissSeq, search]);
+
   const openMenu = useCallback(() => {
     clearUnrenderTimeout();
     clearPendingBannerTimers();
+    closeSearch({ restoreFocus: false, instant: true });
     const bannerWasExpanded = officialBannerExpanded;
     setOpenedFromFloating(floatingLayout);
     setIsMobileMenuOpen(false);
@@ -641,6 +833,7 @@ export function SiteHeader({
   }, [
     clearPendingBannerTimers,
     clearUnrenderTimeout,
+    closeSearch,
     floatingLayout,
     officialBannerExpanded,
     prefersReducedMotion,
@@ -674,6 +867,28 @@ export function SiteHeader({
     }, COLLAPSE_MS + 50);
   }, [clearPendingBannerTimers, clearUnrenderTimeout, focusLogo, isExpanded, prefersReducedMotion]);
 
+  const openSearch = useCallback(
+    (options?: { instant?: boolean }) => {
+      if (!search) return;
+      if (isOpen || isRendered) {
+        closeMenu();
+      }
+      setIsMobileMenuOpen(false);
+      setIsMobileMenuVisible(false);
+      setIsSearchInstant(Boolean(options?.instant));
+      setIsSearchCloseInstant(false);
+      if (!isSearchControlled) {
+        setUncontrolledSearchOpen(true);
+        setIsSearchRendered(true);
+      }
+      // Controlled: the render sync mounts the dialog once the host confirms `open`, so a host that
+      // declines or delays the request never leaves a closed dialog mounted (scroll lock, inert).
+      search.onOpenChange?.(true);
+    },
+    [closeMenu, isOpen, isRendered, isSearchControlled, search],
+  );
+  const handleSearchOpen = useCallback(() => openSearch(), [openSearch]);
+
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(false);
   }, []);
@@ -699,7 +914,8 @@ export function SiteHeader({
   const closeOverlays = useCallback(() => {
     closeMenu();
     closeMobileMenu();
-  }, [closeMenu, closeMobileMenu]);
+    closeSearch({ restoreFocus: false, instant: true });
+  }, [closeMenu, closeMobileMenu, closeSearch]);
 
   useImperativeHandle(
     ref,
@@ -715,8 +931,10 @@ export function SiteHeader({
       switcherOpen: isOpen,
       switcherRendered: isRendered,
       mobileMenuVisible: isMobileMenuVisible,
+      searchOpen: isSearchOpen,
+      searchRendered: isSearchRendered,
     });
-  }, [isOpen, isRendered, isMobileMenuVisible, onOverlayChange]);
+  }, [isOpen, isRendered, isMobileMenuVisible, isSearchOpen, isSearchRendered, onOverlayChange]);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((open) => {
@@ -724,11 +942,12 @@ export function SiteHeader({
         return false;
       }
       closeMenu();
+      closeSearch({ restoreFocus: false, instant: true });
       setOfficialBannerExpanded(false);
       setIsMobileMenuVisible(true);
       return true;
     });
-  }, [closeMenu]);
+  }, [closeMenu, closeSearch]);
 
   const onSurfaceTransitionEnd = useCallback(
     (event: TransitionEvent<HTMLElement>) => {
@@ -743,24 +962,83 @@ export function SiteHeader({
     [clearUnrenderTimeout, focusLogo, isExpanded],
   );
 
+  const isScrollLocked = isOpen || isMobileMenuVisible || isSearchOpen || isSearchRendered;
+
   useEffect(() => {
-    if (!isOpen && !isMobileMenuVisible) return;
+    if (!isScrollLocked) return;
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      if (isOpen) closeMenu();
-      else if (isMobileMenuOpen) closeMobileMenu();
-    };
-
+    const scrollbarWidth = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
     const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
     document.body.style.overflow = 'hidden';
-    document.addEventListener('keydown', onKeyDown);
+    if (scrollbarWidth > 0) {
+      const computedPaddingRight = parseFloat(getComputedStyle(document.body).paddingRight) || 0;
+      document.body.style.paddingRight = `${computedPaddingRight + scrollbarWidth}px`;
+      document.documentElement.style.setProperty(
+        '--veli-header-scrollbar-gap',
+        `${scrollbarWidth}px`,
+      );
+    }
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.paddingRight = previousPaddingRight;
+      document.documentElement.style.removeProperty('--veli-header-scrollbar-gap');
     };
-  }, [isOpen, isMobileMenuVisible, isMobileMenuOpen, closeMenu, closeMobileMenu]);
+  }, [isScrollLocked]);
+
+  useEffect(() => {
+    if (!isScrollLocked) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (isSearchOpen || isSearchRendered) closeSearch({ instant: true });
+      else if (isOpen) closeMenu();
+      else if (isMobileMenuOpen) closeMobileMenu();
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [
+    isScrollLocked,
+    isOpen,
+    isMobileMenuOpen,
+    isSearchOpen,
+    isSearchRendered,
+    closeMenu,
+    closeMobileMenu,
+    closeSearch,
+  ]);
+
+  useEffect(() => {
+    if (!search || search.shortcut === false) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'k' || (!event.metaKey && !event.ctrlKey) || event.altKey) {
+        return;
+      }
+      if (isSearchOpen) {
+        event.preventDefault();
+        closeSearch({ instant: true });
+        return;
+      }
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      event.preventDefault();
+      openSearch({ instant: true });
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [closeSearch, isSearchOpen, openSearch, search]);
 
   useEffect(() => {
     if (isExpanded) {
@@ -797,8 +1075,18 @@ export function SiteHeader({
 
   return (
     <div className={`relative ${className}`}>
-      <SkipToMainLink href={skipToMainHref} label={labels.skipToMain} hidden={overlaysOpen} />
-      <div ref={bannerExitRef} className="fixed inset-x-0 top-0 z-50">
+      <SkipToMainLink
+        href={skipToMainHref}
+        label={labels.skipToMain}
+        hidden={overlaysOpen || isSearchOpen || isSearchRendered}
+      />
+      <div
+        ref={bannerExitRef}
+        className="fixed inset-x-0 top-0 z-50"
+        style={{ paddingRight: 'var(--veli-header-scrollbar-gap, 0px)' }}
+        inert={isSearchOpen || isSearchRendered || undefined}
+        aria-hidden={isSearchOpen || isSearchRendered || undefined}
+      >
         <OfficialWebsiteBanner
           expanded={officialBannerExpanded}
           hidden={officialBannerHidden}
@@ -835,13 +1123,19 @@ export function SiteHeader({
         role={isExpanded ? 'dialog' : undefined}
         aria-modal={isExpanded || undefined}
         aria-labelledby={isExpanded ? titleId : undefined}
-        inert={isHeaderHidden || undefined}
-        aria-hidden={isHeaderHidden || undefined}
+        inert={(isHeaderHidden && !isSearchOpen && !isSearchRendered) || undefined}
+        aria-hidden={(isHeaderHidden && !isSearchOpen && !isSearchRendered) || undefined}
         onTransitionEnd={onSurfaceTransitionEnd}
         className={[
           'fixed inset-x-0 mx-auto flex flex-col outline-none motion-reduce:transition-none',
-          isExpanded || isRendered ? 'overflow-hidden' : 'overflow-visible',
-          isOpen || isRendered || isMobileMenuVisible ? 'z-60' : 'z-40',
+          (isExpanded || isRendered) && !isSearchOpen && !isSearchRendered
+            ? 'overflow-hidden'
+            : 'overflow-visible',
+          isSearchOpen || isSearchRendered
+            ? 'z-70'
+            : isOpen || isRendered || isMobileMenuVisible
+              ? 'z-60'
+              : 'z-40',
           isExpanded
             ? openedFromFloating
               ? 'top-2 h-[calc(100dvh-1rem)] w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:h-[calc(100dvh-1.5rem)] lg:w-[calc(100%-4rem)]'
@@ -850,69 +1144,121 @@ export function SiteHeader({
               ? 'top-2 w-[calc(100%-1rem)] max-w-[1464px] lg:top-4 lg:w-[calc(100%-4rem)]'
               : 'top-0 w-full max-w-[100vw]',
           isExpanded ? 'rounded-[24px]' : floatingLayout ? 'rounded-[36px]' : 'rounded-none',
-          isExpanded
-            ? 'shadow-[0_24px_64px_var(--veli-color-effects-shadow-depth-200)]'
-            : showFloatingChrome
-              ? 'shadow-lg'
-              : 'shadow-none',
-          showFloatingChrome && !isExpanded
-            ? 'bg-surface-raised/90 backdrop-blur-[18px]'
-            : 'bg-surface-raised',
-          isHeaderHidden
+          isHeaderHidden && !isSearchOpen && !isSearchRendered
             ? floatingLayout
               ? 'pointer-events-none -translate-y-1 opacity-0'
               : 'pointer-events-none'
             : 'opacity-100',
-          !isOpen && !isRendered && floatingLayout && floatingMotion
+          !isOpen &&
+          !isRendered &&
+          !isSearchOpen &&
+          !isSearchRendered &&
+          floatingLayout &&
+          floatingMotion
             ? 'transition-[transform,opacity] duration-[160ms] ease-[cubic-bezier(0.23,1,0.32,1)]'
             : '',
         ]
           .filter(Boolean)
           .join(' ')}
         style={{
-          insetInlineStart: anchorExpandedSurfaceToStart && isExpanded ? '0.5rem' : 0,
-          insetInlineEnd: anchorExpandedSurfaceToStart ? 'auto' : 0,
+          ...(anchorExpandedSurfaceToStart
+            ? {
+                insetInlineStart: isExpanded ? '0.5rem' : 0,
+                insetInlineEnd: 'auto',
+              }
+            : {
+                left: 0,
+                right: floatingLayout && !isExpanded ? 'var(--veli-header-scrollbar-gap, 0px)' : 0,
+              }),
           marginInline: anchorExpandedSurfaceToStart ? 0 : 'auto',
           paddingTop: isExpanded ? OPEN_PAD_TOP : 0,
+          paddingRight:
+            !floatingLayout && !isExpanded ? 'var(--veli-header-scrollbar-gap, 0px)' : undefined,
           top: headerTopOffset,
           height: isExpanded ? undefined : barHeight,
           transition: geometryTransition ?? surfaceDockingTransition ?? headerTopTransition,
         }}
       >
+        {/* Background & floating blur live on a dedicated underlay so <header> never traps position:fixed search layers. */}
+        <span
+          aria-hidden
+          className={[
+            'pointer-events-none absolute inset-0 -z-1 rounded-[inherit]',
+            isExpanded
+              ? 'shadow-[0_24px_64px_var(--veli-color-effects-shadow-depth-200)]'
+              : showFloatingChrome
+                ? 'shadow-lg'
+                : 'shadow-none',
+            showFloatingChrome && !isExpanded
+              ? 'bg-surface-raised/90 backdrop-blur-[18px]'
+              : 'bg-surface-raised',
+            isHeaderHidden && (isSearchOpen || isSearchRendered) ? 'opacity-0' : 'opacity-100',
+          ].join(' ')}
+          style={{ transition: chromeTransition ?? surfaceDockingChromeTransition }}
+        />
+
         <div
           ref={navRowRef}
           className={`flex min-h-[72px] shrink-0 items-center ${navRowPadding}`}
           style={{ transition: navRowTransition }}
         >
-          <HeaderLogoButton
-            logo={logo}
-            title={title}
-            isOpen={isOpen}
-            isExpanded={isExpanded}
-            isFloating={floatingLayout && !isExpanded}
-            titleId={titleId}
-            prefersReducedMotion={prefersReducedMotion}
-            openLabel={labels.openAppSwitcher}
-            closeLabel={labels.closeAppSwitcher}
-            onOpen={openMenu}
-            onClose={closeMenu}
-            onHoverStart={() => {}}
-            onHoverEnd={() => {}}
-          />
+          <div
+            className={`contents ${isHeaderHidden && (isSearchOpen || isSearchRendered) ? '[&>*]:pointer-events-none [&>*]:opacity-0' : ''}`}
+            inert={isSearchOpen || isSearchRendered || isHeaderHidden || undefined}
+            aria-hidden={isSearchOpen || isSearchRendered || isHeaderHidden || undefined}
+          >
+            <HeaderLogoButton
+              logo={logo}
+              title={title}
+              isOpen={isOpen}
+              isExpanded={isExpanded}
+              isFloating={floatingLayout && !isExpanded}
+              titleId={titleId}
+              prefersReducedMotion={prefersReducedMotion}
+              openLabel={labels.openAppSwitcher}
+              closeLabel={labels.closeAppSwitcher}
+              onOpen={openMenu}
+              onClose={closeMenu}
+              onHoverStart={() => {}}
+              onHoverEnd={() => {}}
+            />
 
-          <DesktopNav
-            navItems={desktopNavItems}
-            hidden={isChromeHidden}
-            prefersReducedMotion={prefersReducedMotion}
-            primaryNavLabel={labels.primaryNav}
-            renderLink={renderNavLink}
-          />
+            <DesktopNav
+              navItems={desktopNavItems}
+              hidden={isChromeHidden}
+              prefersReducedMotion={prefersReducedMotion}
+              primaryNavLabel={labels.primaryNav}
+              renderLink={renderNavLink}
+            />
+          </div>
 
           <HeaderActions
             isOpen={isOpen}
+            isSearchOpen={isSearchOpen}
+            isSearchRendered={isSearchRendered}
+            isHeaderHidden={isHeaderHidden}
             isMobileMenuOpen={isMobileMenuOpen}
             prefersReducedMotion={prefersReducedMotion}
             onToggleMobileMenu={toggleMobileMenu}
+            searchControl={
+              search ? (
+                <HeaderSearchControl
+                  dialogId={searchDialogId}
+                  open={isSearchOpen}
+                  rendered={isSearchRendered}
+                  instant={isSearchOpen ? isSearchInstant : isSearchCloseInstant}
+                  triggerHidden={isHeaderHidden || !actionsInBar}
+                  shortcutEnabled={search.shortcut !== false}
+                  search={search}
+                  query={searchQuery}
+                  onQueryChange={handleSearchQueryChange}
+                  onOpen={handleSearchOpen}
+                  onClose={handleSearchClose}
+                  onExitComplete={handleSearchExitComplete}
+                  prefersReducedMotion={prefersReducedMotion}
+                />
+              ) : null
+            }
             actions={actions}
             actionsInBar={actionsInBar}
             barActions={barActions}
@@ -991,6 +1337,21 @@ export function SiteHeader({
           renderLink={renderNavLink}
           actions={actions}
           mobileActions={mobileActions}
+          searchAction={
+            search && !actionsInBar ? (
+              <Button
+                intent="secondary"
+                appearance="transparent"
+                size="md"
+                className="w-full"
+                aria-haspopup="dialog"
+                onPress={handleSearchOpen}
+              >
+                <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
+                {search.label ?? 'Search'}
+              </Button>
+            ) : null
+          }
         />
       </ActionsInBarProvider>
     </div>

@@ -384,6 +384,30 @@ export function SiteHeaderDemo() {
           onColorSchemeChange={setScheme}
           onNavigate={() => undefined}
           flagSrc="/blocks/maldives-flag.svg"
+          search={{
+            label: 'Search',
+            placeholder: 'Search gov.mv',
+            suggestionsLabel: 'Suggestions',
+            suggestions: (query) => {
+              const trimmed = query.trim().toLowerCase();
+              if (!trimmed) return [];
+              const demoSuggestions = [
+                'Foundation System Approval',
+                'Important Material Quality Approval',
+                'Mortgage Approval',
+                'Produced Material Quality Approval',
+                'Sublease Approval',
+                'Coastal Modification Approval',
+                'Electric Cable Approval',
+              ].map((label, index) => ({ id: `service-${index}`, label }));
+              return [
+                ...demoSuggestions,
+                ...[...apps, ...sites].map((item) => ({ id: item.id, label: item.name })),
+              ]
+                .filter((item) => item.label.toLowerCase().includes(trimmed))
+                .slice(0, 7);
+            },
+          }}
           actions={
             <Button intent="accent" appearance="fill" size="md">
               {isDv ? 'ސައިންއިން' : 'Sign In'}

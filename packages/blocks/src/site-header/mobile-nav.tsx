@@ -197,6 +197,7 @@ export function MobileNavPanel({
   renderLink,
   actions,
   mobileActions,
+  searchAction,
 }: {
   navItems: SiteHeaderNavItem[];
   open: boolean;
@@ -214,6 +215,7 @@ export function MobileNavPanel({
   actions?: ReactNode;
   /** Menu actions below `sm`. Overrides `actions` when set, including `null`. */
   mobileActions?: SiteHeaderMobileActions;
+  searchAction?: ReactNode;
   renderLink?: (
     item: SiteHeaderNavItem,
     className: string,
@@ -293,6 +295,8 @@ export function MobileNavPanel({
               })}
             </nav>
           </div>
+
+          {searchAction ? <div className="shrink-0 px-5">{searchAction}</div> : null}
 
           <MobileMenuActions
             actions={actions}
