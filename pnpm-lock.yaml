@@ -215,6 +215,9 @@ importers:
       '@astrojs/mdx':
         specifier: ^8.1.1
         version: 8.1.6(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@astrojs/markdown-satteri@0.4.10)(astro@7.4.12(@astrojs/markdown-remark@7.3.4(supports-color@10.2.2))(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.94.2)(terser@5.44.1)(yaml@2.9.0))
+      '@playwright/test':
+        specifier: 1.58.2
+        version: 1.58.2
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.5(vite@8.3.8(@types/node@24.10.1)(esbuild@0.28.1)(jiti@2.7.0)(sass@1.94.2)(terser@5.44.1)(yaml@2.9.0))
@@ -2991,6 +2994,14 @@ packages:
         integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==,
       }
     engines: { node: ^12.20.0 || ^14.18.0 || >=16.0.0 }
+
+  '@playwright/test@1.58.2':
+    resolution:
+      {
+        integrity: sha512-akea+6bHYBBfA9uQqSYmlJXn61cTa+jbO87xVLCWbTqbWadRVmhxlXATaOjOgcBaWU4ePo0wB41KMFv3o35IXA==,
+      }
+    engines: { node: '>=18' }
+    hasBin: true
 
   '@poppinss/colors@4.1.6':
     resolution:
@@ -12017,6 +12028,10 @@ snapshots:
     optional: true
 
   '@pkgr/core@0.2.9': {}
+
+  '@playwright/test@1.58.2':
+    dependencies:
+      playwright: 1.58.2
 
   '@poppinss/colors@4.1.6':
     dependencies:
