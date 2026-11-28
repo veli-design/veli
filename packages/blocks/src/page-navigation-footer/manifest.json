@@ -1,12 +1,12 @@
 {
   "id": "page-navigation-footer",
   "title": "Page navigation footer",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "status": "experimental",
   "description": "Responsive organization identity, navigation groups and social links.",
   "files": ["page-navigation-footer.tsx"],
   "dependencies": {
-    "@veli-design/react": "^0.20.0",
+    "@veli-design/react": "^0.21.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-aria-components": "^1.22.0",
@@ -17,7 +17,7 @@
     "tailwindcss": "^4.3.2"
   },
   "testedDependencies": {
-    "@veli-design/react": "0.20.2",
+    "@veli-design/react": "0.21.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-aria-components": "1.22.0",
