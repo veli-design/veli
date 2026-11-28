@@ -1,3 +1,12 @@
+## 0.18.0
+
+### Added
+
+- Add an optional `search` prop (`SiteHeaderSearchConfig`) that renders a header search trigger button and morphs it along a GPU-composited quadratic-Bézier arc into the gov.mv Figma search dialog (`696×76` pill with `border-primary-emphasis` stroke, `20px` search icon, `type-body-lg-regular` input, and trailing primary-subtle submit arrow button over a dimmed `2px`-blurred backdrop) with a separate `24px`-radius suggestions card (`suggestions` with matched-text emphasis and arrow-key navigation, or custom `renderResults`), optional controlled `open`/`query` state, instant `Cmd/Ctrl+K` & Escape keyboard handling, focus trap & restoration, RTL support, and reduced-motion fades.
+- Report `searchOpen` and `searchRendered` in `onOverlayChange` and close the search dialog from `SiteHeaderHandle.closeOverlays()` and when opening the app switcher or mobile menu.
+
+- Place the built-in search action in the mobile menu below 640px. Opening it closes the menu and uses the fallback fade; closing restores focus to the menu button.
+
 ## 0.17.1
 
 ### Fixed

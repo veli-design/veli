@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useEffect, useState, type ReactNode } from 'react';
-import { MagnifyingGlassIcon } from '@phosphor-icons/react';
 import { addons } from 'storybook/internal/preview-api';
 import { Button } from '@veli-design/react/button';
 import { useVeliColorScheme, useVeliLanguage } from '@veli-design/react/provider';
@@ -10,6 +9,7 @@ import {
   type SiteHeaderLabels,
   type SiteHeaderSwitcherItem,
 } from '@tradenetcorp/veli-blocks/site-header';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { providerSwitcherUpdatedEvent } from '../../.storybook/custom-addons/provider/shared';
 
 const labelsEn: SiteHeaderLabels = {
@@ -892,12 +892,17 @@ function HeaderStory({
   emptySites = false,
   withPageContent = false,
   trackCurrent = false,
+  controlledSearch = false,
+  declineSearchClose = false,
 }: {
   title?: string;
   language?: string;
   emptySites?: boolean;
   withPageContent?: boolean;
   trackCurrent?: boolean;
+  controlledSearch?: boolean;
+  /** Controlled host that ignores `onOpenChange(false)`, so `open` stays true. */
+  declineSearchClose?: boolean;
 }) {
   const { colorScheme } = useVeliColorScheme();
   const { language: providerLanguage } = useVeliLanguage();
@@ -909,6 +914,7 @@ function HeaderStory({
   }, [language]);
 
   const [pathname, setPathname] = useState('/');
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const lang = providerLanguage;
   const isDv = lang === 'dv';
@@ -926,8 +932,26 @@ function HeaderStory({
   const navServices = isDv ? 'ޚިދުމަތްތައް' : 'Services';
   const navAbout = isDv ? 'އަޅުގަނޑުމެންނާ ބެހޭ' : 'About';
   const navContact = isDv ? 'ގުޅުއްވުމަށް' : 'Contact';
-  const searchLabel = isDv ? 'ހޯއްދަވާ' : 'Search';
   const signIn = isDv ? 'ސައިންއިން' : 'Sign In';
+  const searchLabel = isDv ? 'ހޯއްދަވާ' : 'Search';
+  const searchPlaceholder = isDv ? 'ގަވް.އެމްވީ ހޯއްދަވާ' : 'Search gov.mv';
+  const searchSuggestionsLabel = isDv ? 'ލަފާދޭ ޚިދުމަތްތައް' : 'Suggestions';
+  const serviceSuggestionsEn = [
+    'Foundation System Approval',
+    'Important Material Quality Approval',
+    'Mortgage Approval',
+    'Produced Material Quality Approval',
+    'Sublease Approval',
+    'Coastal Modification Approval',
+    'Electric Cable Approval',
+  ].map((label, index) => ({ id: `service-${index}`, label }));
+  const searchableSuggestions = [
+    ...(isDv ? [] : serviceSuggestionsEn),
+    ...[...apps, ...(emptySites ? [] : sites)].map((item) => ({
+      id: item.id,
+      label: item.name,
+    })),
+  ];
   const scrollHint = isDv
     ? 'ފްލޯޓިންގ ހެޑަރ ބޭނުންކުރުމަށް ސްކްރޯލް ކުރައްވާ.'
     : 'Scroll to exercise the floating header.';
@@ -1000,17 +1024,29 @@ function HeaderStory({
             : undefined
         }
         flagSrc="/blocks/maldives-flag.svg"
+        search={{
+          label: searchLabel,
+          placeholder: searchPlaceholder,
+          suggestionsLabel: searchSuggestionsLabel,
+          ...(controlledSearch
+            ? {
+                open: searchOpen,
+                onOpenChange: (next: boolean) => {
+                  if (!next && declineSearchClose) return;
+                  setSearchOpen(next);
+                },
+              }
+            : {}),
+          suggestions: (query) => {
+            const trimmed = query.trim().toLowerCase();
+            if (!trimmed) return [];
+            return searchableSuggestions
+              .filter((item) => item.label.toLowerCase().includes(trimmed))
+              .slice(0, 7);
+          },
+        }}
         actions={
           <>
-            <Button
-              intent="secondary"
-              appearance="transparent"
-              size="md"
-              iconOnly
-              aria-label={searchLabel}
-            >
-              <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
-            </Button>
             <Button intent="accent" appearance="fill" size="md">
               {signIn}
             </Button>
@@ -1018,16 +1054,6 @@ function HeaderStory({
         }
         mobileActions={({ closeMenu }) => (
           <>
-            <Button
-              intent="secondary"
-              appearance="transparent"
-              size="md"
-              className="w-full"
-              onPress={closeMenu}
-            >
-              <MagnifyingGlassIcon aria-hidden size={16} weight="regular" />
-              {searchLabel}
-            </Button>
             <Button
               intent="accent"
               appearance="fill"
@@ -1090,3 +1116,129 @@ export const WithPageContent: Story = {
 export const SwitchingSites: Story = {
   args: { trackCurrent: true },
 };
+
+/** The host owns `search.open` and answers `onOpenChange`, so the header never opens search on its own. */
+export const ControlledSearch: Story = {
+  args: { controlledSearch: true },
+  play: async ({ canvasElement }) => {
+    const trigger = getSearchTrigger(canvasElement);
+    const skipLink = within(canvasElement).getByText('Skip to main content');
+    await expect(skipLink).not.toHaveAttribute('inert');
+    await userEvent.click(trigger);
+    const input = await within(document.body).findByRole('searchbox');
+    await waitFor(() => expect(input).toHaveFocus());
+    // The skip link is out of the tab order while search is open.
+    await expect(skipLink).toHaveAttribute('inert');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(within(document.body).queryByRole('searchbox')).toBeNull());
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await expect(skipLink).not.toHaveAttribute('inert');
+  },
+};
+
+/**
+ * Regression: `open` stays authoritative for closing. A host that ignores `onOpenChange(false)` keeps
+ * the dialog open when the user presses Escape, with focus still in the search field.
+ */
+export const ControlledSearchDeclinesClose: Story = {
+  args: { controlledSearch: true, declineSearchClose: true },
+  play: async ({ canvasElement }) => {
+    const trigger = getSearchTrigger(canvasElement);
+    await userEvent.click(trigger);
+    const input = await within(document.body).findByRole('searchbox');
+    await waitFor(() => expect(input).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+    // Longer than the close morph and its fallback timer, so a local close would have finished.
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    await expect(within(document.body).getByRole('searchbox')).toBeVisible();
+    await expect(input).toHaveFocus();
+    await expect(within(canvasElement).getByText('Skip to main content')).toHaveAttribute('inert');
+
+    // Clicking the backdrop is another close request the host declines: focus stays in the field.
+    const backdrop = document.querySelector<HTMLElement>('[data-header-search-backdrop]');
+    if (!backdrop) throw new Error('Expected the search backdrop');
+    await userEvent.click(backdrop);
+    await new Promise((resolve) => setTimeout(resolve, 900));
+    await expect(within(document.body).getByRole('searchbox')).toBeVisible();
+    await expect(input).toHaveFocus();
+  },
+};
+
+/**
+ * Regression: Tab moves from the search field through the submit button to the results, and arrow
+ * keys move between results. Escape from a result returns focus to the trigger.
+ */
+export const SearchTabReachesResults: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(document.body);
+    const trigger = getSearchTrigger(canvasElement);
+    await userEvent.click(trigger);
+    const input = await body.findByRole('searchbox');
+    await userEvent.type(input, 'approval');
+    const options = await body.findAllByRole('option');
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect(options[0]).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(options[1]).toHaveFocus();
+    await userEvent.keyboard('{ArrowUp}{ArrowUp}');
+    await expect(input).toHaveFocus();
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect(options[0]).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+/**
+ * Regression: on a short viewport the keyboard-highlighted suggestion stays visible in the tray, the
+ * tray stays inside the viewport, and Escape returns focus to the trigger.
+ */
+export const SearchKeyboardShortViewport: Story = {
+  parameters: {
+    viewport: {
+      options: {
+        shortLandscape: {
+          name: 'Short landscape 667x320',
+          styles: { width: '667px', height: '320px' },
+          type: 'mobile',
+        },
+      },
+      defaultViewport: 'shortLandscape',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(document.body);
+    const trigger = getSearchTrigger(canvasElement);
+    await userEvent.click(trigger);
+    const input = await body.findByRole('searchbox');
+    await userEvent.type(input, 'approval');
+    for (let step = 0; step < 7; step += 1) {
+      await userEvent.keyboard('{ArrowDown}');
+    }
+
+    const option = await body.findByRole('option', { selected: true });
+    await expect(input).toHaveAttribute('aria-activedescendant', option.id);
+
+    const scroller = option.closest<HTMLElement>('.overflow-y-auto');
+    if (!scroller) throw new Error('Expected the suggestions to scroll inside the tray');
+    const optionRect = option.getBoundingClientRect();
+    const scrollerRect = scroller.getBoundingClientRect();
+    expect(optionRect.top).toBeGreaterThanOrEqual(scrollerRect.top - 1);
+    expect(optionRect.bottom).toBeLessThanOrEqual(scrollerRect.bottom + 1);
+
+    const tray = document.querySelector<HTMLElement>('[data-header-search-tray]');
+    if (!tray) throw new Error('Expected the suggestions tray to be open');
+    expect(tray.getBoundingClientRect().bottom).toBeLessThanOrEqual(window.innerHeight);
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+function getSearchTrigger(canvasElement: HTMLElement): HTMLElement {
+  const trigger = canvasElement.querySelector<HTMLElement>('[data-header-search-trigger-button]');
+  if (!trigger) throw new Error('Expected the header search trigger');
+  return trigger;
+}
